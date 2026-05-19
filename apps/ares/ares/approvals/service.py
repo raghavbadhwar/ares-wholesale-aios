@@ -2,11 +2,64 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass, replace
 from datetime import datetime, timezone
+from enum import Enum
+from typing import Any, Protocol, runtime_checkable
 from uuid import uuid4
 
-from apps.ares.ares.data.models import ApprovalRequest, ApprovalStatus, RiskLevel
-from apps.ares.ares.data.repository import BusinessRepository
+try:
+    from apps.ares.ares.data.models import ApprovalRequest, ApprovalStatus, RiskLevel
+    from apps.ares.ares.data.repository import BusinessRepository
+except ModuleNotFoundError:
+    class ApprovalStatus(str, Enum):
+        pending = "pending"
+        approved = "approved"
+        rejected = "rejected"
+        edited = "edited"
+
+
+    class RiskLevel(str, Enum):
+        low = "low"
+        medium = "medium"
+        high = "high"
+
+
+    @dataclass(frozen=True)
+    class ApprovalRequest:
+        id: str
+        type: str
+        client_id: str
+        proposed_action: str
+        data: dict[str, Any]
+        reason: str
+        source: str
+        confidence: float
+        risk_level: RiskLevel = RiskLevel.medium
+        dedupe_key: str | None = None
+        status: ApprovalStatus = ApprovalStatus.pending
+        decided_by: str | None = None
+        decided_at: datetime | None = None
+
+        def model_copy(self, *, update: dict[str, Any] | None = None) -> "ApprovalRequest":
+            return replace(self, **(update or {}))
+
+
+    @runtime_checkable
+    class BusinessRepository(Protocol):
+        def find_pending_approval(
+            self,
+            *,
+            client_id: str,
+            action_type: str,
+            dedupe_key: str,
+        ) -> ApprovalRequest | None: ...
+
+        def create_approval(self, approval: ApprovalRequest) -> ApprovalRequest: ...
+
+        def update_approval(self, approval: ApprovalRequest) -> ApprovalRequest: ...
+
+        def list_pending_approvals(self) -> list[ApprovalRequest]: ...
 
 
 DEFAULT_APPROVAL_REQUIRED_ACTIONS = {
