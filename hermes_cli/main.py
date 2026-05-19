@@ -9889,7 +9889,7 @@ _BUILTIN_SUBCOMMANDS = frozenset(
         "model", "pairing", "plugins", "postinstall", "profile", "proxy",
         "send", "sessions", "setup",
         "skills", "slack", "status", "tools", "uninstall", "update",
-        "version", "webhook", "whatsapp", "chat",
+        "version", "webhook", "whatsapp", "chat", "ares",
         # Help-ish invocations — plugin commands not being listed in
         # top-level --help is an acceptable trade-off for skipping an
         # expensive eager import of every bundled plugin module.
@@ -11357,6 +11357,26 @@ Examples:
         plugins_command(args)
 
     plugins_parser.set_defaults(func=cmd_plugins)
+
+    # =========================================================================
+    # ares command — wholesaler AIOS vertical workflows
+    # =========================================================================
+    ares_parser = subparsers.add_parser(
+        "ares",
+        help="Ares Wholesale AIOS workflows and setup",
+        description=(
+            "Run Ares wholesaler workflows: setup, onboarding, autonomous cycle, "
+            "mobile approvals, Drive manifest sync, and cron prompt generation."
+        ),
+    )
+    try:
+        from apps.ares.ares.cli import ares_command as _ares_command
+        from apps.ares.ares.cli import register_cli as _register_ares_cli
+
+        _register_ares_cli(ares_parser)
+        ares_parser.set_defaults(func=_ares_command)
+    except Exception as _exc:
+        logging.getLogger(__name__).debug("Ares CLI wiring failed: %s", _exc)
 
     # =========================================================================
     # Plugin CLI commands — dynamically registered by memory/general plugins.
