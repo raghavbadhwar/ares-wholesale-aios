@@ -1,18 +1,58 @@
 <p align="center">
-  <img src="assets/banner.png" alt="Hermes Agent" width="100%">
+  <img src="assets/banner.png" alt="Ares Wholesale AIOS on Hermes" width="100%">
 </p>
 
-# Hermes Agent ☤
+# Ares Wholesale AIOS
 
 <p align="center">
-  <a href="https://hermes-agent.nousresearch.com/docs/"><img src="https://img.shields.io/badge/Docs-hermes--agent.nousresearch.com-FFD700?style=for-the-badge" alt="Documentation"></a>
-  <a href="https://discord.gg/NousResearch"><img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"></a>
+  <a href="docs/ares/QUICKSTART.md"><img src="https://img.shields.io/badge/Ares-Quickstart-B11226?style=for-the-badge" alt="Ares Quickstart"></a>
+  <a href="docs/ares/OPERATOR_RUNBOOK.md"><img src="https://img.shields.io/badge/Operator-Runbook-B87A2C?style=for-the-badge" alt="Operator Runbook"></a>
+  <a href="https://github.com/raghavbadhwar/hermes-agent"><img src="https://img.shields.io/badge/Built%20for-Indian%20Wholesalers-B11226?style=for-the-badge" alt="Built for Indian Wholesalers"></a>
   <a href="https://github.com/NousResearch/hermes-agent/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a>
-  <a href="https://nousresearch.com"><img src="https://img.shields.io/badge/Built%20by-Nous%20Research-blueviolet?style=for-the-badge" alt="Built by Nous Research"></a>
-  <a href="README.zh-CN.md"><img src="https://img.shields.io/badge/Lang-中文-red?style=for-the-badge" alt="中文"></a>
 </p>
 
-**The self-improving AI agent built by [Nous Research](https://nousresearch.com).** It's the only agent with a built-in learning loop — it creates skills from experience, improves them during use, nudges itself to persist knowledge, searches its own past conversations, and builds a deepening model of who you are across sessions. Run it on a $5 VPS, a GPU cluster, or serverless infrastructure that costs nearly nothing when idle. It's not tied to your laptop — talk to it from Telegram while it works on a cloud VM.
+Ares is a Hermes-based vertical AI operating system for Indian wholesalers and distributors.
+It turns a wholesaler's messy daily business signals — WhatsApp forwards, Tally/Busy exports, order notes, payment reminders, inventory alerts, and owner decisions — into a company brain that can brief, remember, draft actions, and ask for approval before anything important is executed.
+
+This repo is based on [Nous Research's Hermes Agent](https://github.com/NousResearch/hermes-agent) runtime and adds the Ares wholesaler layer as a first-class app/plugin:
+
+- `hermes ares setup` — create a client profile for a wholesaler pilot.
+- `hermes ares autonomous-cycle` — run the daily eyes + memory + radar + approval loop.
+- `hermes ares mobile-approvals` — render WhatsApp/Telegram-friendly owner approval prompts.
+- `hermes ares mobile-reply` — process Hinglish approvals like `haan appr_xxx`.
+- `hermes ares print-cron-specs` — generate Hermes cron specs for scheduled owner briefs.
+- `/ares <client> cycle|approvals|reply ...` — gateway slash command for owner-facing flows.
+
+## One-command Ares setup
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/raghavbadhwar/hermes-agent/main/scripts/setup_ares.sh | bash -s -- \
+  --client demo-wholesaler \
+  --business-name "Demo Wholesale" \
+  --owner-name "Raghav"
+```
+
+After setup:
+
+```bash
+hermes ares autonomous-cycle --client demo-wholesaler
+hermes ares mobile-approvals --client demo-wholesaler
+hermes ares mobile-reply --client demo-wholesaler --reply "haan appr_xxx"
+hermes ares print-cron-specs --client demo-wholesaler
+```
+
+Read the Ares docs first:
+
+- [Ares Quickstart](docs/ares/QUICKSTART.md)
+- [Operator Runbook](docs/ares/OPERATOR_RUNBOOK.md)
+- [Fix and Polish Plan](docs/ares/FIX_AND_POLISH_PLAN.md)
+- [Security and Privacy Notes](docs/ares/SECURITY_AND_PRIVACY.md)
+
+---
+
+## Hermes Agent Runtime
+
+Ares runs on top of Hermes Agent, the self-improving AI agent runtime built by [Nous Research](https://nousresearch.com). Hermes provides the terminal agent, gateway, model routing, tools, skills, memory, cron, and plugin system that Ares uses.
 
 Use any model you want — [Nous Portal](https://portal.nousresearch.com), [OpenRouter](https://openrouter.ai) (200+ models), [NovitaAI](https://novita.ai) (AI-native cloud for Model API, Agent Sandbox, and GPU Cloud), [NVIDIA NIM](https://build.nvidia.com) (Nemotron), [Xiaomi MiMo](https://platform.xiaomimimo.com), [z.ai/GLM](https://z.ai), [Kimi/Moonshot](https://platform.moonshot.ai), [MiniMax](https://www.minimax.io), [Hugging Face](https://huggingface.co), OpenAI, or your own endpoint. Switch with `hermes model` — no code changes, no lock-in.
 
