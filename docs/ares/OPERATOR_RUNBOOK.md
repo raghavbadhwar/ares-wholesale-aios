@@ -38,6 +38,7 @@ Ares persists imported CSV records in local JSON, so the next workflow run can u
 ## 3. Daily operating loop
 
 ```bash
+ares chat --client raj-demo
 ares run-workflow --client raj-demo --workflow daily-brief
 ares run-workflow --client raj-demo --workflow payment-radar
 ares approval-center --client raj-demo

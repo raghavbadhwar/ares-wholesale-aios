@@ -47,6 +47,7 @@ ares setup \
   --business-name "Gupta Distributors" \
   --owner-name "Mr Gupta"
 
+ares chat --client gupta-distributors
 ares autonomous-cycle --client gupta-distributors
 ares mobile-approvals --client gupta-distributors
 ares mobile-reply --client gupta-distributors --reply "haan appr_xxx"

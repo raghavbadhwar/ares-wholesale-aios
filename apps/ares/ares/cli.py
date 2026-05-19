@@ -4,6 +4,10 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import subprocess
+import sys
+from dataclasses import dataclass
 from pathlib import Path
 
 from apps.ares.ares.approvals.service import ApprovalService
@@ -22,6 +26,15 @@ from apps.ares.ares.scheduling import build_cron_job_specs, build_cron_prompts
 
 def register_cli(subparser: argparse.ArgumentParser) -> None:
     actions = subparser.add_subparsers(dest="ares_action")
+
+    chat_p = actions.add_parser("chat", help="Chat interactively with the Ares company brain")
+    chat_p.add_argument("--client", required=True, help="Client slug")
+    chat_p.add_argument("-q", "--query", default="", help="Single query, then exit")
+    chat_p.add_argument("-m", "--model", default="", help="Optional model override")
+    chat_p.add_argument("--provider", default="", help="Optional provider override")
+    chat_p.add_argument("-t", "--toolsets", default="", help="Optional comma-separated toolsets")
+    chat_p.add_argument("--tui", action="store_true", help="Launch Hermes TUI for Ares chat")
+    chat_p.add_argument("--yolo", action="store_true", help="Bypass dangerous command approvals")
 
     run_p = actions.add_parser("run-workflow", help="Run an Ares workflow")
     run_p.add_argument("--client", required=True, help="Client slug")
@@ -97,6 +110,20 @@ def register_cli(subparser: argparse.ArgumentParser) -> None:
 def ares_command(args: argparse.Namespace) -> int:
     action = getattr(args, "ares_action", None)
     try:
+        if action == "chat":
+            profile = load_client_profile(args.client)
+            context_path = build_chat_context(profile)
+            launch = build_chat_launch(
+                profile,
+                context_path,
+                query=getattr(args, "query", ""),
+                model=getattr(args, "model", ""),
+                provider=getattr(args, "provider", ""),
+                toolsets=getattr(args, "toolsets", ""),
+                tui=getattr(args, "tui", False),
+                yolo=getattr(args, "yolo", False),
+            )
+            return run_chat_launch(launch)
         if action == "run-workflow":
             result = _run_workflow(args)
             print(json.dumps(result["payload"], indent=2, default=str) if getattr(args, "json", False) else result["message"])
@@ -201,8 +228,121 @@ def ares_command(args: argparse.Namespace) -> int:
     except Exception as exc:
         print(f"Ares error: {exc}")
         return 1
-    print("Usage: hermes ares {setup|run-workflow|onboard-client|list-clients|show-client|list-workflows|approval-center|owner-reply|autonomous-cycle|mobile-approvals|mobile-reply|sync-drive-manifest|print-cron-prompts|print-cron-specs|schedules}")
+    print("Usage: hermes ares {chat|setup|run-workflow|onboard-client|list-clients|show-client|list-workflows|approval-center|owner-reply|autonomous-cycle|mobile-approvals|mobile-reply|sync-drive-manifest|print-cron-prompts|print-cron-specs|schedules}")
     return 2
+
+
+@dataclass(frozen=True)
+class ChatLaunch:
+    command: list[str]
+    cwd: Path
+    env: dict[str, str]
+
+
+def build_chat_context(profile: ClientProfile) -> Path:
+    """Write an AGENTS.md file that turns Hermes chat into an Ares company brain."""
+    client_root = get_ares_home() / "clients" / profile.client_slug
+    chat_dir = client_root / "chat"
+    chat_dir.mkdir(parents=True, exist_ok=True)
+    context_path = chat_dir / "AGENTS.md"
+    repo_root = Path(__file__).resolve().parents[3]
+    ares_home = get_ares_home()
+    context_path.write_text(
+        f"""# Ares Company Brain Session
+
+You are Ares, the company brain for {profile.business_name}.
+
+Client details:
+- Client slug: {profile.client_slug}
+- Business name: {profile.business_name}
+- Owner name: {profile.owner_name}
+- Language preference: {profile.language_preference}
+- Timezone: {profile.timezone}
+- Ares home: {ares_home}
+- Ares repo: {repo_root}
+
+Operating rules:
+- Be concise, practical, and use simple Indian English.
+- Treat Ares as an approval-first business brain for an Indian wholesaler/distributor.
+- Never claim a workflow ran unless you actually run the relevant command and inspect the result.
+- For money, ledger-impacting actions, external customer/supplier messages, credit holds, or dispatch decisions: draft first, ask owner approval, then execute only after approval.
+- Prefer owner-friendly summaries: payment radar, pending orders, low stock, supplier issues, and next actions.
+
+Useful Ares commands:
+- ares autonomous-cycle --client {profile.client_slug}
+- ares mobile-approvals --client {profile.client_slug}
+- ares approval-center --client {profile.client_slug}
+- ares run-workflow --client {profile.client_slug} --workflow daily-brief
+- ares run-workflow --client {profile.client_slug} --workflow payment-radar
+- ares run-workflow --client {profile.client_slug} --workflow stock-radar
+- ares mobile-reply --client {profile.client_slug} --reply \"haan appr_xxx\"
+- ares print-cron-specs --client {profile.client_slug}
+
+If the `ares` wrapper is not on PATH inside a tool shell, run from the repo instead:
+cd {repo_root} && ARES_HOME={ares_home} uv run hermes ares <command> --client {profile.client_slug}
+
+When the owner asks broad questions like "what happened today?" or "what should I do now?", run the autonomous cycle or daily brief first, then summarize the result.
+""",
+        encoding="utf-8",
+    )
+    return context_path
+
+
+def build_chat_launch(
+    profile: ClientProfile,
+    context_path: Path,
+    *,
+    query: str = "",
+    model: str = "",
+    provider: str = "",
+    toolsets: str = "",
+    tui: bool = False,
+    yolo: bool = False,
+) -> ChatLaunch:
+    """Build the Hermes chat command for an Ares client without executing it."""
+    repo_root = Path(__file__).resolve().parents[3]
+    env = os.environ.copy()
+    env["ARES_CLIENT"] = profile.client_slug
+    env["ARES_BUSINESS_NAME"] = profile.business_name
+    env["ARES_HOME"] = str(get_ares_home())
+    env["ARES_CHAT_CONTEXT"] = str(context_path)
+    env["PYTHONPATH"] = _prepend_path(env.get("PYTHONPATH", ""), str(repo_root))
+
+    bin_dir = get_ares_home() / "bin"
+    if bin_dir.exists():
+        env["PATH"] = _prepend_path(env.get("PATH", ""), str(bin_dir))
+
+    command = [sys.executable, "-m", "hermes_cli.main", "chat"]
+    if query:
+        command.extend(["--query", query])
+    if tui:
+        command.append("--tui")
+    if yolo:
+        command.append("--yolo")
+    if model:
+        command.extend(["--model", model])
+    if provider:
+        command.extend(["--provider", provider])
+    if toolsets:
+        command.extend(["--toolsets", toolsets])
+    return ChatLaunch(command=command, cwd=context_path.parent, env=env)
+
+
+def run_chat_launch(launch: ChatLaunch) -> int:
+    """Run Ares chat. Interactive mode replaces the process; query mode returns."""
+    if "--query" not in launch.command:
+        os.execvpe(launch.command[0], launch.command, launch.env)
+    completed = subprocess.run(launch.command, cwd=launch.cwd, env=launch.env, check=False)
+    return int(completed.returncode)
+
+
+def _prepend_path(existing: str, new_path: str) -> str:
+    if not existing:
+        return new_path
+    parts = existing.split(os.pathsep)
+    if new_path in parts:
+        return existing
+    return os.pathsep.join([new_path, existing])
 
 
 def _run_workflow(args: argparse.Namespace) -> dict:
@@ -242,6 +382,7 @@ Ares home:
   {ares_home}
 
 If installed with scripts/setup_ares.sh, use the wrapper commands:
+  ares chat --client {client}
   ares autonomous-cycle --client {client}
   ares mobile-approvals --client {client}
   ares mobile-reply --client {client} --reply "haan appr_xxx"

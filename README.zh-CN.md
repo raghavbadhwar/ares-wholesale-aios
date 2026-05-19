@@ -20,6 +20,7 @@ curl -fsSL https://raw.githubusercontent.com/raghavbadhwar/ares-wholesale-aios/m
 ## Daily Ares commands
 
 ```bash
+ares chat --client demo-wholesaler
 ares autonomous-cycle --client demo-wholesaler
 ares mobile-approvals --client demo-wholesaler
 ares mobile-reply --client demo-wholesaler --reply "haan appr_xxx"

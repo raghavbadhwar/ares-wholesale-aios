@@ -63,6 +63,7 @@ Examples:
     --business-name "Gupta Distributors" \\
     --owner-name "Mr Gupta"
 
+  ares chat --client gupta-distributors
   ares autonomous-cycle --client gupta-distributors
   ares mobile-approvals --client gupta-distributors
   ares-hermes gateway setup
@@ -247,6 +248,7 @@ EOF
   cat <<EOF
 
 Daily commands:
+  ares chat --client $CLIENT
   ares autonomous-cycle --client $CLIENT
   ares mobile-approvals --client $CLIENT
   ares mobile-reply --client $CLIENT --reply "haan appr_xxx"

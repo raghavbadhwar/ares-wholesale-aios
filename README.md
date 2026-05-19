@@ -42,6 +42,7 @@ curl -fsSL https://raw.githubusercontent.com/raghavbadhwar/ares-wholesale-aios/m
 Then run:
 
 ```bash
+ares chat --client demo-wholesaler
 ares autonomous-cycle --client demo-wholesaler
 ares mobile-approvals --client demo-wholesaler
 ares mobile-reply --client demo-wholesaler --reply "haan appr_xxx"
@@ -53,6 +54,7 @@ ares print-cron-specs --client demo-wholesaler
 The setup script installs an `ares` wrapper, so users do not need a global Hermes install:
 
 ```bash
+ares chat
 ares setup
 ares autonomous-cycle
 ares mobile-approvals
