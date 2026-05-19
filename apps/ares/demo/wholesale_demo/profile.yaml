@@ -1,0 +1,30 @@
+client_slug: demo-wholesale
+business_name: Demo Wholesale
+owner_name: Owner
+language_preference: english_hinglish
+timezone: Asia/Kolkata
+staff: []
+google:
+  command_center_sheet_id: null
+  drive_folder_id: null
+  exports_folder_id: null
+approval_preferences:
+  required_actions:
+    - send_customer_message
+    - mark_payment_received
+    - modify_ledger
+  default_decider: owner
+  batch_approval_allowed: true
+credit_rules:
+  default_payment_terms_days: 30
+  default_credit_limit: 100000
+  hard_stop_overdue_days: 45
+report_times:
+  daily_brief: "09:00"
+connector_status:
+  google_sheets: not_configured
+  google_drive: not_configured
+  message_forwarding: configured
+  exports: configured
+  screenshots: not_configured
+

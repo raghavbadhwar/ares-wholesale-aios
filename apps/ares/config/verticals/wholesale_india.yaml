@@ -1,0 +1,55 @@
+vertical: wholesale_india
+name: Ares Wholesale AIOS for Indian Wholesalers
+default_language: english_hinglish
+core_entities:
+  - Customer
+  - ProductSKU
+  - Order
+  - Invoice
+  - Payment
+  - Supplier
+  - StockRecord
+  - Task
+  - Complaint
+  - BusinessRule
+  - ApprovalRequest
+  - BusinessMemory
+default_workflows:
+  - daily-brief
+  - payment-radar
+  - order-capture
+  - stock-radar
+  - weekly-war-room
+default_skills:
+  - payment_collection
+  - order_management
+  - inventory_radar
+  - customer_memory
+  - daily_briefing
+approval_rules:
+  required_actions:
+    - send_customer_message
+    - send_supplier_message
+    - mark_payment_received
+    - update_invoice_status
+    - modify_ledger
+    - block_dispatch
+    - approve_credit_extension
+    - change_credit_limit
+    - place_purchase_order
+    - activate_recurring_workflow
+    - save_sensitive_business_rule
+daily_brief_schedule: "0 9 * * *"
+supported_connectors:
+  - message_forwarding
+  - google_sheets
+  - google_drive
+  - csv_exports
+  - invoice_payment_screenshot_upload
+out_of_scope:
+  - full ERP replacement
+  - automatic WhatsApp sending without approval
+  - autonomous payment movement
+  - direct bank account access
+  - complex dashboard
+

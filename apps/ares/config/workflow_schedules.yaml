@@ -1,0 +1,19 @@
+daily-brief:
+  schedule: "0 9 * * *"
+  command: "ares run-workflow --client <client_slug> --workflow daily-brief"
+order-capture:
+  schedule: "every 30m"
+  command: "ares run-workflow --client <client_slug> --workflow order-capture"
+payment-radar-morning:
+  schedule: "0 10 * * *"
+  command: "ares run-workflow --client <client_slug> --workflow payment-radar"
+payment-radar-evening:
+  schedule: "0 17 * * *"
+  command: "ares run-workflow --client <client_slug> --workflow payment-radar"
+stock-radar:
+  schedule: "0 8 * * *"
+  command: "ares run-workflow --client <client_slug> --workflow stock-radar"
+weekly-war-room:
+  schedule: "0 17 * * 5"
+  command: "ares run-workflow --client <client_slug> --workflow weekly-war-room"
+
