@@ -2,7 +2,7 @@ from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
 from cli import HermesCLI, _build_compact_banner, _rich_text_from_ansi
-from hermes_cli.skin_engine import get_active_skin, set_active_skin
+from hermes_cli.skin_engine import get_active_skin, get_active_skin_name, init_skin_from_config, set_active_skin
 
 
 def _make_cli_stub():
@@ -30,6 +30,14 @@ def _make_cli_stub():
 
 
 class TestCliSkinPromptIntegration:
+    def test_env_skin_override_wins_over_config(self, monkeypatch):
+        monkeypatch.setenv("HERMES_SKIN", "ares")
+
+        init_skin_from_config({"display": {"skin": "default"}})
+
+        assert get_active_skin_name() == "ares"
+        assert get_active_skin().get_branding("agent_name") == "Ares Agent"
+
     def test_default_prompt_fragments_use_default_symbol(self):
         cli = _make_cli_stub()
 

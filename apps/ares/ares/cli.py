@@ -306,6 +306,7 @@ def build_chat_launch(
     env["ARES_BUSINESS_NAME"] = profile.business_name
     env["ARES_HOME"] = str(get_ares_home())
     env["ARES_CHAT_CONTEXT"] = str(context_path)
+    env["HERMES_SKIN"] = "ares"
     env["PYTHONPATH"] = _prepend_path(env.get("PYTHONPATH", ""), str(repo_root))
 
     bin_dir = get_ares_home() / "bin"

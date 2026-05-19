@@ -50,4 +50,6 @@ def test_build_chat_launch_uses_client_context_directory_and_query(tmp_path: Pat
     assert launch.env["ARES_CLIENT"] == "demo"
     assert launch.env["ARES_BUSINESS_NAME"] == "Demo"
     assert launch.env["ARES_HOME"] == str(tmp_path / ".ares")
+    assert launch.env["ARES_CHAT_CONTEXT"] == str(context_path)
+    assert launch.env["HERMES_SKIN"] == "ares"
     assert str(Path(ares_cli.__file__).resolve().parents[3]) in launch.env["PYTHONPATH"]
