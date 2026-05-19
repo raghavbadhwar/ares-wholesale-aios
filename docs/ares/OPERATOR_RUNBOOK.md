@@ -5,7 +5,7 @@ This runbook is for the concierge/MVP deployment of Ares for Indian wholesalers.
 ## 1. Create a client
 
 ```bash
-hermes ares onboard-client \
+ares onboard-client \
   --client raj-demo \
   --business-name "Raj Demo Traders" \
   --owner-name "Raj"
@@ -29,8 +29,8 @@ Preferred MVP routes:
 Examples:
 
 ```bash
-hermes ares run-workflow --client raj-demo --workflow payment-radar --outstanding-csv exports/tally_outstanding.csv
-hermes ares run-workflow --client raj-demo --workflow stock-radar --stock-csv exports/stock_export.csv
+ares run-workflow --client raj-demo --workflow payment-radar --outstanding-csv exports/tally_outstanding.csv
+ares run-workflow --client raj-demo --workflow stock-radar --stock-csv exports/stock_export.csv
 ```
 
 Ares persists imported CSV records in local JSON, so the next workflow run can use the same data without re-importing.
@@ -38,9 +38,9 @@ Ares persists imported CSV records in local JSON, so the next workflow run can u
 ## 3. Daily operating loop
 
 ```bash
-hermes ares run-workflow --client raj-demo --workflow daily-brief
-hermes ares run-workflow --client raj-demo --workflow payment-radar
-hermes ares approval-center --client raj-demo
+ares run-workflow --client raj-demo --workflow daily-brief
+ares run-workflow --client raj-demo --workflow payment-radar
+ares approval-center --client raj-demo
 ```
 
 Daily brief is read-only. Payment radar creates approval drafts for reminders but does not send messages.
@@ -63,7 +63,7 @@ Owner approval is required before Ares performs or dispatches:
 Print self-contained Hermes cron prompts:
 
 ```bash
-hermes ares print-cron-prompts --client raj-demo
+ares print-cron-prompts --client raj-demo
 ```
 
 Use those prompts with `cronjob(action="create")` or Hermes CLI scheduling. Cron prompts must remain self-contained and must not send customer messages or modify ledgers without approval.

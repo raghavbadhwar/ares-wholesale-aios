@@ -30,7 +30,7 @@ Ares is built for real Indian wholesale operations: WhatsApp-first workflows, si
 
 ## One-command setup
 
-From a machine with `git` and `uv` installed:
+From a machine with `git` installed. The installer will use `uv`, and can install `uv` automatically if it is missing:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/raghavbadhwar/ares-wholesale-aios/main/scripts/setup_ares.sh | bash -s -- \
@@ -42,26 +42,26 @@ curl -fsSL https://raw.githubusercontent.com/raghavbadhwar/ares-wholesale-aios/m
 Then run:
 
 ```bash
-hermes ares autonomous-cycle --client demo-wholesaler
-hermes ares mobile-approvals --client demo-wholesaler
-hermes ares mobile-reply --client demo-wholesaler --reply "haan appr_xxx"
-hermes ares print-cron-specs --client demo-wholesaler
+ares autonomous-cycle --client demo-wholesaler
+ares mobile-approvals --client demo-wholesaler
+ares mobile-reply --client demo-wholesaler --reply "haan appr_xxx"
+ares print-cron-specs --client demo-wholesaler
 ```
 
 ## Ares command surface
 
-Ares is registered as a native Hermes command group:
+The setup script installs an `ares` wrapper, so users do not need a global Hermes install:
 
 ```bash
-hermes ares setup
-hermes ares autonomous-cycle
-hermes ares mobile-approvals
-hermes ares mobile-reply
-hermes ares sync-drive-manifest
-hermes ares print-cron-specs
-hermes ares approval-center
-hermes ares list-clients
-hermes ares list-workflows
+ares setup
+ares autonomous-cycle
+ares mobile-approvals
+ares mobile-reply
+ares sync-drive-manifest
+ares print-cron-specs
+ares approval-center
+ares list-clients
+ares list-workflows
 ```
 
 Gateway slash command:
@@ -75,11 +75,11 @@ Gateway slash command:
 
 ## Pilot operator flow
 
-1. Onboard the wholesaler with `hermes ares setup`.
+1. Onboard the wholesaler with `ares setup`.
 2. Drop Tally/Busy exports, stock exports, and forwarded WhatsApp/order text into the configured intake paths.
-3. Run `hermes ares autonomous-cycle --client <client>` manually or via cron.
-4. Send the owner the output from `hermes ares mobile-approvals --client <client>`.
-5. Process owner replies with `hermes ares mobile-reply --client <client> --reply "haan appr_xxx"`.
+3. Run `ares autonomous-cycle --client <client>` manually or via cron.
+4. Send the owner the output from `ares mobile-approvals --client <client>`.
+5. Process owner replies with `ares mobile-reply --client <client> --reply "haan appr_xxx"`.
 6. Review action logs and memory updates before the next cycle.
 
 ## Repository map

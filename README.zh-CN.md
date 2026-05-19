@@ -20,10 +20,10 @@ curl -fsSL https://raw.githubusercontent.com/raghavbadhwar/ares-wholesale-aios/m
 ## Daily Ares commands
 
 ```bash
-hermes ares autonomous-cycle --client demo-wholesaler
-hermes ares mobile-approvals --client demo-wholesaler
-hermes ares mobile-reply --client demo-wholesaler --reply "haan appr_xxx"
-hermes ares print-cron-specs --client demo-wholesaler
+ares autonomous-cycle --client demo-wholesaler
+ares mobile-approvals --client demo-wholesaler
+ares mobile-reply --client demo-wholesaler --reply "haan appr_xxx"
+ares print-cron-specs --client demo-wholesaler
 ```
 
 ## What Ares is built for

@@ -6,7 +6,7 @@ It uses Hermes as the runtime layer for CLI, tools, memory, cron, model routing,
 
 ## One-command setup
 
-From a fresh machine with `git` and `uv` installed:
+From a fresh machine with `git` installed. The installer will use `uv`, and can install `uv` automatically if it is missing:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/raghavbadhwar/ares-wholesale-aios/main/scripts/setup_ares.sh | bash -s -- \
@@ -19,7 +19,7 @@ This will:
 
 1. Clone or update the Ares repo from `main`.
 2. Set `ARES_HOME` to `~/.ares` unless overridden.
-3. Verify `hermes ares` is registered.
+3. Verify the local Ares command is available.
 4. Create the wholesaler client profile.
 5. Run the first autonomous-cycle smoke test.
 6. Print gateway and cron next steps.
@@ -39,18 +39,18 @@ export ARES_HOME=/Users/raghav/.ares
 
 ## Native Ares commands
 
-After setup, Ares works as a top-level Hermes command group:
+After setup, use the installed `ares` wrapper from any terminal:
 
 ```bash
-hermes ares setup \
+ares setup \
   --client gupta-distributors \
   --business-name "Gupta Distributors" \
   --owner-name "Mr Gupta"
 
-hermes ares autonomous-cycle --client gupta-distributors
-hermes ares mobile-approvals --client gupta-distributors
-hermes ares mobile-reply --client gupta-distributors --reply "haan appr_xxx"
-hermes ares print-cron-specs --client gupta-distributors
+ares autonomous-cycle --client gupta-distributors
+ares mobile-approvals --client gupta-distributors
+ares mobile-reply --client gupta-distributors --reply "haan appr_xxx"
+ares print-cron-specs --client gupta-distributors
 ```
 
 When running from the source checkout, use `uv run`:
@@ -64,16 +64,16 @@ uv run hermes ares autonomous-cycle --client gupta-distributors
 Start with Telegram for the pilot. Move to WhatsApp Business API once the workflow is proven.
 
 ```bash
-hermes gateway setup
-hermes gateway run
+ares-hermes gateway setup
+ares-hermes gateway run
 ```
 
 Or as a background service:
 
 ```bash
-hermes gateway install
-hermes gateway start
-hermes gateway status
+ares-hermes gateway install
+ares-hermes gateway start
+ares-hermes gateway status
 ```
 
 Ares also registers a gateway/CLI slash command:
@@ -90,7 +90,7 @@ Ares also registers a gateway/CLI slash command:
 Generate default schedule specs:
 
 ```bash
-hermes ares print-cron-specs --client gupta-distributors
+ares print-cron-specs --client gupta-distributors
 ```
 
 Use those specs to create Hermes cron jobs for:
@@ -105,7 +105,7 @@ Use those specs to create Hermes cron jobs for:
 Pilot mode supports deterministic file/manifest ingestion:
 
 ```bash
-hermes ares sync-drive-manifest \
+ares sync-drive-manifest \
   --client gupta-distributors \
   --manifest /path/to/drive-manifest.json
 ```

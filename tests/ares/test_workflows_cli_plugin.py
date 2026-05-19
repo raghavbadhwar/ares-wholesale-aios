@@ -137,7 +137,7 @@ def test_cli_setup_creates_profile_and_prints_next_steps(
     assert main() == 0
     output = capsys.readouterr().out
     assert "Ares setup complete" in output
-    assert "hermes ares autonomous-cycle --client demo" in output
+    assert "ares autonomous-cycle --client demo" in output
     assert (tmp_path / ".ares" / "clients" / "demo" / "profile.yaml").exists()
 
 

@@ -241,20 +241,19 @@ Profile:
 Ares home:
   {ares_home}
 
-Try it now:
-  hermes ares autonomous-cycle --client {client}
-  hermes ares mobile-approvals --client {client}
+If installed with scripts/setup_ares.sh, use the wrapper commands:
+  ares autonomous-cycle --client {client}
+  ares mobile-approvals --client {client}
+  ares mobile-reply --client {client} --reply "haan appr_xxx"
+  ares print-cron-specs --client {client}
 
-Owner mobile replies:
-  hermes ares mobile-reply --client {client} --reply "approve appr_xxx"
-  hermes ares mobile-reply --client {client} --reply "haan appr_xxx"
+From the repo without wrappers, use:
+  uv run hermes ares autonomous-cycle --client {client}
+  uv run hermes ares mobile-approvals --client {client}
 
 Gateway:
-  hermes gateway setup
-  hermes gateway run
-
-Cron specs:
-  hermes ares print-cron-specs --client {client}
+  ares-hermes gateway setup
+  ares-hermes gateway run
 """.strip()
 
 

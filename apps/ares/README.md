@@ -23,6 +23,6 @@ python -m apps.ares.ares.cli run-workflow --client demo-wholesale --workflow dai
 When the bundled plugin is enabled, the same action is available as:
 
 ```bash
-hermes ares run-workflow --client demo-wholesale --workflow daily-brief
+ares run-workflow --client demo-wholesale --workflow daily-brief
 ```
 
