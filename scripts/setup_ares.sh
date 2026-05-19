@@ -2,9 +2,9 @@
 set -euo pipefail
 
 SCRIPT_NAME=$(basename "$0")
-DEFAULT_REPO_URL="https://github.com/raghavbadhwar/hermes-agent.git"
-DEFAULT_BRANCH="codex/ares-wholesale-aios"
-DEFAULT_INSTALL_DIR="$HOME/.ares/hermes-agent"
+DEFAULT_REPO_URL="https://github.com/raghavbadhwar/ares-wholesale-aios.git"
+DEFAULT_BRANCH="main"
+DEFAULT_INSTALL_DIR="$HOME/.ares/ares"
 DEFAULT_ARES_HOME="$HOME/.ares"
 
 REPO_URL="${HERMES_ARES_REPO_URL:-$DEFAULT_REPO_URL}"
@@ -37,13 +37,13 @@ Options:
   --ares-home PATH          Ares data directory (default: ~/.ares or ARES_HOME)
   --repo-url URL            Git repo URL (default: $DEFAULT_REPO_URL)
   --branch NAME             Git branch to use (default: $DEFAULT_BRANCH)
-  --install-dir PATH        Clone/update location (default: ~/.ares/hermes-agent)
+  --install-dir PATH        Clone/update location (default: ~/.ares/ares)
   --current-repo            Use the current working tree instead of cloning
   --skip-gateway-hint       Do not print gateway next steps
   -h, --help                Show this help
 
 Examples:
-  curl -fsSL https://raw.githubusercontent.com/raghavbadhwar/hermes-agent/codex/ares-wholesale-aios/scripts/setup_ares.sh | bash -s -- \\
+  curl -fsSL https://raw.githubusercontent.com/raghavbadhwar/ares-wholesale-aios/main/scripts/setup_ares.sh | bash -s -- \\
     --client gupta-distributors \\
     --business-name "Gupta Distributors" \\
     --owner-name "Mr Gupta"
@@ -79,16 +79,16 @@ command -v uv >/dev/null 2>&1 || fail "uv is required. Install it from https://d
 
 if [[ "$USE_CURRENT_REPO" -eq 1 ]]; then
   REPO_DIR=$(pwd)
-  [[ -f "$REPO_DIR/pyproject.toml" ]] || fail "--current-repo must be run from the Hermes repo root"
+  [[ -f "$REPO_DIR/pyproject.toml" ]] || fail "--current-repo must be run from the Ares repo root"
 else
   REPO_DIR="$INSTALL_DIR"
   if [[ -d "$REPO_DIR/.git" ]]; then
-    log "Updating existing Hermes/Ares checkout at $REPO_DIR"
+    log "Updating existing Ares checkout at $REPO_DIR"
     git -C "$REPO_DIR" fetch origin "$BRANCH"
     git -C "$REPO_DIR" checkout "$BRANCH"
     git -C "$REPO_DIR" pull --ff-only origin "$BRANCH"
   else
-    log "Cloning Hermes/Ares from $REPO_URL#$BRANCH into $REPO_DIR"
+    log "Cloning Ares from $REPO_URL#$BRANCH into $REPO_DIR"
     mkdir -p "$(dirname "$REPO_DIR")"
     git clone --branch "$BRANCH" "$REPO_URL" "$REPO_DIR"
   fi

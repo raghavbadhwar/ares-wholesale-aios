@@ -12,7 +12,7 @@ Inputs:
 Reasoning rules:
 - Lead with money, orders, stock, and top actions.
 - Keep the output short enough for mobile chat.
-- Use English/Hinglish depending on client preference.
+- Use simple Indian English by default, and adapt to the client preference when configured.
 - Avoid AI buzzwords and long explanations.
 
 Outputs:

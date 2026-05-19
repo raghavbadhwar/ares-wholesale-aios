@@ -707,7 +707,7 @@ Tests:
 1. Clear message captures order without approval.
 2. “same maal bhej dena” requires approval.
 3. Message with two items extracts two items.
-4. Hindi/Hinglish common units are handled.
+4. Indian wholesaler units and common message formats are handled.
 
 Verification:
 
@@ -944,7 +944,7 @@ Rules:
 - Short sections
 - No giant Markdown tables
 - INR formatting
-- Hinglish-friendly language
+- Simple Indian-English language
 - Approval count clearly visible
 - Message length safe for chat platforms
 

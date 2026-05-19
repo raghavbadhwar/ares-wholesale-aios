@@ -5,10 +5,10 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "hermes-agent"
 version = "0.14.0"
-description = "The self-improving AI agent — creates skills from experience, improves them during use, and runs anywhere"
+description = "Ares Wholesale AIOS — a Hermes-based company brain for Indian wholesalers and distributors"
 readme = "README.md"
 requires-python = ">=3.11"
-authors = [{ name = "Nous Research" }]
+authors = [{ name = "Raghav Badhwar" }, { name = "Nous Research" }]
 license = { text = "MIT" }
 dependencies = [
   # Core — every direct dep is exact-pinned to ==X.Y.Z (no ranges).

@@ -1,14 +1,15 @@
 # Ares Wholesale AIOS Quickstart
 
-Ares is a vertical Hermes distribution/plugin for Indian wholesalers and distributors.
-It uses Hermes for the runtime, gateway, cron, model routing, tools, and memory; Ares adds the wholesaler workflows.
+Ares is a company brain for Indian wholesalers and distributors.
+
+It uses Hermes as the runtime layer for CLI, tools, memory, cron, model routing, and gateway messaging. Ares adds the India-specific wholesaler workflows: WhatsApp-style owner approvals, Tally/Busy export ingestion, payment follow-ups, stock radar, order capture, and business memory.
 
 ## One-command setup
 
 From a fresh machine with `git` and `uv` installed:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/raghavbadhwar/hermes-agent/codex/ares-wholesale-aios/scripts/setup_ares.sh | bash -s -- \
+curl -fsSL https://raw.githubusercontent.com/raghavbadhwar/ares-wholesale-aios/main/scripts/setup_ares.sh | bash -s -- \
   --client gupta-distributors \
   --business-name "Gupta Distributors" \
   --owner-name "Mr Gupta"
@@ -16,12 +17,12 @@ curl -fsSL https://raw.githubusercontent.com/raghavbadhwar/hermes-agent/codex/ar
 
 This will:
 
-1. Clone/update the Hermes branch that contains Ares.
+1. Clone or update the Ares repo from `main`.
 2. Set `ARES_HOME` to `~/.ares` unless overridden.
 3. Verify `hermes ares` is registered.
-4. Create the client profile.
-5. Run a first autonomous-cycle smoke test.
-6. Print the gateway and cron next steps.
+4. Create the wholesaler client profile.
+5. Run the first autonomous-cycle smoke test.
+6. Print gateway and cron next steps.
 
 ## Local developer setup
 
@@ -36,9 +37,9 @@ export ARES_HOME=/Users/raghav/.ares
   --owner-name "Raghav"
 ```
 
-## Native Hermes commands
+## Native Ares commands
 
-After setup, Ares works as a top-level Hermes command:
+After setup, Ares works as a top-level Hermes command group:
 
 ```bash
 hermes ares setup \
@@ -60,7 +61,7 @@ uv run hermes ares autonomous-cycle --client gupta-distributors
 
 ## Gateway setup
 
-Start with Telegram first; move to WhatsApp Business API later.
+Start with Telegram for the pilot. Move to WhatsApp Business API once the workflow is proven.
 
 ```bash
 hermes gateway setup
@@ -94,14 +95,14 @@ hermes ares print-cron-specs --client gupta-distributors
 
 Use those specs to create Hermes cron jobs for:
 
-- 9 AM daily battle plan
-- 2 PM payment radar
-- 6 PM evening follow-up summary
-- weekly war-room report
+- 9 AM Daily Battle Plan
+- 2 PM Payment Radar
+- 6 PM Evening Follow-up Summary
+- Weekly War Room report
 
 ## Data ingestion
 
-Early pilot mode supports deterministic file/manifest ingestion:
+Pilot mode supports deterministic file/manifest ingestion:
 
 ```bash
 hermes ares sync-drive-manifest \
@@ -113,15 +114,16 @@ The manifest can point to:
 
 - Tally/Busy outstanding CSV exports
 - stock CSV exports
-- forwarded order/message text files
+- forwarded WhatsApp/order/message text files
 
-## Pilot flow
+## Indian wholesaler pilot flow
 
-1. Client/operator drops Tally/Busy exports and forwarded order files.
-2. Ares runs an autonomous cycle.
-3. Owner receives mobile-friendly approvals.
-4. Owner replies with `haan`, `approve`, `reject`, `baadme`, or `edit`.
+1. Operator drops Tally/Busy exports, stock exports, and forwarded order files into intake.
+2. Ares runs the autonomous cycle.
+3. Owner receives a mobile-friendly approval list.
+4. Owner replies in simple Indian English: `haan`, `approve`, `reject`, `baadme`, or `edit`.
 5. Ares executes only approved actions and writes audit logs.
+6. Ares updates business memory, for example: “Customer usually pays after Friday reminder.”
 
 ## Useful paths
 
