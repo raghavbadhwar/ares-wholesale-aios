@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 from apps.ares.ares.approvals.service import ApprovalService
+from apps.ares.ares.connectors.export_parser import UnsupportedExportError
 from apps.ares.ares.connectors.file_ingest import ingest_export_file, ingest_message_file
 from apps.ares.ares.data.repository import BusinessRepository
 from apps.ares.ares.paths import client_root
@@ -28,6 +29,56 @@ def _save_seen(client_id: str, seen: set[str]) -> None:
     path = _state_path(client_id)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps({"seen_paths": sorted(seen)}, indent=2), encoding="utf-8")
+
+
+def validate_local_inputs(*, client_id: str) -> dict:
+    """Inspect local pilot folders and report whether inputs are ready to process."""
+    root = client_root(client_id)
+    export_results: list[dict] = []
+    inbox_results: list[dict] = []
+    blocking_errors: list[str] = []
+
+    for path in sorted((root / "exports").glob("*.csv")):
+        try:
+            result = {"path": str(path), **_validate_export_file(path)}
+            export_results.append(result)
+        except UnsupportedExportError as exc:
+            blocking_errors.append(f"{path.name}: {exc}")
+            export_results.append({"path": str(path), "kind": "unknown", "ok": False, "error": str(exc)})
+
+    for path in sorted((root / "inbox").glob("*.txt")):
+        text = path.read_text(encoding="utf-8").strip() if path.exists() else ""
+        if text:
+            inbox_results.append({"path": str(path), "ok": True, "chars": len(text)})
+        else:
+            blocking_errors.append(f"{path.name}: Inbox message file is empty")
+            inbox_results.append({"path": str(path), "ok": False, "error": "Inbox message file is empty"})
+
+    parseable_exports = sum(1 for result in export_results if result.get("ok"))
+    unparseable_exports = sum(1 for result in export_results if not result.get("ok"))
+    return {
+        "client_id": client_id,
+        "exports_found": len(export_results),
+        "parseable_exports": parseable_exports,
+        "unparseable_exports": unparseable_exports,
+        "inbox_messages": len(inbox_results),
+        "blocking_errors": blocking_errors,
+        "exports": export_results,
+        "inbox": inbox_results,
+    }
+
+
+def _validate_export_file(path: Path) -> dict:
+    from apps.ares.ares.connectors.export_parser import validate_outstanding_report, validate_stock_report
+
+    lowered = path.name.lower()
+    if any(token in lowered for token in ["outstanding", "receivable", "payment", "invoice"]):
+        result = validate_outstanding_report(path)
+        return {"ok": True, **result}
+    if any(token in lowered for token in ["stock", "inventory"]):
+        result = validate_stock_report(path)
+        return {"ok": True, **result}
+    raise UnsupportedExportError(f"Cannot infer export type from filename: {path.name}")
 
 
 def process_local_inbox(*, client_id: str, repository: BusinessRepository) -> dict:

@@ -8,7 +8,7 @@ from typing import Any, Literal
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
-from apps.ares.ares.paths import client_root, normalize_client_slug
+from apps.ares.ares.paths import client_root, ensure_client_scaffold, normalize_client_slug
 
 
 class StaffContact(BaseModel):
@@ -90,10 +90,7 @@ def load_client_profile(client_slug: str, *, ares_home: Path | None = None) -> C
 
 
 def write_client_profile(profile: ClientProfile, *, ares_home: Path | None = None) -> Path:
-    root = client_root(profile.client_slug, ares_home=ares_home)
-    root.mkdir(parents=True, exist_ok=True)
-    for subdir in ["memory", "data", "exports", "reports", "approvals", "logs", "workflows", "skills"]:
-        (root / subdir).mkdir(exist_ok=True)
+    root = ensure_client_scaffold(profile.client_slug, ares_home=ares_home)
     path = root / "profile.yaml"
     path.write_text(yaml.safe_dump(profile.model_dump(mode="json"), sort_keys=False), encoding="utf-8")
     try:

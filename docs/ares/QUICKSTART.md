@@ -21,8 +21,8 @@ This will:
 2. Set `ARES_HOME` to `~/.ares` unless overridden.
 3. Verify the local Ares command is available.
 4. Create the wholesaler client profile.
-5. Run the first autonomous-cycle smoke test.
-6. Print gateway and cron next steps.
+5. Create pilot intake folders and README placeholders.
+6. Print the exact next commands for validation, morning-run, and approvals.
 
 ## Local developer setup
 
@@ -47,17 +47,115 @@ ares setup \
   --business-name "Gupta Distributors" \
   --owner-name "Mr Gupta"
 
-ares chat --client gupta-distributors
-ares autonomous-cycle --client gupta-distributors
+# preflight dropped files
+ares validate-inputs --client gupta-distributors
+
+# main operator loop
+ares morning-run --client gupta-distributors
+
+# owner approval surface
 ares mobile-approvals --client gupta-distributors
 ares mobile-reply --client gupta-distributors --reply "haan appr_xxx"
+
+# optional direct ops
+ares chat --client gupta-distributors
+ares autonomous-cycle --client gupta-distributors
 ares print-cron-specs --client gupta-distributors
 ```
 
 When running from the source checkout, use `uv run`:
 
 ```bash
-uv run hermes ares autonomous-cycle --client gupta-distributors
+ARES_HOME=/Users/raghav/.ares uv run hermes ares validate-inputs --client gupta-distributors
+ARES_HOME=/Users/raghav/.ares uv run hermes ares morning-run --client gupta-distributors
+```
+
+## Pilot folder layout
+
+Each client lives under `~/.ares/clients/<client>/`.
+
+Important subfolders:
+
+- `profile.yaml` — client profile and connector flags
+- `data/` — persistent JSON business state
+- `exports/` — CSV drop for Tally/Busy/Vyapar exports
+- `inbox/` — forwarded customer/order/payment text files (`.txt`)
+- `reports/` — saved operator-facing outputs
+- `approvals/`, `memory/`, `logs/`, `workflows/`, `skills/` — audit and operating state
+
+Setup now also creates placeholder READMEs in `exports/`, `inbox/`, and `reports/` so an operator can understand what belongs where.
+
+## Data ingestion contract
+
+### Export filenames
+
+Use obvious filenames so Ares can infer type:
+
+- outstanding / receivables: `tally_outstanding.csv`, `receivables.csv`, `invoice_overdue.csv`
+- stock / inventory: `stock_export.csv`, `inventory.csv`
+
+### Outstanding CSV required columns
+
+Ares accepts aliases for these fields:
+
+- customer: `customer_id` or `customer`
+- amount: `amount`, `outstanding`, or `balance`
+
+Optional:
+
+- invoice: `invoice_number`, `invoice`, or `id`
+- due date: `due_date`
+- status: `status`
+
+### Stock CSV required columns
+
+Ares accepts aliases for these fields:
+
+- sku/item: `sku_id`, `sku`, `product`, or `name`
+- current stock: `current_stock` or `stock`
+
+Optional:
+
+- reorder level: `reorder_level` or `min_stock`
+- unit: `unit`
+- supplier: `supplier_id`
+
+### Inbox messages
+
+Drop one forwarded message per `.txt` file into `inbox/`.
+
+Examples:
+
+```text
+Raj 5 box Surf kal bhejna
+Gupta ji payment Friday ko karenge
+```
+
+## Real pilot operating loop
+
+Use this loop every morning for a concierge pilot:
+
+1. Drop fresh CSV exports into `exports/`.
+2. Drop forwarded order/payment/customer text messages into `inbox/`.
+3. Run:
+
+```bash
+ares validate-inputs --client gupta-distributors
+ares morning-run --client gupta-distributors
+```
+
+4. Read the operator summary.
+5. Send the owner-facing approvals prompt over Telegram/WhatsApp.
+6. Owner replies with simple commands such as:
+   - `haan appr_xxx`
+   - `approve appr_xxx`
+   - `reject appr_xxx`
+   - `edit appr_xxx thoda soft tone me bhejo`
+   - `later appr_xxx`
+7. Run the reply back through Ares:
+
+```bash
+ares mobile-reply --client gupta-distributors --reply "haan appr_xxx"
 ```
 
 ## Gateway setup
@@ -101,9 +199,9 @@ Use those specs to create Hermes cron jobs for:
 - 6 PM Evening Follow-up Summary
 - Weekly War Room report
 
-## Data ingestion
+## Drive-manifest ingestion
 
-Pilot mode supports deterministic file/manifest ingestion:
+Pilot mode also supports deterministic file/manifest ingestion:
 
 ```bash
 ares sync-drive-manifest \
@@ -116,15 +214,6 @@ The manifest can point to:
 - Tally/Busy outstanding CSV exports
 - stock CSV exports
 - forwarded WhatsApp/order/message text files
-
-## Indian wholesaler pilot flow
-
-1. Operator drops Tally/Busy exports, stock exports, and forwarded order files into intake.
-2. Ares runs the autonomous cycle.
-3. Owner receives a mobile-friendly approval list.
-4. Owner replies in simple Indian English: `haan`, `approve`, `reject`, `baadme`, or `edit`.
-5. Ares executes only approved actions and writes audit logs.
-6. Ares updates business memory, for example: “Customer usually pays after Friday reminder.”
 
 ## Useful paths
 

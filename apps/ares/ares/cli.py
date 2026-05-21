@@ -11,7 +11,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from apps.ares.ares.approvals.service import ApprovalService
-from apps.ares.ares.autonomy.runner import run_autonomous_cycle
+from apps.ares.ares.autonomy.runner import run_autonomous_cycle, run_morning_run
+from apps.ares.ares.connectors.auto_ingest import validate_local_inputs
 from apps.ares.ares.connectors.drive_sync import sync_drive_manifest
 from apps.ares.ares.connectors.export_parser import parse_outstanding_report, parse_stock_report
 from apps.ares.ares.data.factory import create_repository_for_profile
@@ -82,6 +83,14 @@ def register_cli(subparser: argparse.ArgumentParser) -> None:
     auto_p = actions.add_parser("autonomous-cycle", help="Run eyes + memory + draft-actions + owner approval summary")
     auto_p.add_argument("--client", required=True)
     auto_p.add_argument("--json", action="store_true")
+
+    validate_p = actions.add_parser("validate-inputs", help="Validate dropped exports and inbox files before running workflows")
+    validate_p.add_argument("--client", required=True)
+    validate_p.add_argument("--json", action="store_true")
+
+    morning_p = actions.add_parser("morning-run", help="Run ingestion + daily brief + owner approval output for pilot ops")
+    morning_p.add_argument("--client", required=True)
+    morning_p.add_argument("--json", action="store_true")
 
     mobile_p = actions.add_parser("mobile-approvals", help="Print Telegram/WhatsApp-friendly approval prompt")
     mobile_p.add_argument("--client", required=True)
@@ -188,6 +197,14 @@ def ares_command(args: argparse.Namespace) -> int:
             result = run_autonomous_cycle(args.client)
             print(json.dumps(result, indent=2, default=str) if getattr(args, "json", False) else result["owner_message"])
             return 0
+        if action == "validate-inputs":
+            result = validate_local_inputs(client_id=args.client)
+            print(json.dumps(result, indent=2, default=str) if getattr(args, "json", False) else _render_validation_summary(result))
+            return 1 if result["blocking_errors"] else 0
+        if action == "morning-run":
+            result = run_morning_run(args.client)
+            print(json.dumps(result, indent=2, default=str) if getattr(args, "json", False) else _render_morning_run_summary(result))
+            return 0
         if action == "mobile-approvals":
             profile = load_client_profile(args.client)
             repo = create_repository_for_profile(profile)
@@ -228,7 +245,7 @@ def ares_command(args: argparse.Namespace) -> int:
     except Exception as exc:
         print(f"Ares error: {exc}")
         return 1
-    print("Usage: hermes ares {chat|setup|run-workflow|onboard-client|list-clients|show-client|list-workflows|approval-center|owner-reply|autonomous-cycle|mobile-approvals|mobile-reply|sync-drive-manifest|print-cron-prompts|print-cron-specs|schedules}")
+    print("Usage: hermes ares {chat|setup|run-workflow|onboard-client|list-clients|show-client|list-workflows|approval-center|owner-reply|autonomous-cycle|validate-inputs|morning-run|mobile-approvals|mobile-reply|sync-drive-manifest|print-cron-prompts|print-cron-specs|schedules}")
     return 2
 
 
@@ -371,8 +388,51 @@ def _owner_reply_message(result: dict) -> str:
     return str(result.get("message", "Approval kept pending."))
 
 
+def _render_morning_run_summary(result: dict) -> str:
+    metrics = result["metrics"]
+    return "\n".join(
+        [
+            f"Ares morning run for {result['client_id']}",
+            f"Files ingested: {metrics['files_ingested']}",
+            f"Overdue invoices: {metrics['overdue_invoices']}",
+            f"Low-stock items: {metrics['low_stock_items']}",
+            f"Approvals created: {metrics['approvals_created']}",
+            "",
+            "Operator brief:",
+            result["daily_brief_text"],
+            "",
+            "Owner message:",
+            result["owner_message"],
+        ]
+    )
+
+
+def _render_validation_summary(result: dict) -> str:
+    lines = [
+        f"Ares input validation for {result['client_id']}",
+        f"Parseable exports: {result['parseable_exports']}",
+        f"Unparseable exports: {result['unparseable_exports']}",
+        f"Inbox messages: {result['inbox_messages']}",
+        f"Blocking issues: {len(result['blocking_errors'])}",
+    ]
+    if result["exports_found"] == 0:
+        lines.append("No export files found")
+    if result["inbox_messages"] == 0:
+        lines.append("No inbox messages found")
+    if result["blocking_errors"]:
+        lines.append("Issues:")
+        lines.extend(f"- {error}" for error in result["blocking_errors"])
+    else:
+        lines.append("Inputs look ready for processing.")
+    return "\n".join(lines)
+
+
 def _setup_success_message(client: str, profile_path: Path, ares_home: str, *, sample: bool = False) -> str:
     label = "sample" if sample else "client"
+    root = profile_path.parent
+    exports_dir = root / "exports"
+    inbox_dir = root / "inbox"
+    reports_dir = root / "reports"
     return f"""Ares setup complete for {label}: {client}
 
 Profile:
@@ -381,16 +441,33 @@ Profile:
 Ares home:
   {ares_home}
 
-If installed with scripts/setup_ares.sh, use the wrapper commands:
+Drop exports into:
+  {exports_dir}
+
+Drop forwarded messages into:
+  {inbox_dir}
+
+Reports folder:
+  {reports_dir}
+
+Next steps:
+  1. ares validate-inputs --client {client}
+  2. ares morning-run --client {client}
+  3. ares mobile-approvals --client {client}
+
+Wrapper commands:
   ares chat --client {client}
+  ares validate-inputs --client {client}
+  ares morning-run --client {client}
   ares autonomous-cycle --client {client}
   ares mobile-approvals --client {client}
   ares mobile-reply --client {client} --reply "haan appr_xxx"
   ares print-cron-specs --client {client}
 
 From the repo without wrappers, use:
-  uv run hermes ares autonomous-cycle --client {client}
-  uv run hermes ares mobile-approvals --client {client}
+  ARES_HOME={ares_home} uv run hermes ares validate-inputs --client {client}
+  ARES_HOME={ares_home} uv run hermes ares morning-run --client {client}
+  ARES_HOME={ares_home} uv run hermes ares mobile-approvals --client {client}
 
 Gateway:
   ares-hermes gateway setup
