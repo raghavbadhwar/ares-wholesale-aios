@@ -15,6 +15,7 @@ SAVE_WORTHY_CATEGORIES = {
     "business_rule",
     "sku_seasonality",
     "repeated_issue",
+    "pdc_bounce_pattern",
 }
 
 NOISE_CATEGORIES = {

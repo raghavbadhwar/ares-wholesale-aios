@@ -68,6 +68,19 @@ class ActionExecutor:
             if not recipient or not body:
                 raise ValueError("message action requires recipient/customer and draft/message")
             return self.message_sender.send_message(recipient=recipient, body=body)
+        if action_type == "send_whatsapp_business_message":
+            recipient = str(data.get("recipient_phone") or data.get("recipient") or "")
+            body = str(data.get("body") or data.get("draft") or data.get("message") or "")
+            if not recipient or not body:
+                raise ValueError("WhatsApp Business action requires recipient_phone and body")
+            result = self.message_sender.send_message(recipient=recipient, body=body)
+            return {
+                **result,
+                "channel": "whatsapp_business",
+                "template_name": data.get("template_name"),
+                "idempotency_key": data.get("idempotency_key"),
+                "external_whatsapp_business_api_called": False,
+            }
         if action_type == "update_order_status":
             order_id = str(data["order_id"])
             status = str(data["status"])

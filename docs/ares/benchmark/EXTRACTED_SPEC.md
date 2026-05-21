@@ -1,0 +1,878 @@
+# Hermes Vyapar Agent Spec — Extracted Text
+
+Source PDF: `hermes-vyapar-agent-spec.PDF`
+
+This file preserves the benchmark content as extracted text for downstream planning, gap analysis, and implementation.
+
+```text
+AGENT      DESIGN         SPECIFICATION           ·    V1.0        ·   INDIAN     WHOLESALE
+
+
+
+
+Hermes Vyapar
+A Hermes-based AI agent, fully wrapped and contextualised for Indian wholesale
+distribution networks — from kirana stockists in Tier-2 towns to multi-crore FMCG
+distributors operating across state lines.
+
+
+TARGET     SEGMENT                        STAGE                                   PRIMARY     LANGUAGE
+
+Indian Wholesalers & Distributors         Final Polish — Production Ready         Hinglish + 7 Regional Languages
+
+
+CORE    MODULES
+
+9 Deep Verticals
+
+
+
+
+00
+           Why This Agent Exists
+           The problem space that makes this non-trivial
+
+
+
+
+     🏪                                        ⚖️                                       💸
+     The Invisible Backbone                   The Compliance Trap                      The Credit Crisis
+
+     Indian wholesale distribution is a       Post-GST, wholesalers now                60–90 day credit cycles with
+     ₹40L+ crore economy that runs            operate at the most complex              zero structured tracking means
+     on WhatsApp messages,                    node of the tax chain —                  cash flow is managed by
+     kachcha-pakka billing, PDC               managing ITC, e-way bills, multi-        memory. Udhaar leakage alone
+     cheques, and handshake credit            state GSTIN, and reconciliation          costs mid-size wholesalers 3–8%
+     — almost entirely outside                simultaneously, often with a             of annual revenue — entirely
+     formal software.                         single accountant.                       preventable.
+
+
+
+
+     📦                                        🗣️                                       🤖
+     Multi-Principal Chaos                        The Language Gap                               The Agent Opportunity
+
+     A typical FMCG wholesaler                    80% of wholesale operations                    Hermes Vyapar doesn't replace
+     handles 40–200 principals                    happen in regional languages                   the wholesaler's judgment — it
+     (brands). Each has different                 and Hinglish — but every                       replaces all the cognitive
+     schemes, beat schedules, return              software tool is built in English,             overhead that isn't judgment:
+     policies, and claim timelines.               creating a perpetual translation               recall, reconciliation, compliance
+     Managing this with                           overhead that slows decisions                  computation, and relationship
+     spreadsheets is a full-time job              and creates errors.                            tracking.
+     that shouldn't exist.
+
+
+
+
+01
+           System Architecture
+           Five-layer stack from interface to integration
+
+
+
+
+         INTERFACE
+                               💬 WhatsApp                 📱 Mobile App                 🖥️ Web Dashboard          🎙️ Voice / IVR
+                               Business
+
+
+
+
+     AGENT BRAIN
+                               🧠 Hermes LLM               🌐 Hinglish /                 📋 Task                    🔍 Context
+                               Core                       Regional NLU                 Orchestrator              Memory
+
+
+
+
+       COMPLIANCE              📊 GST Engine               📄 E-Invoice / E-             🏦 TDS/TCS Logic           📁 ROC / Labour
+                                                          Way
+
+
+
+                               📦 Inventory                💳 Credit Ledger              🛒 Order                   🚚 Logistics Layer
+                               Engine                                                  Intelligence
+       OPERATIONS
+
+
+                               💰 Collections Engine
+
+     INTEGRATION
+                               📒 Tally / Busy /           🏧 Banking APIs               🏛️ GSTN / NIC             📲 UPI / Payment
+                               Zoho                                                    Portal                    GW
+02
+            Benchmark KPIs at Final Polish
+            What "done" looks like — measurable, not aspirational
+
+
+
+
+            <3s                            98%                            8+                                  0
+          GST INVOICE                      ITC   MATCH                LANGUAGES                       MANUAL     E-WAY
+          GENERATION                       ACCURACY                   SUPPORTED                        BILL   EFFORT
+
+
+
+
+             ₹0                            24/7                       <2%                             1-tap
+             UDHAAR                          AGENT                   ORDER    ERROR                    TALLY     SYNC
+            LEAKAGE                    AVAILABILITY                       RATE                            TRIGGER
+
+
+
+
+     THE     FINAL       POLISH     TEST                            THE   FINAL         POLISH   TEST
+
+
+     A Kanpur kirana stockist can use                               A Mumbai FMCG super-stockist
+     it                                                             can rely on it
+     → Operates entirely in Hindi or Hinglish with zero             → Manages 120+ SKUs across 8 principals with zero
+
+          English required                                             spreadsheets
+     → Places orders, checks udhaar balance, and raises             → GSTR-1 filed on time every month with auto-
+          complaints via WhatsApp                                      reconciled ITC
+     → Receives GST invoices auto-generated and                     → Beat route performance tracked and
+
+          WhatsApp-forwarded                                           underperforming retailers flagged
+     → Collections reminders go out automatically on                → Claim cycles for all principals tracked and auto-
+          due date                                                     escalated
+     → Works on a ₹8,000 Android phone with 2G                      → CFO-level P&L view with principal-wise margin
+          connectivity                                                 breakdown
+03
+      Feature List — All 9 Modules
+      Each module with feature detail and benchmark criteria
+
+
+
+
+     🏛️        GST & Compliance Engine
+               MOD-01 · THE MOST NON-NEGOTIABLE LAYER
+                                                                                                  C RITICAL
+
+
+
+
+     FEATURE                             WHAT    IT    DOES       BENCHMARK     /   PASS   CONDITION
+
+
+
+     Smart GST Invoicing                 Auto-calculates           P0
+
+                                         CGST/SGST/IGST           Invoice generated in <3s. Zero manual
+                                         based on supply type     slab selection. IRN returned without
+                                         (intra/inter-state),     portal login. QR code scannable by any
+                                         HSN code, and            GST app.
+                                         applicable GST slab.
+                                         Generates e-invoice
+                                         with IRN + QR code
+                                         via NIC API in real
+                                         time.
+
+
+     GSTR-1 Auto-Preparation             Aggregates all B2B,       P0
+
+                                         B2C, CDNR, HSN           GSTR-1 draft ready by 5th of every month.
+                                         summaries from the       Zero manual data entry. Error flag rate
+                                         month's                  <0.5%.
+                                         transactions. Flags
+                                         mismatches, missing
+                                         GSTINs, and invalid
+                                         invoices before filing
+                                         window.
+
+
+     ITC Reconciliation (2A/2B)          Pulls GSTR-2A and 2B      P0
+
+                                         from GSTN, matches       ITC match accuracy ≥98%. Unmatched
+                                         against purchase         invoices surfaced within 24h. Pending ITC
+                                         register, flags          value always visible on dashboard.
+                                         unmatched invoices,
+                                         and computes
+                                         claimable ITC after
+                                         2B locking.
+FEATURE                    WHAT    IT    DOES       BENCHMARK     /   PASS   CONDITION
+
+
+
+E-Way Bill Automation      Triggers e-way bill       P0
+
+                           generation at invoice    Zero manual e-way bill effort for
+                           creation if              standard consignments. Extension
+                           consignment value        reminders 4h before expiry. Bulk
+                           >₹50,000. Auto-          generation for multi-drop routes.
+                           populates
+                           transporter details,
+                           manages extension
+                           and cancellation
+                           lifecycle.
+
+
+Multi-GSTIN Management     Manages multiple          P1
+
+                           GSTINs (multi-state      Supports up to 10 GSTINs. Correct GSTIN
+                           operations) from a       auto-selected at invoice creation. Branch
+                           single dashboard.        transfer compliance handled without
+                           Ensures correct          manual intervention.
+                           GSTIN is used per
+                           supply origin.
+                           Handles cross-state
+                           stock transfers
+                           (Branch Transfer).
+
+
+TDS / TCS Computation      Detects TCS               P1
+
+                           applicability (Section   TCS auto-applied where applicable. Form
+                           206C for certain         27EQ draft generated quarterly. 26AS
+                           goods), computes         reconciliation mismatch alert rate <1%.
+                           deduction amounts,
+                           generates Form
+                           27EQ challan data,
+                           and tracks 26AS
+                           credit entries.
+
+
+Composition Scheme Guard   If registered under       P2
+
+                           composition,             Threshold alert at 90% of limit. Zero
+                           enforces correct bill    incorrect tax invoices raised. CMP-08
+                           of supply (no tax        quarterly statement auto-drafted.
+                           breakup), blocks ITC
+                           claims, and tracks
+                           turnover threshold
+                           proximity with alerts.
+🛒         Order Intelligence Engine
+          MOD-02 · MULTI-CHANNEL ORDER CAPTURE & PROCESSING
+                                                                                                  CORE
+
+
+
+
+                                                                     BENCHMARK         /   PASS
+FEATURE                       WHAT    IT   DOES
+                                                                     CONDITION
+
+
+
+WhatsApp Order Parsing        Reads natural-language orders sent      P0
+
+                              on WhatsApp ("bhai 50 Surf Excel ek    NLU order accuracy ≥95%.
+                              kilo bhejo aur 20 Ariel pack bhi"),    Confirmation + invoice
+                              maps to SKUs, checks stock,            dispatched within 60s.
+                              confirms or flags back-order.          Unknown SKU escalation
+                              Handles typos, abbreviations, and      with suggestions within 5s.
+                              brand nicknames.
+
+
+Credit Limit Enforcement      Checks retailer/dealer's outstanding    P0
+
+                              balance against approved credit        Zero orders dispatched
+                              limit before confirming order. Holds   above credit limit without
+                              order if over-limit, notifies owner,   owner approval. Override
+                              allows override with approval.         audit trail maintained.
+                                                                     Owner notified within 30s
+                                                                     of hold.
+
+
+Beat Route Order Collation    Aggregates orders from all retailers    P0
+
+                              on a salesman's beat route.            Route-optimised manifest
+                              Generates pick list and delivery       generated before
+                              manifest optimised by geographic       salesman departs. Pick list
+                              sequence. Handles partial fulfilment   accuracy ≥99%. Partial
+                              and back-order tracking.               delivery documented with
+                                                                     auto-backorder.
+
+
+Scheme & Offer Auto-Apply     Maintains all principal trade           P1
+
+                              schemes (buy-3-get-1, volume           Zero missed scheme
+                              discounts, seasonal offers). Auto-     applications. Scheme-wise
+                              applies eligible schemes at order      claim register auto-
+                              creation. Flags scheme expiry and      maintained for principal
+                              eligibility threshold proximity.       reconciliation.
+                                                                           BENCHMARK        /   PASS
+FEATURE                        WHAT       IT   DOES
+                                                                           CONDITION
+
+
+
+Return & Damage Management     Captures return requests, photos of          P1
+
+                               damaged goods, generates credit             Credit note with correct
+                               note with correct GST reversal              CDNR entry generated at
+                               (CDNR filing ready). Tracks                 return acceptance. Photo
+                               returnable containers and crates            evidence archived per
+                               separately.                                 invoice. Crate
+                                                                           reconciliation weekly.
+
+
+
+
+💳         Udhaar & Collections Engine
+          MOD-03 · CREDIT LEDGER, AGING & RECOVERY INTELLIGENCE
+                                                                                                C RITICAL
+
+
+
+
+                                                                     BENCHMARK       /   PASS
+FEATURE                      WHAT    IT    DOES
+                                                                     CONDITION
+
+
+
+Party-wise Ledger            Maintains real-time debit/credit         P0
+
+                             ledger per party (retailer/dealer).     Ledger accuracy = 100%.
+                             Tracks invoice-wise outstanding,        WhatsApp query "Ramesh ka
+                             advance adjustments, credit notes,      hisaab batao" returns balance
+                             and payment receipts. Accessible        in <5s. Zero manual ledger
+                             via WhatsApp query.                     updates required.
+
+
+Aging Analysis & Alerts      Buckets all outstanding into 0–30,       P0
+
+                             31–60, 61–90, 90+ day categories.       Reminder delivery rate ≥97%.
+                             Auto-sends WhatsApp reminders           Owner escalation 100% on-
+                             at due date, 7 days overdue, and        time. 90+ day bucket <5% of
+                             30 days overdue with invoice            total outstanding.
+                             detail. Escalates to owner at 45+
+                             days.
+
+
+PDC Cheque Tracker           Registers post-dated cheques with        P0
+
+                             amount, date, bank, and party.          Zero missed cheque deposits.
+                             Sends deposit reminders 2 days          Bounce rate trends tracked by
+                             before date. Tracks bounced             party. Section 138 draft notice
+                             cheques, triggers Section 138 NI        generated automatically on
+                             Act reminder workflow.                  bounce.
+
+
+UPI Payment Reconciliation   Matches incoming UPI payments            P0
+
+                             (from bank statement or webhook)        Auto-match rate ≥95%.
+                             to open invoices. Handles partial       Unmatched payments flagged
+                             payments, advance payments, and
+                                                                      BENCHMARK      /   PASS
+FEATURE                     WHAT    IT   DOES
+                                                                      CONDITION
+
+
+                            round-off adjustments. Sends              within 1h. Receipt WhatsApp-
+                            auto-receipt on match.                    sent within 30s of match.
+
+
+Credit Scoring per Party    Maintains internal credit score per        P1
+
+                            retailer based on payment history,        Score recalculated monthly.
+                            bounce frequency, average days-           Limit recommendations
+                            to-pay, and order consistency.            accepted by owner ≥70% of
+                            Recommends credit limit                   time. Score-based order hold
+                            adjustments monthly.                      reduces bad debt by
+                                                                      measurable %.
+
+
+Collections Dashboard       Owner-facing dashboard: total              P1
+
+                            outstanding, today's expected             Dashboard loads in <2s. All
+                            collections, week's PDC deposits,         numbers match ledger to the
+                            top 10 defaulters, collection             rupee. Owner acts on
+                            efficiency ratio (collected vs billed).   dashboard without needing to
+                            All in Hinglish.                          ask accountant.
+
+
+
+
+📦         Inventory Intelligence
+          MOD-04 · MULTI-WAREHOUSE STOCK, EXPIRY & REORDER
+                                                                                                    CORE
+
+
+
+
+                                                                        BENCHMARK        /   PASS
+FEATURE                     WHAT    IT   DOES
+                                                                        CONDITION
+
+
+
+Real-time Stock Ledger      Live stock position per SKU per              P0
+
+                            warehouse, updated on every inward          Stock accuracy ≥99.5% vs
+                            (GRN) and outward (invoice/delivery).       physical count. "Surf ka stock
+                            Handles unit-of-measure conversions         kitna hai?" answered
+                            (case → piece, kg → g). WhatsApp            correctly in <3s. Zero
+                            queryable.                                  negative stock allowed.
+
+
+Batch & Expiry Tracking     FIFO-enforced batch tracking for             P0
+
+                            pharma, food, and agri products.            Zero expired stock
+                            Expiry alert at 90/60/30/15 days.           dispatched. Alert delivered
+                            Flags near-expiry stock for priority        90 days before expiry. Near-
+                            push or return to principal.                expiry stock converted or
+                            Generates expiry dump register.             returned before 30-day mark
+                                                                        ≥80% of the time.
+                                                                        BENCHMARK        /    PASS
+FEATURE                        WHAT   IT   DOES
+                                                                        CONDITION
+
+
+
+Auto-Reorder Intelligence      Analyses 90-day sales velocity per        P1
+
+                               SKU, computes reorder point and          Stockout events on fast-
+                               suggested order quantity (factoring      movers <2% per month.
+                               seasonal demand, festive spikes,         Over-stocking of slow-
+                               supplier lead time). Drafts purchase     movers reduced by 20%+ vs
+                               order to principal automatically.        baseline. PO draft accepted
+                                                                        without editing ≥65% of
+                                                                        time.
+
+
+Goods Receipt Note (GRN)       GRN against PO with variance              P1
+
+                               capture (short supply, damaged           GRN completion time <10
+                               goods, wrong batch). Three-way           min per truck load. Variance
+                               matching: PO → GRN → Supplier            claims raised within 24h.
+                               invoice. Discrepancies auto-raised as    Three-way match accuracy
+                               supplier debit note.                     ≥99%.
+
+
+
+Festive Demand Planning        Pre-loads Indian festive calendar         P2
+
+                               (Diwali, Navratri, Eid, Onam, Holi,      Stockout on recommended
+                               Pongal). Generates advance stocking      SKUs during festive weeks
+                               recommendations 6 weeks before           <1%. Agent-recommended
+                               each festival based on previous year     festive orders accepted
+                               velocity + market signals.               ≥60% of time.
+
+
+
+
+🚚         Distribution Network Intelligence
+          MOD-05 · BEAT ROUTES, PRINCIPAL MANAGEMENT & CLAIMS
+                                                                                                     CORE
+
+
+
+
+                                                                       BENCHMARK     /       PASS
+FEATURE                           WHAT     IT   DOES
+                                                                       CONDITION
+
+
+
+Beat Route Management             Maintains retailer-wise beat          P0
+
+                                  assignment, visit frequency, and     Beat visit compliance tracked
+                                  salesman allocation. Tracks visit    with 100% accuracy. Declining
+                                  compliance, strike rate, and         accounts (2-month drop)
+                                  average order value per beat.        flagged automatically. Strike
+                                  Flags unvisited retailers and        rate visible per salesman per
+                                  declining accounts.                  beat.
+
+
+Principal / Brand Management      Separate P&L per principal.           P0
+
+                                  Tracks purchase terms, credit        Principal-wise margin report
+                                  days, return policy, scheme
+                                                                      BENCHMARK       /   PASS
+FEATURE                          WHAT     IT    DOES
+                                                                      CONDITION
+
+
+                                 calendar, and salesman target.       available on demand. Zero
+                                 Manages multiple principals          data cross-contamination.
+                                 without data bleed between           Purchase terms enforced
+                                 them.                                automatically on GRN.
+
+
+Claim & Scheme Reconciliation    Tracks all pending claims from        P0
+
+                                 principals (scheme deductions,       Claim aging visible at all times.
+                                 damage claims, return credits).      Claims >30 days escalation
+                                 Auto-reconciles against credit       success rate ≥85%. Zero
+                                 notes received. Escalates claims     scheme credit missed due to
+                                 older than 30 days with              non-tracking.
+                                 communication draft.
+
+
+Salesman Performance Tracking    Tracks daily orders, collections,     P1
+
+                                 new party additions, scheme          Scorecard generated every
+                                 push, and visit count per            Monday 8 AM. Salesman data
+                                 salesman. Generates weekly           entry overhead <5 min/day
+                                 scorecard. Identifies top/bottom     (voice/WhatsApp-driven).
+                                 performers with drill-down by
+                                 principal and beat.
+
+
+New Party Onboarding             Streamlines retailer onboarding       P1
+
+                                 — captures shop name, GSTIN,         Onboarding completed in <5
+                                 contact, bank details, GST           min. GSTIN auto-verified. Zero
+                                 verification via API, sets default   invoices raised to parties with
+                                 credit terms. KYC document           invalid GSTINs. Credit terms
+                                 upload and DigiLocker                set at onboarding enforced
+                                 integration for verification.        from day one.
+
+
+
+
+💰         Financial Operations & Payments
+          MOD-06 · CASH FLOW, BANKING & PAYABLES
+                                                                                                     CORE
+
+
+
+
+                                                                        BENCHMARK         /   PASS
+FEATURE                         WHAT     IT    DOES
+                                                                        CONDITION
+
+
+
+Daily Cash Flow Statement       Real-time inflows (collections,          P0
+
+                                advance payments, principal             Cash position accurate
+                                credits) vs outflows (supplier          within ±₹100 vs manual
+                                payments, salesman expenses,            count. Owner receives daily
+                                freight, miscellaneous). Net cash       EOD summary on
+                                                                        WhatsApp. No manual entry
+                                                                          BENCHMARK      /   PASS
+FEATURE                         WHAT   IT    DOES
+                                                                          CONDITION
+
+
+                                position per bank account and cash-       required for digital
+                                in-hand.                                  transactions.
+
+
+Supplier Payment Scheduling     Tracks all outstanding payables to         P0
+
+                                principals with due dates, early          EPD captured ≥90% of
+                                payment discounts (EPD), and cash         eligible invoices. Zero
+                                discount terms. Recommends                payment made after penalty
+                                optimal payment dates to maximise         due date without owner
+                                EPD while preserving cash flow.           approval. Payable aging
+                                                                          always visible.
+
+
+Bank Statement Reconciliation   Parses bank statements (PDF/Excel)         P1
+
+                                from all major Indian banks. Auto-        Auto-match rate ≥93%.
+                                matches transactions to invoices,         Reconciliation of 1 month's
+                                payments, expenses. Unmatched             statement in <5 min.
+                                entries flagged for review. Works         Supports all top-10 Indian
+                                with SBI, HDFC, ICICI, Axis, Kotak,       bank statement formats.
+                                PNB formats.
+
+
+Working Capital Intelligence    Tracks Cash Conversion Cycle —             P2
+
+                                days inventory outstanding, days          CCC calculated weekly. Alert
+                                sales outstanding, and days payable       triggered when DSO >60
+                                outstanding. Benchmarks against           days or DIO >45 days. Owner
+                                healthy wholesale norms. Alerts           receives plain-language
+                                when CCC deteriorates beyond              Hinglish summary.
+                                threshold.
+
+
+
+
+🗣️        Language & Communication Layer
+          MOD-07 · MULTILINGUAL NLU, WHATSAPP & VOICE
+                                                                                                 C RITICAL
+
+
+
+
+                                                                            BENCHMARK        /   PASS
+FEATURE                                  WHAT    IT   DOES
+                                                                            CONDITION
+
+
+
+Hinglish NLU Engine                      Processes mixed Hindi-              P0
+
+                                         English as the primary             Intent accuracy ≥95% on
+                                         register. Handles romanised        Hinglish. Slang/nickname
+                                         Hindi ("bhai stock khatam ho       dictionary continuously
+                                         gaya"), Devanagari script, and     updated. Zero context loss
+                                         mid-sentence code-                 on code-switch within
+                                         switching. Understands             sentence.
+                                                                       BENCHMARK        /   PASS
+FEATURE                              WHAT     IT   DOES
+                                                                       CONDITION
+
+
+                                     trade-specific slang and
+                                     brand nicknames.
+
+
+Regional Language Support            Full operational support in        P0
+
+                                     Tamil, Telugu, Kannada,           All 8 languages
+                                     Marathi, Gujarati, Bengali,       operational at ≥90%
+                                     Punjabi. Not just translation     intent accuracy. Language
+                                     — actual business                 auto-detected from input.
+                                     vocabulary per language           Documents (invoices,
+                                     (e.g., Tamil trade                statements) generated in
+                                     terminology for pharma).          selected language.
+
+
+WhatsApp Business Integration        Native WhatsApp Business           P0
+
+                                     API integration. Handles          WhatsApp response
+                                     orders, queries, ledger           latency <5s. Invoice PDF
+                                     requests, reminders, invoice      auto-sent post-
+                                     dispatch, and complaint           confirmation. Voice note
+                                     registration. DLT-registered      order processing accuracy
+                                     templates for transactional       ≥90%. DLT templates
+                                     messages. Supports voice          compliant — zero
+                                     notes.                            message drops.
+
+
+Automated Communication Workflows    Pre-built workflows for:           P1
+
+                                     payment reminders (day 0,         All workflows tested and
+                                     +7, +30), scheme expiry           compliant. Message
+                                     alerts, delivery                  delivery rate ≥97%. Opt-
+                                     confirmations, cheque             out respected
+                                     deposit reminders, new            immediately. Response
+                                     scheme announcements, and         handling (replies to
+                                     festive greeting + offer          reminders) managed by
+                                     notifications.                    agent without human
+                                                                       intervention.
+
+
+Voice Query Interface                IVR-style voice interface for      P2
+
+                                     owners and salesmen on the        Voice STT accuracy ≥88%
+                                     go. "Aaj kitna collection hua?"   for Hinglish. Top-5 queries
+                                     answered in voice. Supports       answerable via voice.
+                                     call-in balance enquiry, stock    Fallback to WhatsApp text
+                                     check, and order placement        when voice fails, without
+                                     for low-literacy users.           user friction.
+
+
+
+
+          Analytics & Decision Intelligence
+                                                                                            A DVANCED
+📊         MOD-08 · BUSINESS INSIGHTS, FORECASTS & OWNER ALERTS
+
+
+
+
+                                                                      BENCHMARK         /   PASS
+FEATURE                        WHAT      IT   DOES
+                                                                      CONDITION
+
+
+
+Principal-wise P&L             Revenue, COGS, gross margin,            P0
+
+                               scheme income, and claims for          P&L generated on demand in
+                               each principal. Identifies most and    <5s. Numbers auditable to
+                               least profitable principals. Adjusts   source transaction. Owner
+                               for EPD, freight, and damage write-    able to read without CA
+                               offs. Monthly and trailing-12-month    assistance.
+                               views.
+
+
+SKU Performance Intelligence   Sales velocity, margin per unit,        P1
+
+                               return rate, and stockout frequency    Dead stock (>90 days no
+                               per SKU. Identifies dead stock, star   movement) identified
+                               performers, and margin diluters.       monthly. Range
+                               Recommends range rationalisation.      rationalisation
+                                                                      recommendations acted on
+                                                                      ≥40% of time. Star SKU never
+                                                                      stocked out.
+
+
+Retailer Segmentation          Segments retailer base by revenue,      P1
+
+                               payment reliability, product mix,      Segmentation updated
+                               and growth trend. Identifies at-risk   monthly. At-risk accounts
+                               accounts, growth accounts, and         identified 60 days before
+                               high-potential new accounts.           churn. Top-20 accounts
+                               Recommends differential service        tracked with dedicated focus.
+                               and credit strategies.
+
+
+Daily Owner Briefing           7 AM WhatsApp summary:                  P1
+                               yesterday's sales vs target, today's   Delivered ≥98% of business
+                               expected collections, top 3 alerts     days. Actionable
+                               (low stock, overdue payments,          recommendation rated
+                               expiring schemes), and one             useful ≥70% of time. <60
+                               actionable recommendation.             words — readable in 20s.
+
+
+Mandi Price Integration        For agri-commodity wholesalers:         P2
+
+                               live mandi prices from Agmarknet       Price data lag <24h. Covers all
+                               for relevant commodities in nearby     10 most relevant APMCs for
+                               APMCs. Price alerts on significant     the wholesaler's geography.
+                               movements. Purchase timing             Alert on ≥5% price
+                               recommendations based on price         movement.
+                               trends.
+🔌         Integration & Interoperability Layer
+          MOD-09 · TALLY, BANKING, GSTN & LOGISTICS
+                                                                                             A DVANCED
+
+
+
+
+                                                                   BENCHMARK       /   PASS
+FEATURE                     WHAT   IT   DOES
+                                                                   CONDITION
+
+
+
+Tally / Busy Sync           Bi-directional sync with Tally Prime    P0
+
+                            and Busy Accounting. Pushes sales      Sync success rate ≥99%.
+                            vouchers, purchase vouchers,           Voucher sync latency <30s. CA
+                            journal entries, and payments.         can close books directly from
+                            Pulls balance confirmation. 1-tap      Tally without re-entry.
+                            sync, no XML file juggling.            Supports Tally Prime 3.x and
+                                                                   Busy 21+.
+
+
+GSTN API Integration        Live connection to GSTN sandbox         P0
+
+                            and production for: e-invoice IRN      API uptime ≥99.5%. Graceful
+                            generation, e-way bill APIs, GSTR-     fallback during GSTN
+                            2B pull, GSTIN validation. No          downtime with queue-and-
+                            manual portal login ever required      retry. All API calls logged for
+                            for routine operations.                audit trail.
+
+
+UPI & Payment Gateway       Integration with Razorpay,              P0
+
+                            Cashfree, and PhonePe Business         Payment link generated in <2s.
+                            for payment link generation, UPI       Reconciliation via webhook
+                            autopay, payment reconciliation        within 10s of payment.
+                            webhooks. Generates QR-code            Supports all UPI apps, NEFT,
+                            payment links per invoice.             RTGS. Zero manual
+                                                                   reconciliation for digital
+                                                                   payments.
+
+
+Logistics Integration       Connects to Delhivery, Xpressbees,      P1
+
+                            Shadowfax, and local 3PL APIs for      Shipment booked within
+                            shipment booking, tracking, and        invoice workflow. Tracking
+                            POD collection. Auto-updates           status pushed to retailer on
+                            delivery status on invoice. COD        WhatsApp. COD reconciliation
+                            reconciliation handled                 lag <24h after delivery.
+                            automatically.
+                                                                                           BENCHMARK      /   PASS
+        FEATURE                                WHAT    IT   DOES
+                                                                                           CONDITION
+
+
+
+        Account Aggregator / AA                Integrates with RBI's Account                P2
+
+                                               Aggregator framework for credit             AA consent flow completed in
+                                               assessment — pulls consented                <2 min. Credit
+                                               financial data to build internal            recommendation generated
+                                               creditworthiness score for new              within 30s of data pull.
+                                               retailer onboarding and credit limit        Reduces bad debt on new party
+                                               enhancement.                                additions by measurable %.
+
+
+        ONDC Seller Node                       Exposes wholesale catalogue on               P2
+
+                                               ONDC network for B2B discovery.             ONDC orders processed in
+                                               Manages ONDC orders alongside               same workflow as WhatsApp
+                                               traditional channel orders in a             orders. Zero duplicate stock
+                                               unified view. Handles ONDC-                 commitment. Catalogue sync
+                                               specific GST and logistics                  to ONDC within 1h of
+                                               requirements.                               price/stock update.
+
+
+
+
+04
+          Build Sequencing — 3 Phases to Polish
+          What to ship in what order to reach final polish without wasted effort
+
+
+
+
+     PHASE     1   ·   MONTHS      1–3                                   PHASE    2    ·   MONTHS      4–6
+
+
+     The Non-Negotiable Core                                             Operational Intelligence
+     → GST invoicing + e-invoice + e-way bill (P0                        → GSTR-1 auto-preparation + ITC reconciliation
+        compliance)                                                      → Beat route management + salesman tracking
+     → Party ledger + PDC tracker + WhatsApp
+                                                                         → Principal-wise P&L + scheme reconciliation
+        collections
+                                                                         → Auto-reorder + GRN with three-way match
+     → Basic inventory (stock ledger + batch expiry)
+                                                                         → UPI reconciliation + supplier payment scheduling
+     → WhatsApp order capture + credit limit
+                                                                         → Regional language support (Tamil, Telugu,
+        enforcement
+                                                                            Marathi)
+     → Hinglish NLU operational for top-5 use cases
+
+     → Tally sync (one-way push)
+   PHASE     3   ·   MONTHS        7–9                            THE    TRUE     POLISH       GATE
+
+
+   Polish & Differentiation                                       How You Know You're Done
+   → Credit scoring engine + AA framework integration             → A semi-literate salesman in a Tier-3 town uses it
+
+   → Festive demand planning + mandi price
+                                                                      daily without training
+
+      integration                                                 → An owner makes business decisions from agent
+
+   → Daily owner briefing + retailer segmentation
+                                                                      data without calling accountant
+
+                                                                  → CA closes books from Tally without re-entering a
+   → Voice interface (IVR-style)
+                                                                      single transaction
+   → ONDC seller node + logistics API
+                                                                  → Zero GST penalty incurred by any agent-managed
+   → Working capital intelligence + CCC tracking                      business in 12 months
+                                                                  → Udhaar leakage eliminated — every rupee tracked
+                                                                      to final settlement
+                                                                  → The agent wakes up at 7 AM and tells the owner
+                                                                      what needs attention today
+
+
+
+
+    DESIGN       PRINCIPLE
+
+
+    Hermes Vyapar is not a SaaS product for Indian wholesalers — it is a business partner that happens to
+    run on software. Every feature must pass this test: would a trusted senior employee with perfect
+    memory and zero ego provide this function? If yes, build it. If the feature requires the owner to adapt
+    their workflow rather than the agent adapting to the owner, rebuild it.
+
+     GST-Native          WhatsApp-First            Hinglish-Primary     Tally-Compatible
+
+
+     MSME-Calibrated           Offline-Resilient           Zero-Training UX        Udhaar-Aware
+
+
+
+
+Hermes Vyapar                 Agent Design Specification · Indian Wholesale Vertical · Final Polish
+
+
+9 Modules · 47 Features · 3-Phase Build Sequence
+```

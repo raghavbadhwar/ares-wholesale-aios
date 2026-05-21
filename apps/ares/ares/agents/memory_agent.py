@@ -77,3 +77,32 @@ class MemoryAgent:
             confidence=candidate.confidence,
             source=source,
         )
+
+    def propose_from_pdc_bounces(
+        self,
+        *,
+        party_id: str,
+        bounce_count: int,
+        source: str = "pdc_history",
+    ) -> BusinessMemory | None:
+        if bounce_count < 2:
+            return None
+        candidate = MemoryCandidate(
+            category="pdc_bounce_pattern",
+            subject_id=party_id,
+            content=f"Party cheque discipline risk: bounced {bounce_count} times.",
+            observations=bounce_count,
+            confidence=0.9,
+            source=source,
+        )
+        decision = evaluate_memory_candidate(candidate)
+        if not decision.save:
+            return None
+        return BusinessMemory(
+            id=f"mem_{uuid4().hex[:12]}",
+            category=candidate.category,
+            subject_id=party_id,
+            content=candidate.content,
+            confidence=candidate.confidence,
+            source=source,
+        )

@@ -18,11 +18,15 @@ from apps.ares.ares.connectors.export_parser import parse_outstanding_report, pa
 from apps.ares.ares.data.factory import create_repository_for_profile
 from apps.ares.ares.execution.actions import ActionExecutor
 from apps.ares.ares.face.mobile_approval import MobileApprovalAdapter
+from apps.ares.ares.face.operator_shell import build_operator_shell, render_operator_shell
 from apps.ares.ares.face.owner_chat import handle_owner_reply
 from apps.ares.ares.orchestrator.router import AresRouter, WORKFLOW_ALIASES
 from apps.ares.ares.paths import get_ares_home, normalize_client_slug
 from apps.ares.ares.profiles import ClientProfile, load_client_profile, write_client_profile
 from apps.ares.ares.scheduling import build_cron_job_specs, build_cron_prompts
+from apps.ares.ares.workflows.benchmark_audit import build_benchmark_completion_audit
+from apps.ares.ares.workflows.gstr1 import prepare_gstr1_return
+from apps.ares.ares.workflows.integration_preflight import build_integration_prerequisite_preflight
 
 
 def register_cli(subparser: argparse.ArgumentParser) -> None:
@@ -43,6 +47,13 @@ def register_cli(subparser: argparse.ArgumentParser) -> None:
     run_p.add_argument("--outstanding-csv", default="", help="Optional outstanding export CSV")
     run_p.add_argument("--stock-csv", default="", help="Optional stock export CSV")
     run_p.add_argument("--json", action="store_true", help="Print JSON payload")
+
+    gstr1_p = actions.add_parser("prepare-gstr1", help="Prepare a local approval-gated GSTR-1 draft")
+    gstr1_p.add_argument("--client", required=True)
+    gstr1_p.add_argument("--period", required=True, help="Return period in YYYY-MM format")
+    gstr1_p.add_argument("--seller-gstin", required=True)
+    gstr1_p.add_argument("--requested-by", default="owner")
+    gstr1_p.add_argument("--json", action="store_true")
 
     onboard_p = actions.add_parser("onboard-client", help="Create a real local Ares client profile")
     onboard_p.add_argument("--client", required=True)
@@ -72,6 +83,10 @@ def register_cli(subparser: argparse.ArgumentParser) -> None:
 
     approval_p = actions.add_parser("approval-center", help="Show pending approvals")
     approval_p.add_argument("--client", required=True)
+
+    shell_p = actions.add_parser("operator-shell", help="Show local Ares operator shell")
+    shell_p.add_argument("--client", required=True)
+    shell_p.add_argument("--json", action="store_true")
 
     reply_p = actions.add_parser("owner-reply", help="Process owner approval reply and execute approved action")
     reply_p.add_argument("--client", required=True)
@@ -113,6 +128,19 @@ def register_cli(subparser: argparse.ArgumentParser) -> None:
     cron_specs_p.add_argument("--client", required=True)
 
     actions.add_parser("schedules", help="Print default workflow schedules")
+
+    preflight_p = actions.add_parser("integration-preflight", help="Check external integration sandbox prerequisites")
+    preflight_p.add_argument("--json", action="store_true", help="Print JSON payload")
+    preflight_p.add_argument(
+        "--confirm-safe-sandbox",
+        action="append",
+        default=[],
+        help="Provider key explicitly confirmed safe for sandbox adapter tests",
+    )
+
+    audit_p = actions.add_parser("benchmark-audit", help="Report benchmark coverage and production blockers")
+    audit_p.add_argument("--latest-local-test-result", default="not supplied", help="Latest local tests/ares result string")
+    audit_p.add_argument("--json", action="store_true", help="Print JSON payload")
     subparser.set_defaults(func=ares_command)
 
 
@@ -136,6 +164,10 @@ def ares_command(args: argparse.Namespace) -> int:
         if action == "run-workflow":
             result = _run_workflow(args)
             print(json.dumps(result["payload"], indent=2, default=str) if getattr(args, "json", False) else result["message"])
+            return 0
+        if action == "prepare-gstr1":
+            result = _prepare_gstr1(args)
+            print(json.dumps(result, indent=2, default=str) if getattr(args, "json", False) else _render_gstr1_summary(result))
             return 0
         if action in {"create-sample-client", "onboard-client"}:
             slug = normalize_client_slug(args.client)
@@ -179,6 +211,13 @@ def ares_command(args: argparse.Namespace) -> int:
             setattr(args, "stock_csv", "")
             setattr(args, "json", False)
             print(_run_workflow(args)["message"])
+            return 0
+        if action == "operator-shell":
+            profile = load_client_profile(args.client)
+            repo = create_repository_for_profile(profile)
+            approvals = ApprovalService(repo, required_actions=set(profile.approval_preferences.required_actions) or None)
+            shell = build_operator_shell(profile=profile, repository=repo, approvals=approvals)
+            print(json.dumps(shell, indent=2, default=str) if getattr(args, "json", False) else render_operator_shell(shell))
             return 0
         if action == "owner-reply":
             profile = load_client_profile(args.client)
@@ -236,6 +275,20 @@ def ares_command(args: argparse.Namespace) -> int:
             schedule_path = Path(__file__).resolve().parents[1] / "config" / "workflow_schedules.yaml"
             print(schedule_path.read_text(encoding="utf-8"))
             return 0
+        if action == "integration-preflight":
+            result = build_integration_prerequisite_preflight(
+                safe_test_environment_confirmations=set(getattr(args, "confirm_safe_sandbox", []) or [])
+            )
+            print(
+                json.dumps(result, indent=2, default=str)
+                if getattr(args, "json", False)
+                else _render_integration_preflight(result)
+            )
+            return 0 if result["status"] in {"ready", "partial_ready"} else 1
+        if action == "benchmark-audit":
+            result = build_benchmark_completion_audit(latest_local_test_result=args.latest_local_test_result)
+            print(json.dumps(result, indent=2, default=str) if getattr(args, "json", False) else _render_benchmark_audit(result))
+            return 0 if result["ship_ready"] else 1
     except FileNotFoundError as exc:
         print(
             f"Ares error: {exc}\n"
@@ -245,7 +298,7 @@ def ares_command(args: argparse.Namespace) -> int:
     except Exception as exc:
         print(f"Ares error: {exc}")
         return 1
-    print("Usage: hermes ares {chat|setup|run-workflow|onboard-client|list-clients|show-client|list-workflows|approval-center|owner-reply|autonomous-cycle|validate-inputs|morning-run|mobile-approvals|mobile-reply|sync-drive-manifest|print-cron-prompts|print-cron-specs|schedules}")
+    print("Usage: hermes ares {chat|setup|run-workflow|prepare-gstr1|onboard-client|list-clients|show-client|list-workflows|approval-center|operator-shell|owner-reply|autonomous-cycle|validate-inputs|morning-run|mobile-approvals|mobile-reply|sync-drive-manifest|print-cron-prompts|print-cron-specs|schedules|integration-preflight|benchmark-audit}")
     return 2
 
 
@@ -376,6 +429,20 @@ def _run_workflow(args: argparse.Namespace) -> dict:
     return router.run_workflow(args.workflow)
 
 
+def _prepare_gstr1(args: argparse.Namespace) -> dict:
+    profile = load_client_profile(args.client)
+    repo = create_repository_for_profile(profile)
+    approvals = ApprovalService(repo, required_actions=set(profile.approval_preferences.required_actions) or None)
+    return prepare_gstr1_return(
+        repository=repo,
+        approvals=approvals,
+        client_id=profile.client_slug,
+        period=args.period,
+        seller_gstin=args.seller_gstin,
+        requested_by=args.requested_by,
+    )
+
+
 def _owner_reply_message(result: dict) -> str:
     decision = result.get("decision", "unknown")
     if decision == "approved":
@@ -386,6 +453,24 @@ def _owner_reply_message(result: dict) -> str:
     if decision == "edited":
         return "Edited. Approval marked for review; no action executed."
     return str(result.get("message", "Approval kept pending."))
+
+
+def _render_gstr1_summary(result: dict) -> str:
+    summary = result["summary"]
+    lines = [
+        f"GSTR-1 draft prepared for {result['period']}",
+        f"Status: {result['status']}",
+        f"Pending approval: {result['approval_id']}",
+        f"B2B invoices: {summary['b2b_invoices']}",
+        f"B2CL invoices: {summary['b2cl_invoices']}",
+        f"B2CS groups: {summary['b2cs_groups']}",
+        f"HSN rows: {summary['hsn_rows']}",
+        f"Taxable value: INR {summary['taxable_value']:.2f}",
+        f"Tax amount: INR {summary['tax_amount']:.2f}",
+        f"Validation errors: {summary['validation_errors']}",
+        result["audit"]["limitation"],
+    ]
+    return "\n".join(lines)
 
 
 def _render_morning_run_summary(result: dict) -> str:
@@ -424,6 +509,45 @@ def _render_validation_summary(result: dict) -> str:
         lines.extend(f"- {error}" for error in result["blocking_errors"])
     else:
         lines.append("Inputs look ready for processing.")
+    return "\n".join(lines)
+
+
+def _render_integration_preflight(result: dict) -> str:
+    lines = [
+        "Ares external integration preflight",
+        f"Status: {result['status']}",
+        f"Ready providers: {result['ready_provider_count']}",
+        f"Blocked providers: {result['blocked_provider_count']}",
+        "",
+        "Providers:",
+    ]
+    for provider, status in result["providers"].items():
+        missing = ", ".join(status["missing_env_names"]) if status["missing_env_names"] else "none"
+        lines.extend(
+            [
+                f"- {provider}: {status['status']}",
+                f"  missing env names: {missing}",
+                f"  safe sandbox confirmed: {status['safe_test_environment_confirmed']}",
+            ]
+        )
+    lines.extend(["", result["audit"]["limitation"]])
+    return "\n".join(lines)
+
+
+def _render_benchmark_audit(result: dict) -> str:
+    lines = [
+        "Ares benchmark audit",
+        f"Feature rows covered locally/contract-only: {result['local_or_contract_rows_covered']}/{result['feature_rows_total']}",
+        f"Latest local test result: {result['latest_local_test_result']}",
+        f"Benchmark parity: {result['benchmark_parity']}",
+        f"Ship ready: {result['ship_ready']}",
+        "",
+        "Production blockers:",
+    ]
+    lines.extend(f"- {blocker}" for blocker in result["production_blockers"])
+    lines.extend(["", "Done-state gates:"])
+    lines.extend(f"- {gate['gate']}: {gate['status']}" for gate in result["done_state_gates"])
+    lines.extend(["", result["audit"]["limitation"]])
     return "\n".join(lines)
 
 

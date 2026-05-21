@@ -8,6 +8,7 @@ from datetime import date
 from apps.ares.ares.approvals.service import ApprovalService
 from apps.ares.ares.data.models import Invoice, RiskLevel
 from apps.ares.ares.data.repository import BusinessRepository
+from apps.ares.ares.workflows.pdc_tracker import analyze_pdc_tracker, create_pdc_approvals
 
 
 @dataclass(frozen=True)
@@ -104,6 +105,7 @@ def run_payment_radar(
     create_approvals: bool = True,
 ) -> dict:
     payload = analyze_payment_radar(repository, today=today)
+    payload["pdc_summary"] = analyze_pdc_tracker(repository, today=today)
     if create_approvals:
         approvals_created = create_payment_reminder_approvals(
             repository,
@@ -111,7 +113,13 @@ def run_payment_radar(
             client_id=client_id,
             priorities=payload["priorities"],
         )
-        payload["approvals_created"] = len(approvals_created)
+        pdc_approvals = create_pdc_approvals(
+            repository,
+            approvals,
+            client_id=client_id,
+            pdc_summary=payload["pdc_summary"],
+        )
+        payload["approvals_created"] = len(approvals_created) + len(pdc_approvals)
     else:
         payload["approvals_created"] = 0
     return payload

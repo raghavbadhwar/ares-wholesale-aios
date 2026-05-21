@@ -44,6 +44,22 @@ class Customer(BaseModel):
     status: str = "active"
 
 
+class BusinessGSTRegistration(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    gstin: str
+    legal_name: str
+    state_code: str
+    state_name: str | None = None
+    trade_name: str | None = None
+    address: str | None = None
+    is_default: bool = False
+    composition_scheme: bool = False
+    composition_turnover_limit: float = 15_000_000.0
+    status: str = "active"
+
+
 class ProductSKU(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -52,6 +68,8 @@ class ProductSKU(BaseModel):
     aliases: list[str] = Field(default_factory=list)
     category: str | None = None
     unit: str = "unit"
+    principal_id: str | None = None
+    brand_id: str | None = None
     current_stock: float = 0
     reorder_level: float = 0
     supplier_id: str | None = None
@@ -86,15 +104,43 @@ class Order(BaseModel):
     updated_at: DateTime = Field(default_factory=utc_now)
 
 
+class InvoiceLineItem(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    sku_id: str | None = None
+    description: str
+    hsn_code: str | None = None
+    quantity: float | None = None
+    unit: str | None = None
+    taxable_value: float
+    gst_rate_percent: float | None = None
+    cgst_amount: float = 0.0
+    sgst_amount: float = 0.0
+    igst_amount: float = 0.0
+    cess_amount: float = 0.0
+
+
 class Invoice(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     id: str
     invoice_number: str
     customer_id: str | None = None
+    business_gstin_id: str | None = None
     date: Date | None = None
     amount: float
+    taxable_value: float | None = None
     tax_amount: float | None = None
+    gst_rate_percent: float | None = None
+    cgst_amount: float = 0.0
+    sgst_amount: float = 0.0
+    igst_amount: float = 0.0
+    cess_amount: float = 0.0
+    place_of_supply: str | None = None
+    reverse_charge: bool = False
+    invoice_type: str = "regular"
+    ecommerce_gstin: str | None = None
+    line_items: list[InvoiceLineItem] = Field(default_factory=list)
     due_date: Date | None = None
     status: str = "open"
     source_file: str | None = None
@@ -110,8 +156,28 @@ class Payment(BaseModel):
     mode: str | None = None
     reference: str | None = None
     matched_invoice_id: str | None = None
+    raw_source: dict[str, Any] = Field(default_factory=dict)
+    candidate_invoice_ids: list[str] = Field(default_factory=list)
+    unapplied_amount: float = 0.0
+    audit_note: str | None = None
     confidence: float = 1.0
     status: str = "pending"
+
+
+class PostDatedCheque(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    party_id: str
+    amount: float
+    cheque_date: Date
+    bank_name: str
+    cheque_number: str
+    status: str = "scheduled"
+    deposit_date: Date | None = None
+    bounce_reason: str | None = None
+    invoice_id: str | None = None
+    notes: str | None = None
 
 
 class Supplier(BaseModel):
@@ -121,8 +187,121 @@ class Supplier(BaseModel):
     name: str
     aliases: list[str] = Field(default_factory=list)
     phone: str | None = None
+    gstin: str | None = None
     lead_time_days: int | None = None
     notes: str | None = None
+
+
+class Principal(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    name: str
+    gstin: str | None = None
+    contact_phone: str | None = None
+    payment_terms: str | None = None
+    notes: str | None = None
+    status: str = "active"
+
+
+class Brand(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    principal_id: str
+    name: str
+    category: str | None = None
+    default_margin_percent: float | None = None
+    scheme_notes: str | None = None
+    status: str = "active"
+
+
+class TradeScheme(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    principal_id: str
+    brand_id: str | None = None
+    name: str
+    start_date: Date
+    end_date: Date
+    payout_type: str = "per_unit"
+    payout_value: float
+    status: str = "active"
+
+
+class SchemeClaim(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    scheme_id: str
+    principal_id: str
+    invoice_id: str
+    sku_id: str | None = None
+    claim_amount: float
+    status: str = "draft"
+
+
+class PurchaseOrderLine(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    sku_id: str
+    description: str
+    quantity: float
+    unit_cost: float
+
+
+class PurchaseOrder(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    supplier_id: str | None = None
+    order_number: str
+    order_date: Date | None = None
+    lines: list[PurchaseOrderLine] = Field(default_factory=list)
+    status: str = "open"
+
+
+class GoodsReceiptNoteLine(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    sku_id: str
+    description: str
+    quantity_received: float
+
+
+class GoodsReceiptNote(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    supplier_id: str | None = None
+    purchase_order_id: str | None = None
+    received_on: Date | None = None
+    lines: list[GoodsReceiptNoteLine] = Field(default_factory=list)
+    status: str = "received"
+
+
+class PurchaseInvoice(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    supplier_id: str | None = None
+    supplier_gstin: str | None = None
+    purchase_order_id: str | None = None
+    invoice_number: str
+    date: Date | None = None
+    due_date: Date | None = None
+    taxable_value: float
+    tax_amount: float
+    gst_rate_percent: float | None = None
+    line_items: list[PurchaseOrderLine] = Field(default_factory=list)
+    tds_section: str | None = None
+    tds_rate_percent: float | None = None
+    tds_base_amount: float | None = None
+    early_payment_discount_amount: float = 0.0
+    early_payment_discount_deadline: Date | None = None
+    status: str = "booked"
+    source_file: str | None = None
 
 
 class StockRecord(BaseModel):
@@ -138,6 +317,19 @@ class StockRecord(BaseModel):
     last_updated: DateTime = Field(default_factory=utc_now)
 
 
+class InventoryBatch(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    sku_id: str
+    batch_code: str
+    quantity: float
+    expiry_date: Date | None = None
+    unit_cost: float | None = None
+    received_at: Date | None = None
+    notes: str | None = None
+
+
 class StaffMember(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -145,6 +337,26 @@ class StaffMember(BaseModel):
     name: str
     role: str
     phone: str | None = None
+    status: str = "active"
+
+
+class BeatRouteStop(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    customer_id: str
+    sequence: int
+    planned_time: str | None = None
+    notes: str | None = None
+
+
+class BeatRoute(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    name: str
+    staff_id: str | None = None
+    weekday: str | None = None
+    stops: list[BeatRouteStop] = Field(default_factory=list)
     status: str = "active"
 
 
@@ -166,6 +378,43 @@ class Complaint(BaseModel):
     customer_id: str | None = None
     summary: str
     status: str = "open"
+    created_at: DateTime = Field(default_factory=utc_now)
+
+
+class ReturnDamageCaseItem(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    sku_id: str | None = None
+    quantity: float
+    reason: str
+    estimated_credit_value: float = 0.0
+
+
+class ReturnDamageCase(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    customer_id: str
+    invoice_id: str
+    reported_on: Date
+    requested_resolution: str
+    items: list[ReturnDamageCaseItem] = Field(default_factory=list)
+    status: str = "pending_review"
+    created_at: DateTime = Field(default_factory=utc_now)
+
+
+class LogisticsShipment(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    invoice_id: str
+    customer_id: str | None = None
+    carrier: str
+    packages: int = 1
+    status: str = "pending_approval"
+    delivery_status: str = "not_dispatched"
+    tracking_number: str | None = None
+    delivery_updates: list[dict[str, Any]] = Field(default_factory=list)
     created_at: DateTime = Field(default_factory=utc_now)
 
 
