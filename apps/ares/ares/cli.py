@@ -26,7 +26,14 @@ from apps.ares.ares.profiles import ClientProfile, load_client_profile, write_cl
 from apps.ares.ares.scheduling import build_cron_job_specs, build_cron_prompts
 from apps.ares.ares.workflows.benchmark_audit import build_benchmark_completion_audit
 from apps.ares.ares.workflows.gstr1 import prepare_gstr1_return
-from apps.ares.ares.workflows.integration_preflight import build_integration_prerequisite_preflight
+from apps.ares.ares.workflows.integration_preflight import (
+    INTEGRATION_PREFLIGHT_LIMITATION,
+    PROVIDER_REQUIREMENTS,
+    build_integration_env_template,
+    build_integration_prerequisite_preflight,
+    build_integration_provider_catalog,
+    build_integration_readiness_packet,
+)
 
 
 def register_cli(subparser: argparse.ArgumentParser) -> None:
@@ -131,6 +138,15 @@ def register_cli(subparser: argparse.ArgumentParser) -> None:
 
     preflight_p = actions.add_parser("integration-preflight", help="Check external integration sandbox prerequisites")
     preflight_p.add_argument("--json", action="store_true", help="Print JSON payload")
+    preflight_p.add_argument("--list-providers", action="store_true", help="List valid provider setup requirements")
+    preflight_p.add_argument("--readiness-packet", action="store_true", help="Print provider sandbox hardening packet")
+    preflight_p.add_argument("--env-template", action="store_true", help="Print sandbox dotenv variable template")
+    preflight_p.add_argument(
+        "--provider",
+        action="append",
+        default=[],
+        help="Provider key to scope the preflight; repeat for multiple providers",
+    )
     preflight_p.add_argument(
         "--confirm-safe-sandbox",
         action="append",
@@ -141,6 +157,23 @@ def register_cli(subparser: argparse.ArgumentParser) -> None:
     audit_p = actions.add_parser("benchmark-audit", help="Report benchmark coverage and production blockers")
     audit_p.add_argument("--latest-local-test-result", default="not supplied", help="Latest local tests/ares result string")
     audit_p.add_argument("--json", action="store_true", help="Print JSON payload")
+    audit_p.add_argument(
+        "--include-integration-preflight",
+        action="store_true",
+        help="Embed current local integration preflight status in the audit",
+    )
+    audit_p.add_argument(
+        "--provider",
+        action="append",
+        default=[],
+        help="Provider key to scope the embedded integration preflight",
+    )
+    audit_p.add_argument(
+        "--confirm-safe-sandbox",
+        action="append",
+        default=[],
+        help="Provider key explicitly confirmed safe for embedded sandbox preflight",
+    )
     subparser.set_defaults(func=ares_command)
 
 
@@ -276,9 +309,45 @@ def ares_command(args: argparse.Namespace) -> int:
             print(schedule_path.read_text(encoding="utf-8"))
             return 0
         if action == "integration-preflight":
-            result = build_integration_prerequisite_preflight(
-                safe_test_environment_confirmations=set(getattr(args, "confirm_safe_sandbox", []) or [])
-            )
+            selected_providers = set(getattr(args, "provider", []) or []) or None
+            try:
+                if getattr(args, "env_template", False):
+                    result = build_integration_env_template(selected_providers=selected_providers)
+                    print(
+                        json.dumps(result, indent=2, default=str)
+                        if getattr(args, "json", False)
+                        else _render_integration_env_template(result)
+                    )
+                    return 0
+                if getattr(args, "readiness_packet", False):
+                    result = build_integration_readiness_packet(
+                        safe_test_environment_confirmations=set(getattr(args, "confirm_safe_sandbox", []) or []),
+                        selected_providers=selected_providers,
+                    )
+                    print(
+                        json.dumps(result, indent=2, default=str)
+                        if getattr(args, "json", False)
+                        else _render_integration_readiness_packet(result)
+                    )
+                    return 0 if result["status"] in {"ready", "partial_ready"} else 1
+                if getattr(args, "list_providers", False):
+                    result = build_integration_provider_catalog(selected_providers=selected_providers)
+                    print(
+                        json.dumps(result, indent=2, default=str)
+                        if getattr(args, "json", False)
+                        else _render_integration_provider_catalog(result)
+                    )
+                    return 0
+                result = build_integration_prerequisite_preflight(
+                    safe_test_environment_confirmations=set(getattr(args, "confirm_safe_sandbox", []) or []),
+                    selected_providers=selected_providers,
+                )
+            except ValueError as exc:
+                if getattr(args, "json", False):
+                    print(json.dumps(_integration_preflight_error(str(exc)), indent=2))
+                else:
+                    print(f"Ares error: {exc}")
+                return 1
             print(
                 json.dumps(result, indent=2, default=str)
                 if getattr(args, "json", False)
@@ -286,7 +355,23 @@ def ares_command(args: argparse.Namespace) -> int:
             )
             return 0 if result["status"] in {"ready", "partial_ready"} else 1
         if action == "benchmark-audit":
-            result = build_benchmark_completion_audit(latest_local_test_result=args.latest_local_test_result)
+            integration_preflight = None
+            try:
+                if getattr(args, "include_integration_preflight", False):
+                    integration_preflight = build_integration_prerequisite_preflight(
+                        safe_test_environment_confirmations=set(getattr(args, "confirm_safe_sandbox", []) or []),
+                        selected_providers=set(getattr(args, "provider", []) or []) or None,
+                    )
+            except ValueError as exc:
+                if getattr(args, "json", False):
+                    print(json.dumps(_integration_preflight_error(str(exc)), indent=2))
+                else:
+                    print(f"Ares error: {exc}")
+                return 1
+            result = build_benchmark_completion_audit(
+                latest_local_test_result=args.latest_local_test_result,
+                integration_preflight=integration_preflight,
+            )
             print(json.dumps(result, indent=2, default=str) if getattr(args, "json", False) else _render_benchmark_audit(result))
             return 0 if result["ship_ready"] else 1
     except FileNotFoundError as exc:
@@ -516,6 +601,7 @@ def _render_integration_preflight(result: dict) -> str:
     lines = [
         "Ares external integration preflight",
         f"Status: {result['status']}",
+        f"Provider scope: {', '.join(result.get('provider_scope', []))}",
         f"Ready providers: {result['ready_provider_count']}",
         f"Blocked providers: {result['blocked_provider_count']}",
         "",
@@ -523,14 +609,101 @@ def _render_integration_preflight(result: dict) -> str:
     ]
     for provider, status in result["providers"].items():
         missing = ", ".join(status["missing_env_names"]) if status["missing_env_names"] else "none"
+        reasons = "; ".join(status.get("blocked_reasons", [])) if status.get("blocked_reasons") else "none"
+        actions = "; ".join(status.get("next_required_actions", [])) if status.get("next_required_actions") else "none"
         lines.extend(
             [
                 f"- {provider}: {status['status']}",
                 f"  missing env names: {missing}",
                 f"  safe sandbox confirmed: {status['safe_test_environment_confirmed']}",
+                f"  can run sandbox adapter tests: {status.get('can_run_sandbox_adapter_tests', False)}",
+                f"  blocked reasons: {reasons}",
+                f"  next required actions: {actions}",
             ]
         )
     lines.extend(["", result["audit"]["limitation"]])
+    return "\n".join(lines)
+
+
+def _integration_preflight_error(message: str) -> dict:
+    code = "unknown_integration_provider"
+    selected_providers: list[str] = []
+    if message.startswith("Safe sandbox confirmation provider outside selected provider scope:"):
+        code = "invalid_integration_provider_scope"
+        if "Selected providers:" in message:
+            selected = message.split("Selected providers:", 1)[1].strip()
+            selected_providers = [provider.strip() for provider in selected.split(",") if provider.strip()]
+    return {
+        "error": {
+            "code": code,
+            "message": message,
+            "valid_providers": list(PROVIDER_REQUIREMENTS),
+            "selected_providers": selected_providers,
+        },
+        "audit": {
+            "secret_values_inspected": False,
+            "live_api_called": False,
+            "sandbox_submission_performed": False,
+            "limitation": INTEGRATION_PREFLIGHT_LIMITATION,
+        },
+    }
+
+
+def _render_integration_provider_catalog(result: dict) -> str:
+    lines = [
+        "Ares external integration provider catalog",
+        f"Provider scope: {', '.join(result.get('provider_scope', []))}",
+        f"Provider count: {result['provider_count']}",
+        "",
+        "Providers:",
+    ]
+    for provider, status in result["providers"].items():
+        env_names = ", ".join(status["required_env_names"])
+        actions = "; ".join(status["next_required_actions"])
+        lines.extend(
+            [
+                f"- {provider}",
+                f"  required env names: {env_names}",
+                f"  scope flag: {status['scope_flag']}",
+                f"  confirmation flag: {status['confirmation_flag']}",
+                f"  next required actions: {actions}",
+            ]
+        )
+    lines.extend(["", result["audit"]["limitation"]])
+    return "\n".join(lines)
+
+
+def _render_integration_readiness_packet(result: dict) -> str:
+    lines = [
+        "Ares external integration readiness packet",
+        f"Status: {result['status']}",
+        f"Provider scope: {', '.join(result.get('provider_scope', []))}",
+        f"Ready providers: {result['ready_provider_count']}",
+        f"Blocked providers: {result['blocked_provider_count']}",
+        "",
+        "Providers:",
+    ]
+    for provider, status in result["providers"].items():
+        actions = "; ".join(status["next_required_actions"]) if status["next_required_actions"] else "none"
+        commands = "; ".join(status["operator_commands"])
+        lines.extend(
+            [
+                f"- {provider}: {status['status']}",
+                f"  adapter hardening gate: {status['adapter_hardening_gate']}",
+                f"  next required actions: {actions}",
+                f"  operator commands: {commands}",
+            ]
+        )
+    lines.extend(["", result["audit"]["limitation"]])
+    return "\n".join(lines)
+
+
+def _render_integration_env_template(result: dict) -> str:
+    lines: list[str] = []
+    for status in result["providers"].values():
+        if lines:
+            lines.append("")
+        lines.extend(status["env_template_lines"])
     return "\n".join(lines)
 
 
@@ -538,6 +711,14 @@ def _render_benchmark_audit(result: dict) -> str:
     lines = [
         "Ares benchmark audit",
         f"Feature rows covered locally/contract-only: {result['local_or_contract_rows_covered']}/{result['feature_rows_total']}",
+        (
+            "Feature evidence traced: "
+            f"{result.get('feature_evidence', {}).get('feature_rows_with_evidence', 0)}/{result['feature_rows_total']}"
+        ),
+        (
+            "Production-proof feature rows: "
+            f"{result.get('feature_evidence', {}).get('feature_rows_with_production_proof', 0)}/{result['feature_rows_total']}"
+        ),
         f"Latest local test result: {result['latest_local_test_result']}",
         f"Benchmark parity: {result['benchmark_parity']}",
         f"Ship ready: {result['ship_ready']}",
@@ -545,6 +726,49 @@ def _render_benchmark_audit(result: dict) -> str:
         "Production blockers:",
     ]
     lines.extend(f"- {blocker}" for blocker in result["production_blockers"])
+    integration_preflight = result.get("integration_preflight", {})
+    if integration_preflight.get("included"):
+        lines.extend(
+            [
+                "",
+                f"Integration preflight: {integration_preflight['status']}",
+                f"Provider scope: {', '.join(integration_preflight.get('provider_scope', []))}",
+                f"Ready providers: {integration_preflight['ready_provider_count']}",
+                f"Blocked providers: {integration_preflight['blocked_provider_count']}",
+            ]
+        )
+        for provider in integration_preflight.get("blocked_providers", []):
+            missing = ", ".join(provider.get("missing_env_names", [])) if provider.get("missing_env_names") else "none"
+            reasons = "; ".join(provider.get("blocked_reasons", [])) if provider.get("blocked_reasons") else "none"
+            feature_rows = (
+                ", ".join(provider.get("benchmark_feature_rows", []))
+                if provider.get("benchmark_feature_rows")
+                else "none"
+            )
+            blockers_addressed = (
+                ", ".join(provider.get("production_blockers_addressed", []))
+                if provider.get("production_blockers_addressed")
+                else "none"
+            )
+            lines.extend(
+                [
+                    f"- {provider['provider']}: {provider['status']}",
+                    f"  missing env names: {missing}",
+                    f"  safe sandbox confirmed: {provider['safe_test_environment_confirmed']}",
+                    f"  can run sandbox adapter tests: {provider['can_run_sandbox_adapter_tests']}",
+                    f"  blocked reasons: {reasons}",
+                    f"  benchmark feature rows: {feature_rows}",
+                    f"  production blockers addressed: {blockers_addressed}",
+                ]
+            )
+        audit = integration_preflight.get("audit", {})
+        lines.extend(
+            [
+                f"secret values inspected: {audit.get('secret_values_inspected', False)}",
+                f"live API called: {audit.get('live_api_called', False)}",
+                f"sandbox submission performed: {audit.get('sandbox_submission_performed', False)}",
+            ]
+        )
     lines.extend(["", "Done-state gates:"])
     lines.extend(f"- {gate['gate']}: {gate['status']}" for gate in result["done_state_gates"])
     lines.extend(["", result["audit"]["limitation"]])

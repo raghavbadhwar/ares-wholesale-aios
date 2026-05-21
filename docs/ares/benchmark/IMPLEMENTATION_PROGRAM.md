@@ -1014,15 +1014,22 @@ Slice A45 — Benchmark completion audit and production blocker register
 - Maps the 48 enumerated source-of-truth feature rows to local/contract coverage
 - Explicitly keeps `benchmark_parity` and `ship_ready` false
 - Lists remaining production blockers for live WhatsApp, GSTN/NIC, Tally/Busy, payment gateways, bank/AA data, hosted SaaS auth/billing, low-end Android/connectivity verification, and 12-month compliance outcome evidence
+- Can embed a sanitized local integration preflight summary via `--include-integration-preflight` in JSON and text output so audit evidence shows exact provider-sandbox blockers, benchmark feature rows, and production-blocker mapping without inspecting secrets or calling live APIs
 - Maps final done-state gates to `not_proven`
 - CLI exits nonzero while `ship_ready` is false so local coverage cannot be mistaken for production readiness
 - Verified with:
   - `UV_CACHE_DIR=/private/tmp/ares-uv-cache uv run --directory /Users/raghav/.ares/ares --extra dev python -m pytest tests/ares/test_benchmark_completion_audit.py -q -o 'addopts='`
-    - Result: `2 passed`
+    - Result: `7 passed`
   - `UV_CACHE_DIR=/private/tmp/ares-uv-cache uv run --directory /Users/raghav/.ares/ares --extra dev python -m pytest tests/ares -q -o 'addopts='`
-    - Result: `162 passed`
+    - Result: `181 passed`
+  - `UV_CACHE_DIR=/private/tmp/ares-uv-cache uv run --directory /Users/raghav/.ares/ares --extra dev python -m apps.ares.ares.cli benchmark-audit --latest-local-test-result '181 passed' --include-integration-preflight --provider razorpay`
+    - Result: exited `1`, text output showed `Integration preflight: blocked`, Razorpay missing sandbox env names, benchmark feature rows, production-blocker mapping, no secret values inspected, no live API calls, and `ship_ready: False`
+  - `UV_CACHE_DIR=/private/tmp/ares-uv-cache uv run --directory /Users/raghav/.ares/ares --extra dev python -m apps.ares.ares.cli benchmark-audit --latest-local-test-result '181 passed' --include-integration-preflight --provider razorpay --json`
+    - Result: exited `1`, with `benchmark_parity: false`, `ship_ready: false`, `integration_preflight.status: "blocked"`, Razorpay benchmark feature rows, production-blocker mapping, missing sandbox env names, and no secret values inspected or live API calls performed
+  - `UV_CACHE_DIR=/private/tmp/ares-uv-cache uv run --directory /Users/raghav/.ares/ares --extra dev python -m apps.ares.ares.cli benchmark-audit --latest-local-test-result '181 passed' --include-integration-preflight --provider stripe --json`
+    - Result: exited `1`, returned `unknown_integration_provider`, valid provider keys, and no secret values inspected or live API calls performed
   - `UV_CACHE_DIR=/private/tmp/ares-uv-cache uv run --directory /Users/raghav/.ares/ares --extra dev python -m apps.ares.ares.cli benchmark-audit --latest-local-test-result '162 passed' --json`
-    - Result: exited `1`, with `benchmark_parity: false`, `ship_ready: false`, and 8 production blockers
+    - Result: exited `1`, with `benchmark_parity: false`, `ship_ready: false`, and local/contract coverage still not treated as production readiness
 
 **Current limitation:** This is a local benchmark audit only. It does not prove production benchmark parity, live integration readiness, hosted SaaS readiness, or longitudinal business outcomes.
 
@@ -1032,22 +1039,43 @@ Slice A46 — Production integration adapter hardening
 
 **Objective:** Replace selected contract-only integration stubs with real sandbox adapters only where credentials and safe test environments are available; otherwise keep them blocked as explicit external-integration blockers.
 
-**Status:** Local prerequisite preflight implemented and verified; live/sandbox adapter hardening remains blocked by missing external sandbox credentials and safe integration environments.
+**Status:** Local prerequisite preflight implemented and verified; provider-scoped rollout checks added. Live/sandbox adapter hardening remains blocked by missing external sandbox credentials and safe integration environments.
 
 **Evidence:**
 - Added `tests/ares/test_integration_preflight.py`
 - Added `apps/ares/ares/workflows/integration_preflight.py`
 - Added `ares integration-preflight --json`
 - Preflight reports provider readiness from configured sandbox environment variable names only and requires explicit `--confirm-safe-sandbox <provider>` confirmation before marking any provider ready for sandbox adapter tests
+- Preflight supports provider-scoped checks with repeatable `--provider <provider>` and `--list-providers` for focused sandbox rollout readiness
+- Preflight supports `--readiness-packet` to generate provider-specific sandbox adapter handoff packets with setup checklist, operator commands, required external artifacts, and adapter hardening gate state
+- Preflight supports `--env-template` to emit empty dotenv-style sandbox variable templates for selected providers without reading or printing values
+- Preflight returns machine-readable JSON errors for unknown provider keys, unknown safe-sandbox confirmation keys, and valid-but-out-of-scope confirmation keys in `--json` mode, including the valid provider list and no-secret/no-network audit flags
+- Provider reports now include `can_run_sandbox_adapter_tests`, concrete `blocked_reasons`, `next_required_actions`, allowed sandbox test scope, forbidden production/live action scope, benchmark feature rows, and production blockers addressed by the provider
 - Preflight audit explicitly records that secret values are not inspected, live APIs are not called, and sandbox submissions are not performed
 - Checked current process environment for integration credential variable names without printing secret values:
   - `env | cut -d= -f1 | rg '^(GSTN|NIC|RAZORPAY|CASHFREE|PHONEPE|TALLY|BUSY|WHATSAPP|META|ONDC|ACCOUNT_AGGREGATOR|AA_|AGMARKNET)'`
   - Result: no matching configured environment names
 - Verified with:
   - `UV_CACHE_DIR=/private/tmp/ares-uv-cache uv run --directory /Users/raghav/.ares/ares --extra dev python -m pytest tests/ares/test_integration_preflight.py -q -o 'addopts='`
-    - Result: `7 passed`
+    - Result: `21 passed`
   - `UV_CACHE_DIR=/private/tmp/ares-uv-cache uv run --directory /Users/raghav/.ares/ares --extra dev python -m pytest tests/ares -q -o 'addopts='`
-    - Result: `162 passed`
+    - Result: `180 passed`
+  - `UV_CACHE_DIR=/private/tmp/ares-uv-cache uv run --directory /Users/raghav/.ares/ares --extra dev python -m apps.ares.ares.cli integration-preflight --env-template --provider razorpay --json`
+    - Result: exited `0`, scoped to `provider_scope: ["razorpay"]`, with empty Razorpay sandbox dotenv lines, `values_included: false`, and no secret values inspected or live API calls performed
+  - `UV_CACHE_DIR=/private/tmp/ares-uv-cache uv run --directory /Users/raghav/.ares/ares --extra dev python -m apps.ares.ares.cli integration-preflight --env-template --provider razorpay`
+    - Result: exited `0`, printed only empty dotenv assignments for Razorpay sandbox env names
+  - `UV_CACHE_DIR=/private/tmp/ares-uv-cache uv run --directory /Users/raghav/.ares/ares --extra dev python -m apps.ares.ares.cli integration-preflight --readiness-packet --provider razorpay --json`
+    - Result: exited `1`, scoped to `provider_scope: ["razorpay"]`, with `adapter_hardening_gate: "blocked_until_checklist_passes"`, setup checklist, operator commands, required external artifacts, benchmark feature rows, production-blocker mapping, and no secret values inspected or live API calls performed
+  - `UV_CACHE_DIR=/private/tmp/ares-uv-cache uv run --directory /Users/raghav/.ares/ares --extra dev python -m apps.ares.ares.cli integration-preflight --provider razorpay --json`
+    - Result: exited `1`, scoped to `provider_scope: ["razorpay"]`, with `blocked_provider_count: 1`, `can_run_sandbox_adapter_tests: false`, and no secret values inspected
+  - `UV_CACHE_DIR=/private/tmp/ares-uv-cache uv run --directory /Users/raghav/.ares/ares --extra dev python -m apps.ares.ares.cli integration-preflight --list-providers --provider razorpay --json`
+    - Result: exited `0`, scoped to `provider_scope: ["razorpay"]`, listed sandbox env names and confirmation flag, and no secret values inspected or live API calls performed
+  - `UV_CACHE_DIR=/private/tmp/ares-uv-cache uv run --directory /Users/raghav/.ares/ares --extra dev python -m apps.ares.ares.cli integration-preflight --provider stripe --json`
+    - Result: exited `1`, returned `unknown_integration_provider`, valid provider keys, and no secret values inspected or live API calls performed
+  - `UV_CACHE_DIR=/private/tmp/ares-uv-cache uv run --directory /Users/raghav/.ares/ares --extra dev python -m apps.ares.ares.cli integration-preflight --provider razorpay --confirm-safe-sandbox stripe --json`
+    - Result: exited `1`, returned `unknown_integration_provider` for the unknown confirmation key, valid provider keys, and no secret values inspected or live API calls performed
+  - `UV_CACHE_DIR=/private/tmp/ares-uv-cache uv run --directory /Users/raghav/.ares/ares --extra dev python -m apps.ares.ares.cli integration-preflight --provider razorpay --confirm-safe-sandbox cashfree --json`
+    - Result: exited `1`, returned `invalid_integration_provider_scope` for the out-of-scope confirmation key, selected provider keys, and no secret values inspected or live API calls performed
 
 **Current blocker evidence:**
 - Current Ares app-layer integrations remain deliberately local/contract-only:
@@ -1066,11 +1094,38 @@ Slice A46 — Production integration adapter hardening
 
 **Current limitation:** This is a local integration prerequisite preflight only. It does not inspect secret values, call live APIs, perform sandbox submissions, replace contract-only adapters with real provider clients, or prove production integration readiness.
 
+### Next recommended slice
+
+Slice A47 — Source-of-truth feature evidence traceability
+
+**Objective:** Make the benchmark audit trace every enumerated source-of-truth feature row to the local implementation slice, workflow files, tests, current limitation, and production proof still required, without upgrading local coverage into a ship-ready claim.
+
+**Status:** Implemented locally and verified.
+
+**Evidence:**
+- Extended `tests/ares/test_benchmark_completion_audit.py`
+- Extended `apps/ares/ares/workflows/benchmark_audit.py`
+- Extended `ares benchmark-audit` text output in `apps/ares/ares/cli.py`
+- `feature_rows` now include module, priority, implementation slice, workflow files, test files, coverage type, current limitation, and required production evidence for all 48 source-of-truth rows
+- `feature_evidence` now reports `source_of_truth_feature_rows_traced: true`, `feature_rows_with_evidence: 48`, `feature_rows_missing_evidence: []`, and `feature_rows_with_production_proof: 0`
+- CLI text output now shows `Feature evidence traced: 48/48` and `Production-proof feature rows: 0/48`
+- Verified with:
+  - `UV_CACHE_DIR=/private/tmp/ares-uv-cache uv run --directory /Users/raghav/.ares/ares --extra dev python -m pytest tests/ares/test_benchmark_completion_audit.py -q -o 'addopts='`
+    - Result: `7 passed`
+  - `UV_CACHE_DIR=/private/tmp/ares-uv-cache uv run --directory /Users/raghav/.ares/ares --extra dev python -m pytest tests/ares -q -o 'addopts='`
+    - Result: `181 passed`
+  - `UV_CACHE_DIR=/private/tmp/ares-uv-cache uv run --directory /Users/raghav/.ares/ares --extra dev python -m apps.ares.ares.cli benchmark-audit --latest-local-test-result '181 passed' --include-integration-preflight --provider razorpay`
+    - Result: exited `1`, with feature evidence traced `48/48`, production-proof feature rows `0/48`, blocked Razorpay integration preflight, no secret values inspected, no live API calls, and `ship_ready: False`
+  - `UV_CACHE_DIR=/private/tmp/ares-uv-cache uv run --directory /Users/raghav/.ares/ares --extra dev python -m apps.ares.ares.cli benchmark-audit --latest-local-test-result '181 passed' --json`
+    - Result: exited `1`, with every feature row carrying local evidence metadata and `production_proof.status: "not_proven"`
+
+**Current limitation:** This is evidence traceability for local and contract coverage only. It does not prove live integrations, hosted SaaS behavior, low-end Android reliability, accountant-verified close, or 12-month compliance outcomes.
+
 ## Verification commands
 
 Targeted:
 ```bash
-UV_CACHE_DIR=/private/tmp/ares-uv-cache uv run --directory /Users/raghav/.ares/ares --extra dev python -m pytest tests/ares/test_integration_preflight.py -q -o 'addopts='
+UV_CACHE_DIR=/private/tmp/ares-uv-cache uv run --directory /Users/raghav/.ares/ares --extra dev python -m pytest tests/ares/test_benchmark_completion_audit.py -q -o 'addopts='
 ```
 
 Broader:
