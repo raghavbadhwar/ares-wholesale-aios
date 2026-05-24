@@ -7,6 +7,7 @@ from pathlib import Path
 
 from apps.ares.ares.approvals.service import ApprovalService
 from apps.ares.ares.connectors.file_ingest import ingest_export_file, ingest_message_file
+from apps.ares.ares.connectors.export_parser import UnsupportedExportError, parse_outstanding_report, parse_stock_report
 from apps.ares.ares.data.repository import BusinessRepository
 from apps.ares.ares.paths import client_root
 from apps.ares.ares.workflows.order_capture import capture_order
@@ -69,3 +70,37 @@ def process_local_inbox(*, client_id: str, repository: BusinessRepository) -> di
 
     _save_seen(client_id, seen)
     return {"exports_imported": exports_imported, "orders_captured": orders_captured, "errors": errors}
+
+
+def validate_local_inputs(*, client_id: str) -> dict:
+    """Check dropped client files without mutating repository state."""
+    root = client_root(client_id)
+    exports_dir = root / "exports"
+    inbox_dir = root / "inbox"
+    parseable_exports: list[str] = []
+    blocking_errors: list[str] = []
+
+    for path in sorted(exports_dir.glob("*.csv")) if exports_dir.exists() else []:
+        lowered = path.name.lower()
+        try:
+            if any(token in lowered for token in ["outstanding", "receivable", "payment", "invoice"]):
+                parse_outstanding_report(path)
+            elif any(token in lowered for token in ["stock", "inventory"]):
+                parse_stock_report(path)
+            else:
+                raise UnsupportedExportError(f"Cannot infer export type from filename: {path.name}")
+            parseable_exports.append(str(path))
+        except Exception as exc:
+            blocking_errors.append(f"{path.name}: {exc}")
+
+    inbox_messages = len(list(inbox_dir.glob("*.txt"))) if inbox_dir.exists() else 0
+    exports_found = len(list(exports_dir.glob("*.csv"))) if exports_dir.exists() else 0
+
+    return {
+        "client_id": client_id,
+        "root": str(root),
+        "exports_found": exports_found,
+        "parseable_exports": parseable_exports,
+        "inbox_messages": inbox_messages,
+        "blocking_errors": blocking_errors,
+    }

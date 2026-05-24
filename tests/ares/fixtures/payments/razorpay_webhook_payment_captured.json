@@ -1,0 +1,27 @@
+{
+  "entity": "event",
+  "account_id": "acc_sandbox_ares",
+  "event": "payment.captured",
+  "created_at": 1782009600,
+  "contains_redacted_test_data": true,
+  "payload_reference": "redacted://payments/razorpay/webhook-captured-1",
+  "payload": {
+    "payment": {
+      "entity": {
+        "id": "pay_sbox_adapter_0001",
+        "amount": 1180000,
+        "currency": "INR",
+        "status": "captured",
+        "captured_at": 1782009600,
+        "notes": {
+          "invoice_id": "inv_1",
+          "customer_id": "cust_1",
+          "utr": "UTR-SANDBOX-ADAPTER-0001"
+        },
+        "acquirer_data": {
+          "rrn": "UTR-SANDBOX-ADAPTER-0001"
+        }
+      }
+    }
+  }
+}

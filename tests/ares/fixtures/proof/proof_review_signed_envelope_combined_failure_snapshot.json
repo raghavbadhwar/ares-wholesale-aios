@@ -1,0 +1,45 @@
+{
+  "latest_local_test_result": "202 passed in 2.74s",
+  "mode": "local_proof_review_signed_envelope_packet",
+  "reviewer_key_registry_snapshot_summary": {
+    "artifacts_proven_by_registry_snapshot": 0,
+    "latest_snapshot_hash": "",
+    "latest_snapshot_id": "",
+    "registry_snapshots_blocked": 2,
+    "registry_snapshots_total": 2,
+    "registry_snapshots_verified": 0,
+    "snapshot_chain_verification_enabled": true
+  },
+  "reviewer_key_registry_summary": {
+    "active_registry_entries": 0,
+    "artifacts_proven_by_key_registry": 0,
+    "envelopes_blocked_by_reviewer_key": 1,
+    "envelopes_with_allowed_reviewer_key": 0,
+    "registry_entries_total": 0,
+    "revoked_registry_entries": 0
+  },
+  "signature_scope": "signed_external_metadata_review_decision_envelopes_only",
+  "signed_envelope_summary": {
+    "artifacts_proven_by_signed_envelope": 0,
+    "signed_envelopes_accepted": 0,
+    "signed_envelopes_blocked": 1,
+    "signed_envelopes_total": 1,
+    "signed_envelopes_with_approved_decisions": 0,
+    "signed_envelopes_with_rejected_decisions": 0
+  },
+  "signed_review_envelopes": {
+    "signed-missing-signature-reference": {
+      "artifact_id": "owner_briefing_delivery_evidence",
+      "decision_status": "external_review_blocked",
+      "key_registry_snapshot_hash": "",
+      "key_registry_snapshot_id": "",
+      "key_registry_status": "blocked_reviewer_key",
+      "rejection_reasons": [
+        "missing_signed_envelope_fields: signature_reference",
+        "reviewer_key_registry_snapshot_chain_unverified"
+      ],
+      "reviewer": "external_reviewer",
+      "signature_status": "signature_metadata_blocked"
+    }
+  }
+}

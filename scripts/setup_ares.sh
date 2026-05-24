@@ -157,7 +157,7 @@ clone_or_update_repo() {
 run_ares() {
   (
     cd "$REPO_DIR"
-    ARES_HOME="$ARES_HOME" "$UV_BIN" run hermes ares "$@"
+    ARES_HOME="$ARES_HOME" HERMES_HOME="${HERMES_HOME:-$ARES_HOME}" "$UV_BIN" run hermes ares "$@"
   )
 }
 
@@ -170,6 +170,7 @@ install_wrappers() {
 #!/usr/bin/env bash
 set -euo pipefail
 export ARES_HOME="\${ARES_HOME:-$ARES_HOME}"
+export HERMES_HOME="\${HERMES_HOME:-\$ARES_HOME}"
 cd "$REPO_DIR"
 exec "$UV_BIN" run hermes ares "\$@"
 EOF
@@ -178,6 +179,7 @@ EOF
 #!/usr/bin/env bash
 set -euo pipefail
 export ARES_HOME="\${ARES_HOME:-$ARES_HOME}"
+export HERMES_HOME="\${HERMES_HOME:-\$ARES_HOME}"
 cd "$REPO_DIR"
 exec "$UV_BIN" run hermes "\$@"
 EOF

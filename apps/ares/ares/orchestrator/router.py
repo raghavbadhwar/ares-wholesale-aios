@@ -14,6 +14,7 @@ from apps.ares.ares.workflows.weekly_war_room import run_weekly_war_room
 
 
 WORKFLOW_ALIASES = {
+    "order-capture": ("order", "orders", "pending orders", "dispatch", "bhejna"),
     "payment-radar": ("payment", "paise", "outstanding", "collection", "receivable"),
     "stock-radar": ("stock", "inventory", "low stock", "khatam"),
     "weekly-war-room": ("weekly", "war room", "report", "hafta"),
@@ -91,8 +92,9 @@ class AresRouter:
             "workflow": "fallback",
             "payload": {},
             "message": (
-                "I can run daily brief, payment radar, stock radar, weekly report, "
-                "or approval center. Share an export/file if data is missing."
+                "I can run daily brief, order capture, payment radar, stock radar, "
+                "weekly report, approval center, or autonomous cycle. Share an "
+                "export/file if data is missing."
             ),
         }
 

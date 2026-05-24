@@ -7,7 +7,7 @@ from apps.ares.ares.cli import build_chat_context, build_chat_launch
 from apps.ares.ares.profiles import ClientProfile, write_client_profile
 
 
-def test_build_chat_context_writes_company_brain_instructions(tmp_path: Path, monkeypatch) -> None:
+def test_build_chat_context_writes_wholesaler_aios_instructions(tmp_path: Path, monkeypatch) -> None:
     monkeypatch.setenv("ARES_HOME", str(tmp_path / ".ares"))
     profile = ClientProfile(
         client_slug="demo-wholesaler",
@@ -22,10 +22,12 @@ def test_build_chat_context_writes_company_brain_instructions(tmp_path: Path, mo
     assert context_path.name == "AGENTS.md"
     assert context_path.parent == tmp_path / ".ares" / "clients" / "demo-wholesaler" / "chat"
     text = context_path.read_text(encoding="utf-8")
-    assert "You are Ares, the company brain for Demo Wholesale" in text
+    assert "You are Ares, the wholesaler AIOS for Demo Wholesale" in text
     assert "Client slug: demo-wholesaler" in text
     assert "ares autonomous-cycle --client demo-wholesaler" in text
     assert "approval-first" in text.lower()
+    assert "Approach every problem, query, and task through the lens of a wholesaler business operator" in text
+    assert "collections, pending orders, dispatch risk, low stock, reorder timing, supplier follow-up, GST/compliance, and owner approvals" in text
 
 
 def test_build_chat_launch_uses_client_context_directory_and_query(tmp_path: Path, monkeypatch) -> None:
@@ -50,6 +52,7 @@ def test_build_chat_launch_uses_client_context_directory_and_query(tmp_path: Pat
     assert launch.env["ARES_CLIENT"] == "demo"
     assert launch.env["ARES_BUSINESS_NAME"] == "Demo"
     assert launch.env["ARES_HOME"] == str(tmp_path / ".ares")
+    assert launch.env["HERMES_HOME"] == str(tmp_path / ".ares")
     assert launch.env["ARES_CHAT_CONTEXT"] == str(context_path)
     assert launch.env["HERMES_SKIN"] == "ares"
     assert str(Path(ares_cli.__file__).resolve().parents[3]) in launch.env["PYTHONPATH"]

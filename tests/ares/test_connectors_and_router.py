@@ -10,7 +10,7 @@ from apps.ares.ares.connectors.message_ingest import ingest_forwarded_message
 from apps.ares.ares.data.models import Invoice, StockRecord
 from apps.ares.ares.data.repository import InMemoryRepository
 from apps.ares.ares.orchestrator.intent_classifier import EventIntent, classify_event, classify_text
-from apps.ares.ares.orchestrator.router import AresRouter, route_text
+from apps.ares.ares.orchestrator.router import AresRouter, WORKFLOW_ALIASES, route_text
 
 
 class FakeDrive:
@@ -90,3 +90,8 @@ def test_router_runs_workflow_with_available_data() -> None:
     assert "Ares Brief" in result["message"]
     assert result["payload"]["pending_approvals"] == 0
     assert result["payload"]["payments"]["priorities"]
+
+
+def test_router_workflow_registry_includes_executable_order_capture() -> None:
+    assert "order-capture" in WORKFLOW_ALIASES
+    assert route_text("pending orders dikhao") == "order-capture"

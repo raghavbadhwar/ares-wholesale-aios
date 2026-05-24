@@ -1,0 +1,34 @@
+{
+  "entity": "event",
+  "account_id": "acc_sandbox_ares",
+  "event": "payment.refunded",
+  "created_at": 1782009600,
+  "contains_redacted_test_data": true,
+  "payload_reference": "redacted://payments/razorpay/webhook-refunded-1",
+  "payload": {
+    "payment": {
+      "entity": {
+        "id": "pay_sbox_adapter_refund_0001",
+        "amount": 1180000,
+        "currency": "INR",
+        "status": "refunded",
+        "captured_at": 1782009600,
+        "notes": {
+          "invoice_id": "inv_1",
+          "customer_id": "cust_1",
+          "utr": "UTR-SANDBOX-ADAPTER-REFUND-0001"
+        },
+        "acquirer_data": {
+          "rrn": "UTR-SANDBOX-ADAPTER-REFUND-0001"
+        }
+      }
+    },
+    "refund": {
+      "entity": {
+        "id": "rfnd_sbox_adapter_0001",
+        "amount": 1180000,
+        "status": "processed"
+      }
+    }
+  }
+}

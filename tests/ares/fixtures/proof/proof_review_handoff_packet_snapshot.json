@@ -1,0 +1,118 @@
+{
+  "artifact_review_statuses": {
+    "ca_close_without_reentry_evidence": {
+      "metadata_status": "missing",
+      "required_reviewer": "ca_reviewer",
+      "review_status": "blocked_until_metadata_submitted"
+    },
+    "gst_12_month_outcome_evidence": {
+      "metadata_status": "missing",
+      "required_reviewer": "accountant_reviewer",
+      "review_status": "blocked_until_metadata_submitted"
+    },
+    "large_distributor_monthly_ops_evidence": {
+      "metadata_status": "missing",
+      "required_reviewer": "accountant_or_owner_reviewer",
+      "review_status": "blocked_until_metadata_submitted"
+    },
+    "low_literacy_pilot_evidence": {
+      "metadata_status": "missing",
+      "required_reviewer": "observer",
+      "review_status": "blocked_until_metadata_submitted"
+    },
+    "owner_briefing_delivery_evidence": {
+      "metadata_status": "metadata_accepted_for_review",
+      "required_reviewer": "external_reviewer",
+      "review_status": "pending_external_review"
+    },
+    "provider_sandbox_adapter_evidence": {
+      "metadata_status": "metadata_accepted_for_review",
+      "required_reviewer": "operator_or_accountant_reviewer",
+      "review_status": "pending_external_review"
+    },
+    "udhaar_settlement_evidence": {
+      "metadata_status": "missing",
+      "required_reviewer": "owner_or_accountant_reviewer",
+      "review_status": "blocked_until_metadata_submitted"
+    }
+  },
+  "artifact_review_summary": {
+    "artifact_requirements_missing_metadata": 5,
+    "artifact_requirements_proven": 0,
+    "artifact_requirements_ready_for_external_review": 2,
+    "artifact_requirements_rejected_metadata": 0,
+    "artifact_requirements_total": 7
+  },
+  "done_state_gate_review_statuses": {
+    "ca_closes_books_without_reentry": {
+      "accepted_artifact_ids": [
+        "provider_sandbox_adapter_evidence"
+      ],
+      "metadata_status": "metadata_partially_submitted",
+      "missing_artifact_ids": [
+        "ca_close_without_reentry_evidence"
+      ],
+      "rejected_artifact_ids": [],
+      "review_status": "blocked_until_required_metadata_submitted"
+    },
+    "every_rupee_udhaar_settled": {
+      "accepted_artifact_ids": [
+        "provider_sandbox_adapter_evidence"
+      ],
+      "metadata_status": "metadata_partially_submitted",
+      "missing_artifact_ids": [
+        "udhaar_settlement_evidence"
+      ],
+      "rejected_artifact_ids": [],
+      "review_status": "blocked_until_required_metadata_submitted"
+    },
+    "owner_trusts_agent_summaries": {
+      "accepted_artifact_ids": [
+        "owner_briefing_delivery_evidence"
+      ],
+      "metadata_status": "metadata_submitted_for_review",
+      "missing_artifact_ids": [],
+      "rejected_artifact_ids": [],
+      "review_status": "pending_external_review"
+    },
+    "reliable_7am_owner_briefing": {
+      "accepted_artifact_ids": [
+        "owner_briefing_delivery_evidence"
+      ],
+      "metadata_status": "metadata_submitted_for_review",
+      "missing_artifact_ids": [],
+      "rejected_artifact_ids": [],
+      "review_status": "pending_external_review"
+    },
+    "small_wholesaler_no_training": {
+      "accepted_artifact_ids": [],
+      "metadata_status": "metadata_missing",
+      "missing_artifact_ids": [
+        "low_literacy_pilot_evidence"
+      ],
+      "rejected_artifact_ids": [],
+      "review_status": "blocked_until_required_metadata_submitted"
+    },
+    "zero_gst_penalty_12_months": {
+      "accepted_artifact_ids": [
+        "provider_sandbox_adapter_evidence"
+      ],
+      "metadata_status": "metadata_partially_submitted",
+      "missing_artifact_ids": [
+        "gst_12_month_outcome_evidence"
+      ],
+      "rejected_artifact_ids": [],
+      "review_status": "blocked_until_required_metadata_submitted"
+    }
+  },
+  "done_state_gate_review_summary": {
+    "done_state_gates_blocked_until_required_metadata_submitted": 4,
+    "done_state_gates_blocked_until_valid_redacted_metadata": 0,
+    "done_state_gates_pending_external_review": 2,
+    "done_state_gates_proven_by_review": 0,
+    "done_state_gates_total": 6
+  },
+  "latest_local_test_result": "202 passed in 2.74s",
+  "mode": "local_proof_review_handoff_packet",
+  "review_scope": "metadata_review_only"
+}

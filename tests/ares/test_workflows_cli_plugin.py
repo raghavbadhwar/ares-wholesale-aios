@@ -173,3 +173,17 @@ def test_cli_run_workflow_from_sample_profile(
     assert main() == 0
     assert "Ares Brief" in capsys.readouterr().out
 
+
+def test_cli_list_workflows_includes_every_router_workflow(
+    tmp_path: Path,
+    monkeypatch,
+    capsys,
+) -> None:
+    from apps.ares.ares.orchestrator.router import WORKFLOW_ALIASES
+
+    monkeypatch.setenv("ARES_HOME", str(tmp_path / ".ares"))
+    monkeypatch.setattr("sys.argv", ["ares", "list-workflows"])
+
+    assert main() == 0
+    listed = set(capsys.readouterr().out.strip().splitlines())
+    assert set(WORKFLOW_ALIASES) <= listed

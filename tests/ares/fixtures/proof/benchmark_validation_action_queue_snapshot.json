@@ -1,0 +1,44 @@
+{
+  "action_queue": {
+    "action_item": {
+      "action_item_hash": "d683f03f318e5d8b9f80b087f20a286726bc0615e198274bec95ec5b6b432a19",
+      "action_status": "open",
+      "hash_verification_status": "verified",
+      "next_action_type_hash": "13d4e143ee4a8c28f84c14812a41237fd25198fbcdd97be74fd736f26b4a1bb5",
+      "previous_action_item_hash": "GENESIS",
+      "source_rejection_reasons": [
+        "operator_reference_missing"
+      ],
+      "specialized_subagent_profile": "integration_accounting_reviewer",
+      "validation_gate": "operator_reference_required"
+    },
+    "action_queue_scope_hash": "06e857f20500e69b0991d880ca096c1207228b368c1ad2368e0ce5aee25a22a1",
+    "generated_from_hash": "10b19b36f3d597fee89dadadeac6cbe8c63aa79b3dab3090e1470e85acca2096",
+    "local_execution_constraints": {
+      "artifact_files_read": false,
+      "external_contact_performed": false,
+      "live_api_called": false,
+      "metadata_only": true,
+      "secret_values_inspected": false
+    },
+    "proves_benchmark_parity": false,
+    "proves_ship_ready": false
+  },
+  "action_queue_key_hash": "a740719704929f8da08b201c32859ca3f25ee573352ddca924578f1227e73396",
+  "hash_chain_summary": {
+    "action_items_hash_failed": 0,
+    "action_items_hash_verified": 1,
+    "hash_algorithm": "sha256",
+    "hash_chain_verification_enabled": true,
+    "hash_chain_verified": true
+  },
+  "summary": {
+    "action_items_closed_no_proof": 0,
+    "action_items_open": 1,
+    "action_items_total": 1,
+    "artifacts_proven": 0,
+    "specialized_subagent_profiles_total": 1,
+    "validation_gates_requiring_followup": 1,
+    "validation_gates_total": 9
+  }
+}

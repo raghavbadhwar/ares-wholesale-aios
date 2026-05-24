@@ -1,0 +1,21 @@
+{
+  "event": "checkout.order.failed",
+  "eventTime": "2026-05-23T10:28:00+05:30",
+  "payload_reference": "redacted://payments/phonepe/webhook-failed-1",
+  "contains_redacted_test_data": true,
+  "payload": {
+    "merchantId": "merchant_sandbox_demo",
+    "merchantTransactionId": "inv_1",
+    "transactionId": "ppepay_sbox_fail_0001",
+    "amount": 1180000,
+    "state": "FAILED",
+    "responseCode": "PAYMENT_ERROR",
+    "paymentInstrument": {
+      "type": "UPI_INTENT"
+    },
+    "metaInfo": {
+      "customerId": "cust_1",
+      "utr": "UTR-PPE-FAIL-0001"
+    }
+  }
+}

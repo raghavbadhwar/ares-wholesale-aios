@@ -89,6 +89,11 @@ export function getRegisteredCount(): number {
 
 declare global {
   interface Window {
+    __ARES_PLUGIN_SDK__: unknown;
+    __ARES_PLUGINS__: {
+      register: typeof registerPlugin;
+      registerSlot: typeof registerSlot;
+    };
     __HERMES_PLUGIN_SDK__: unknown;
     __HERMES_PLUGINS__: {
       register: typeof registerPlugin;
@@ -98,12 +103,14 @@ declare global {
 }
 
 export function exposePluginSDK() {
-  window.__HERMES_PLUGINS__ = {
+  const pluginRegistry = {
     register: registerPlugin,
     registerSlot,
   };
+  window.__ARES_PLUGINS__ = pluginRegistry;
+  window.__HERMES_PLUGINS__ = pluginRegistry;
 
-  window.__HERMES_PLUGIN_SDK__ = {
+  const pluginSdk = {
     // React core — plugins use these instead of importing react
     React,
     hooks: {
@@ -146,4 +153,6 @@ export function exposePluginSDK() {
     // Hooks
     useI18n,
   };
+  window.__ARES_PLUGIN_SDK__ = pluginSdk;
+  window.__HERMES_PLUGIN_SDK__ = pluginSdk;
 }

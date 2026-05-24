@@ -1,0 +1,14 @@
+{
+  "provider": "razorpay",
+  "sandbox": true,
+  "event_type": "payment.captured",
+  "payment_id": "pay_sbox_0001",
+  "invoice_id": "inv_1",
+  "customer_id": "cust_1",
+  "amount": 11800,
+  "utr": "UTR-SANDBOX-0001",
+  "paid_on": "2026-05-21",
+  "signature_verification_status": "verified_contract_fixture",
+  "redaction_confirmed": true,
+  "payload_reference": "redacted://payments/razorpay/captured-1"
+}

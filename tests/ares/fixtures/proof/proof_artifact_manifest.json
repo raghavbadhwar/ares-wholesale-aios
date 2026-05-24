@@ -1,0 +1,23 @@
+{
+  "artifacts": [
+    {
+      "artifact_id": "provider_sandbox_adapter_evidence",
+      "artifact_path_or_reference": "redacted://razorpay/sandbox-run-1",
+      "provider": "razorpay",
+      "sandbox_or_production_like_tenant": "sandbox",
+      "run_timestamp": "2026-05-22T09:00:00+05:30",
+      "operator_or_accountant_reviewer": "ops-reviewer-redacted",
+      "redaction_confirmed": true
+    },
+    {
+      "artifact_id": "owner_briefing_delivery_evidence",
+      "delivery_period": "2026-05",
+      "scheduled_delivery_time": "07:00",
+      "successful_delivery_count": 20,
+      "missed_delivery_count": 0,
+      "owner_acknowledgement_reference": "redacted-owner-review-1",
+      "fallback_channel_used": "whatsapp_sandbox",
+      "redaction_confirmed": true
+    }
+  ]
+}

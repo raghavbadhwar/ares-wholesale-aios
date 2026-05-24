@@ -1,0 +1,34 @@
+{
+  "artifact_id": "provider_sandbox_adapter_evidence",
+  "bundle_id": "external-evidence-bundle-gst-bc1328ed022e",
+  "filing_identity_metadata": {
+    "filing_period": "2026-05",
+    "gstin": "27REDAC1234F1Z5",
+    "operation": "gstr1_return_upload",
+    "portal_reference": "GSTN-SANDBOX-REF-0001",
+    "redaction_confirmed": true
+  },
+  "intake_id": "reviewed-gst-evidence-intake-3467706e7da8",
+  "operator_login_metadata": {
+    "actor_role": "accountant",
+    "login_reference": "redacted-gst-operator-login-1",
+    "login_surface": "gstn_nic_sandbox_operator_console",
+    "redaction_confirmed": true,
+    "session_reference": "redacted-gst-session-1"
+  },
+  "provider": "gstn_nic",
+  "redaction_confirmed": true,
+  "review_outcome": "metadata_review_complete_not_verified",
+  "review_scope": "reviewed_external_evidence_intake_only",
+  "reviewed_at": "2026-05-23T12:15:00+05:30",
+  "reviewer_reference": "redacted-gst-reviewer-1",
+  "subject_metadata": {
+    "filing_period": "2026-05",
+    "gstin": "27REDAC1234F1Z5",
+    "operation": "gstr1_return_upload",
+    "portal_reference": "GSTN-SANDBOX-REF-0001",
+    "redaction_confirmed": true
+  },
+  "subject_metadata_kind": "gst_filing_identity",
+  "transcript_id": "gst_txn_1c9236b98d7a"
+}

@@ -1,0 +1,35 @@
+{
+  "latest_local_test_result": "202 passed in 2.74s",
+  "mode": "local_reviewed_external_evidence_intake_packet",
+  "reviewed_evidence_intake_summary": {
+    "intakes_accepted_for_local_replay": 0,
+    "intakes_blocked": 1,
+    "intakes_rejected_after_review": 0,
+    "intakes_resubmitted_after_review_rejection": 1,
+    "intakes_total": 1,
+    "intakes_with_multi_attempt_review_history": 1
+  },
+  "reviewed_evidence_intakes": {
+    "reviewed-tally-evidence-intake-cb1bdc4621f1": {
+      "intake_status": "blocked_until_metadata_ready",
+      "rejection_reasons": [
+        "prior_review_cycle:1:review_resubmission_reference_missing",
+        "review_rejection_reason:company_scope_still_incomplete"
+      ],
+      "review_cycle_history_summary": {
+        "all_prior_cycles_complete": false,
+        "multi_attempt_review_replay": true,
+        "prior_review_cycle_count": 2,
+        "total_review_cycle_count": 3
+      },
+      "review_outcome": "metadata_review_resubmitted_after_rejection",
+      "review_rejection_summary": {
+        "rejected_after_review": false,
+        "reopened_after_review_rejection": true,
+        "review_rejection_reason_count": 1,
+        "review_rejection_reference_present": true,
+        "review_resubmission_reference_present": true
+      }
+    }
+  }
+}

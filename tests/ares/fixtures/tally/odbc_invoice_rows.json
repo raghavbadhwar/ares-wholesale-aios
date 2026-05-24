@@ -1,0 +1,21 @@
+{
+  "provider": "tally_busy",
+  "sandbox": true,
+  "recordset": "voucher_summary",
+  "rows": [
+    {
+      "voucher_number": "INV-SBOX-001",
+      "party_ledger": "Raj Traders Sandbox",
+      "amount": 11800.0,
+      "status": "accepted"
+    },
+    {
+      "voucher_number": "PAY-SBOX-001",
+      "party_ledger": "Raj Traders Sandbox",
+      "amount": 11800.0,
+      "status": "accepted"
+    }
+  ],
+  "redaction_confirmed": true,
+  "payload_reference": "redacted://tally/sandbox/odbc-voucher-summary-1"
+}

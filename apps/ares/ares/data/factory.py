@@ -21,5 +21,6 @@ def create_repository_for_profile(profile: ClientProfile) -> BusinessRepository:
         return GoogleSheetsRepository(
             client=GwsSheetsClient(),
             spreadsheet_id=profile.google.command_center_sheet_id,
+            client_slug=profile.client_slug,
         )
     return JsonClientRepository(client_root(profile.client_slug) / "data")

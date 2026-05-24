@@ -1,0 +1,9 @@
+{
+  "artifact_id": "provider_sandbox_adapter_evidence",
+  "artifact_path_or_reference": "redacted://whatsapp_business/whatsapp_txn_5c80a0e615b2",
+  "provider": "whatsapp_business",
+  "sandbox_or_production_like_tenant": "sandbox",
+  "run_timestamp": "2026-05-23T11:00:00+05:30",
+  "operator_or_accountant_reviewer": "redacted-ops-reviewer-2",
+  "redaction_confirmed": true
+}

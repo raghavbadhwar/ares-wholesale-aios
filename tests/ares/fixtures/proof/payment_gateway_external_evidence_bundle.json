@@ -1,0 +1,58 @@
+{
+  "bundle_id": "external-evidence-bundle-payment-demo",
+  "generated_at": "2026-05-23T10:30:00+05:30",
+  "redaction_confirmed": true,
+  "artifacts": [
+    {
+      "artifact_id": "provider_sandbox_adapter_evidence",
+      "artifact_path_or_reference": "redacted://payment_gateway/razorpay/payment_txn_6023a1f90409",
+      "provider": "razorpay",
+      "sandbox_or_production_like_tenant": "sandbox",
+      "run_timestamp": "2026-05-23T10:30:00+05:30",
+      "operator_or_accountant_reviewer": "redacted-ops-reviewer-1",
+      "redaction_confirmed": true
+    }
+  ],
+  "review_decisions": [
+    {
+      "artifact_id": "provider_sandbox_adapter_evidence",
+      "decision": "approved",
+      "reviewer": "operator_or_accountant_reviewer",
+      "review_reference": "redacted-ops-reviewer-1",
+      "reviewed_at": "2026-05-23T10:30:00+05:30",
+      "redaction_confirmed": true
+    }
+  ],
+  "signed_envelopes": [
+    {
+      "envelope_id": "signed-payment-proof-demo",
+      "signature_scheme": "local_metadata_signature_v1",
+      "signer_key_reference": "redacted-reviewer-key-1",
+      "signature_reference": "redacted-signature-reference-1",
+      "signed_at": "2026-05-23T10:30:00+05:30",
+      "decision": {
+        "artifact_id": "provider_sandbox_adapter_evidence",
+        "decision": "approved",
+        "reviewer": "operator_or_accountant_reviewer",
+        "review_reference": "redacted-ops-reviewer-1",
+        "reviewed_at": "2026-05-23T10:30:00+05:30",
+        "redaction_confirmed": true
+      }
+    }
+  ],
+  "reviewer_key_registry_snapshots": [
+    {
+      "snapshot_id": "registry-snapshot-payment-demo",
+      "recorded_at": "2026-05-23T10:30:00+05:30",
+      "reviewer_keys": [
+        {
+          "reviewer": "operator_or_accountant_reviewer",
+          "signer_key_reference": "redacted-reviewer-key-1",
+          "key_status": "active"
+        }
+      ],
+      "previous_snapshot_hash": "GENESIS",
+      "snapshot_hash": "eec9e0e0233fa20058e70c5255f6ab106ee70bfc0a1d819d6b9601df782a7040"
+    }
+  ]
+}

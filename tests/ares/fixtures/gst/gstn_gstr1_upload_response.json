@@ -1,0 +1,20 @@
+{
+  "provider": "gstn_nic",
+  "sandbox": true,
+  "operation": "gstr1_return_upload",
+  "gstin": "27REDAC1234F1Z5",
+  "request_payload": {
+    "period": "2026-05",
+    "sections": {
+      "b2b": 2,
+      "b2cs": 1
+    }
+  },
+  "response": {
+    "status": "accepted",
+    "reference_id": "GSTN-SANDBOX-REF-0001",
+    "queue_status": "queued"
+  },
+  "redaction_confirmed": true,
+  "payload_reference": "redacted://gstn/sandbox/gstr1-upload-accepted-1"
+}

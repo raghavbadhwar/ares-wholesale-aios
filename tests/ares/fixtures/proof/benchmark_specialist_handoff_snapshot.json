@@ -1,0 +1,106 @@
+{
+  "handoff_packet": {
+    "artifact_ids": [
+      "provider_sandbox_adapter_evidence"
+    ],
+    "assigned_actions": [
+      {
+        "artifact_id": "provider_sandbox_adapter_evidence",
+        "current_action_status": "in_progress",
+        "instructions": [
+          "collect accepted redacted metadata for provider_sandbox_adapter_evidence",
+          "do not read artifact files inside this local workflow",
+          "do not inspect secrets or call live APIs",
+          "resubmit bundle metadata for external review"
+        ],
+        "latest_action_entry_id": "action-entry-from-subagent-1",
+        "next_action_type": "collect_redacted_metadata",
+        "proves_artifact_requirement": false
+      }
+    ],
+    "execution_journal_entries": [
+      {
+        "artifact_ids": [
+          "provider_sandbox_adapter_evidence"
+        ],
+        "journal_entry_id": "external-evidence-bundle-1:work_order_prepared:integration_accounting_reviewer",
+        "journal_stage": "work_order_prepared",
+        "local_execution_constraints": {
+          "artifact_files_read": false,
+          "external_contact_performed": false,
+          "live_api_called": false,
+          "metadata_only": true,
+          "secret_values_inspected": false
+        },
+        "proves_artifact_requirement": false,
+        "specialized_subagent_profile": "integration_accounting_reviewer",
+        "work_order_id": "external-evidence-bundle-1:integration_accounting_reviewer",
+        "work_order_status": "in_progress"
+      },
+      {
+        "action_entries_ingested": 1,
+        "journal_entry_id": "external-evidence-bundle-1:subagent_result:subagent-result-accepted",
+        "journal_stage": "subagent_result_accepted",
+        "proves_artifact_requirement": false,
+        "rejection_reasons": [],
+        "result_id": "subagent-result-accepted",
+        "specialized_subagent_profile": "integration_accounting_reviewer",
+        "work_order_id": "external-evidence-bundle-1:integration_accounting_reviewer"
+      },
+      {
+        "action_entry_id": "action-entry-from-subagent-1",
+        "action_status": "in_progress",
+        "artifact_id": "provider_sandbox_adapter_evidence",
+        "journal_entry_id": "external-evidence-bundle-1:action_status_replayed:action-entry-from-subagent-1",
+        "journal_stage": "action_status_replayed",
+        "proves_artifact_requirement": false,
+        "replay_status": "applied"
+      }
+    ],
+    "handoff_hash": "e87149a5fb31c53aa5da46c8a265014c3d051297a25cf2e740b3b4de2afbcf77",
+    "handoff_scope": "local_specialist_metadata_packet_only",
+    "hash_verification_status": "verified",
+    "local_execution_constraints": {
+      "artifact_files_read": false,
+      "external_contact_performed": false,
+      "live_api_called": false,
+      "metadata_only": true,
+      "secret_values_inspected": false
+    },
+    "previous_handoff_hash": "e6718ce28f0c5aa6425336a642cc9bed4ce85e3461a7c700a607e5ae3cdc5659",
+    "proves_benchmark_parity": false,
+    "proves_ship_ready": false,
+    "specialized_subagent_profile": "integration_accounting_reviewer",
+    "subagent_results": [
+      {
+        "action_entries_ingested": 1,
+        "proves_artifact_requirement": false,
+        "rejection_reasons": [],
+        "reported_at": "2026-05-22T12:00:00+05:30",
+        "result_id": "subagent-result-accepted",
+        "result_status": "accepted_for_local_replay",
+        "specialized_subagent_profile": "integration_accounting_reviewer",
+        "work_order_id": "external-evidence-bundle-1:integration_accounting_reviewer"
+      }
+    ],
+    "work_order_id": "external-evidence-bundle-1:integration_accounting_reviewer",
+    "work_order_scope": "local_metadata_task_only",
+    "work_order_status": "in_progress"
+  },
+  "hash_chain_summary": {
+    "hash_algorithm": "sha256",
+    "hash_chain_verification_enabled": true,
+    "hash_chain_verified": true,
+    "specialist_handoff_packets_hash_failed": 0,
+    "specialist_handoff_packets_hash_verified": 7
+  },
+  "summary": {
+    "action_entries_replayed": 1,
+    "artifacts_proven_by_specialist_handoff": 0,
+    "specialist_packets_closed_no_proof": 0,
+    "specialist_packets_in_progress": 1,
+    "specialist_packets_open": 6,
+    "specialist_packets_total": 7,
+    "specialist_packets_with_results": 1
+  }
+}

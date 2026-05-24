@@ -1,0 +1,11 @@
+{
+  "provider": "whatsapp_business",
+  "sandbox": true,
+  "client_id": "demo",
+  "approval_id": "appr_sandbox_receipt_001",
+  "provider_message_id": "wamid.sandbox.msg.0001",
+  "recipient_phone": "+919000000001",
+  "status": "delivered",
+  "redaction_confirmed": true,
+  "payload_reference": "redacted://whatsapp/sandbox/delivery-receipt-1"
+}

@@ -1,0 +1,465 @@
+{
+  "artifact_requirements": [
+    {
+      "accepted_metadata_fields": [
+        "artifact_path_or_reference",
+        "provider",
+        "sandbox_or_production_like_tenant",
+        "run_timestamp",
+        "operator_or_accountant_reviewer",
+        "redaction_confirmed"
+      ],
+      "artifact_id": "provider_sandbox_adapter_evidence",
+      "category": "external_integrations",
+      "metadata_validation_rules": [
+        {
+          "description": "must confirm the artifact metadata is redaction-safe",
+          "field": "redaction_confirmed",
+          "type": "exact_true"
+        }
+      ],
+      "proves_ship_ready": false,
+      "required_for_done_state_gates": [
+        "zero_gst_penalty_12_months",
+        "ca_closes_books_without_reentry",
+        "every_rupee_udhaar_settled"
+      ],
+      "required_for_feature_rows": [
+        "GSTN API Integration",
+        "UPI & Payment Gateway",
+        "WhatsApp Business Integration",
+        "Tally / Busy Sync"
+      ],
+      "required_metadata_fields": [
+        "artifact_path_or_reference",
+        "provider",
+        "sandbox_or_production_like_tenant",
+        "run_timestamp",
+        "operator_or_accountant_reviewer",
+        "redaction_confirmed"
+      ],
+      "status": "missing",
+      "submitted_metadata": null
+    },
+    {
+      "accepted_metadata_fields": [
+        "artifact_path_or_reference",
+        "provider",
+        "sandbox_or_production_like_tenant",
+        "run_timestamp",
+        "operator_or_accountant_reviewer",
+        "redaction_confirmed"
+      ],
+      "artifact_id": "owner_briefing_delivery_evidence",
+      "category": "owner_briefing",
+      "metadata_validation_rules": [
+        {
+          "description": "must show at least one delivered owner briefing",
+          "field": "successful_delivery_count",
+          "minimum": 1,
+          "type": "minimum_integer"
+        },
+        {
+          "description": "must confirm the artifact metadata is redaction-safe",
+          "field": "redaction_confirmed",
+          "type": "exact_true"
+        }
+      ],
+      "proves_ship_ready": false,
+      "required_for_done_state_gates": [
+        "owner_trusts_agent_summaries",
+        "reliable_7am_owner_briefing"
+      ],
+      "required_for_feature_rows": [
+        "Daily Owner Briefing"
+      ],
+      "required_metadata_fields": [
+        "delivery_period",
+        "scheduled_delivery_time",
+        "successful_delivery_count",
+        "missed_delivery_count",
+        "owner_acknowledgement_reference",
+        "fallback_channel_used",
+        "redaction_confirmed"
+      ],
+      "status": "missing",
+      "submitted_metadata": null
+    },
+    {
+      "accepted_metadata_fields": [
+        "artifact_path_or_reference",
+        "provider",
+        "sandbox_or_production_like_tenant",
+        "run_timestamp",
+        "operator_or_accountant_reviewer",
+        "redaction_confirmed"
+      ],
+      "artifact_id": "large_distributor_monthly_ops_evidence",
+      "category": "monthly_operations",
+      "metadata_validation_rules": [
+        {
+          "description": "must cover at least 120 SKUs",
+          "field": "sku_count",
+          "minimum": 120,
+          "type": "minimum_integer"
+        },
+        {
+          "description": "must cover at least 8 principals",
+          "field": "principal_count",
+          "minimum": 8,
+          "type": "minimum_integer"
+        },
+        {
+          "description": "must confirm the artifact metadata is redaction-safe",
+          "field": "redaction_confirmed",
+          "type": "exact_true"
+        }
+      ],
+      "proves_ship_ready": false,
+      "required_for_done_state_gates": [
+        "large_distributor_monthly_compliance"
+      ],
+      "required_for_feature_rows": [
+        "GSTR-1 Auto-Preparation",
+        "ITC Reconciliation (2A/2B)",
+        "Beat Route Management",
+        "Claim & Scheme Reconciliation",
+        "Principal-wise P&L"
+      ],
+      "required_metadata_fields": [
+        "monthly_period",
+        "sku_count",
+        "principal_count",
+        "gstr1_review_reference",
+        "itc_review_reference",
+        "claim_cycle_review_reference",
+        "principal_pnl_review_reference",
+        "accountant_or_owner_reviewer",
+        "redaction_confirmed"
+      ],
+      "status": "missing",
+      "submitted_metadata": null
+    },
+    {
+      "accepted_metadata_fields": [
+        "artifact_path_or_reference",
+        "provider",
+        "sandbox_or_production_like_tenant",
+        "run_timestamp",
+        "operator_or_accountant_reviewer",
+        "redaction_confirmed"
+      ],
+      "artifact_id": "gst_12_month_outcome_evidence",
+      "category": "longitudinal_compliance",
+      "metadata_validation_rules": [
+        {
+          "description": "must show zero GST penalties across the reviewed period",
+          "expected": 0,
+          "field": "penalty_count",
+          "type": "exact_integer"
+        },
+        {
+          "description": "must cover at least 12 months of agent-managed GST operation",
+          "end_field": "compliance_period_end",
+          "minimum_days": 365,
+          "start_field": "compliance_period_start",
+          "type": "minimum_date_span_days"
+        },
+        {
+          "description": "must confirm the artifact metadata is redaction-safe",
+          "field": "redaction_confirmed",
+          "type": "exact_true"
+        }
+      ],
+      "proves_ship_ready": false,
+      "required_for_done_state_gates": [
+        "zero_gst_penalty_12_months"
+      ],
+      "required_for_feature_rows": [
+        "GSTN API Integration"
+      ],
+      "required_metadata_fields": [
+        "compliance_period_start",
+        "compliance_period_end",
+        "penalty_count",
+        "accountant_reviewer",
+        "redaction_confirmed"
+      ],
+      "status": "missing",
+      "submitted_metadata": null
+    },
+    {
+      "accepted_metadata_fields": [
+        "artifact_path_or_reference",
+        "provider",
+        "sandbox_or_production_like_tenant",
+        "run_timestamp",
+        "operator_or_accountant_reviewer",
+        "redaction_confirmed"
+      ],
+      "artifact_id": "udhaar_settlement_evidence",
+      "category": "collections_outcomes",
+      "metadata_validation_rules": [
+        {
+          "description": "must cover at least one receivable invoice settlement",
+          "field": "invoice_count",
+          "minimum": 1,
+          "type": "minimum_integer"
+        },
+        {
+          "description": "must show a positive settled receivable amount",
+          "field": "settled_amount",
+          "type": "positive_decimal"
+        },
+        {
+          "description": "must show no remaining unsettled receivable amount",
+          "expected": "0.00",
+          "field": "unsettled_amount",
+          "type": "exact_decimal"
+        },
+        {
+          "description": "must confirm the artifact metadata is redaction-safe",
+          "field": "redaction_confirmed",
+          "type": "exact_true"
+        }
+      ],
+      "proves_ship_ready": false,
+      "required_for_done_state_gates": [
+        "every_rupee_udhaar_settled"
+      ],
+      "required_for_feature_rows": [
+        "UPI Payment Reconciliation",
+        "Collections Dashboard"
+      ],
+      "required_metadata_fields": [
+        "pilot_period",
+        "invoice_count",
+        "settled_amount",
+        "unsettled_amount",
+        "bank_or_gateway_reconciliation_reference",
+        "owner_or_accountant_reviewer",
+        "redaction_confirmed"
+      ],
+      "status": "metadata_rejected",
+      "submitted_metadata": null
+    },
+    {
+      "accepted_metadata_fields": [
+        "artifact_path_or_reference",
+        "provider",
+        "sandbox_or_production_like_tenant",
+        "run_timestamp",
+        "operator_or_accountant_reviewer",
+        "redaction_confirmed"
+      ],
+      "artifact_id": "low_literacy_pilot_evidence",
+      "category": "field_adoption",
+      "metadata_validation_rules": [
+        {
+          "description": "must confirm the artifact metadata is redaction-safe",
+          "field": "redaction_confirmed",
+          "type": "exact_true"
+        }
+      ],
+      "proves_ship_ready": false,
+      "required_for_done_state_gates": [
+        "small_wholesaler_no_training"
+      ],
+      "required_for_feature_rows": [
+        "Hinglish NLU Engine",
+        "Regional Language Support"
+      ],
+      "required_metadata_fields": [
+        "participant_role",
+        "pilot_reference",
+        "redaction_confirmed"
+      ],
+      "status": "missing",
+      "submitted_metadata": null
+    },
+    {
+      "accepted_metadata_fields": [
+        "artifact_path_or_reference",
+        "provider",
+        "sandbox_or_production_like_tenant",
+        "run_timestamp",
+        "operator_or_accountant_reviewer",
+        "redaction_confirmed"
+      ],
+      "artifact_id": "ca_close_without_reentry_evidence",
+      "category": "accounting_close",
+      "metadata_validation_rules": [
+        {
+          "description": "must confirm the artifact metadata is redaction-safe",
+          "field": "redaction_confirmed",
+          "type": "exact_true"
+        }
+      ],
+      "proves_ship_ready": false,
+      "required_for_done_state_gates": [
+        "ca_closes_books_without_reentry"
+      ],
+      "required_for_feature_rows": [
+        "Tally / Busy Sync",
+        "Principal-wise P&L"
+      ],
+      "required_metadata_fields": [
+        "close_period",
+        "tally_or_busy_reference",
+        "ca_reviewer",
+        "redaction_confirmed"
+      ],
+      "status": "missing",
+      "submitted_metadata": null
+    }
+  ],
+  "artifact_requirements_accepted": 0,
+  "artifact_requirements_missing": 7,
+  "artifact_requirements_rejected": 1,
+  "artifact_requirements_total": 7,
+  "artifact_statuses": {
+    "ca_close_without_reentry_evidence": "missing",
+    "gst_12_month_outcome_evidence": "missing",
+    "large_distributor_monthly_ops_evidence": "missing",
+    "low_literacy_pilot_evidence": "missing",
+    "owner_briefing_delivery_evidence": "missing",
+    "provider_sandbox_adapter_evidence": "missing",
+    "udhaar_settlement_evidence": "metadata_rejected"
+  },
+  "audit": {
+    "artifact_files_read": false,
+    "limitation": "Local proof collection packet only; it lists required artifact metadata and does not inspect files, secrets, or external systems.",
+    "live_api_called": false,
+    "metadata_manifest_files_read": false,
+    "sandbox_submission_performed": false,
+    "secret_values_inspected": false
+  },
+  "benchmark_parity": false,
+  "done_state_gate_metadata_readiness": [
+    {
+      "accepted_artifact_ids": [],
+      "gate": "small_wholesaler_no_training",
+      "missing_artifact_ids": [
+        "low_literacy_pilot_evidence"
+      ],
+      "proves_done_state_gate": false,
+      "rejected_artifact_ids": [],
+      "required_artifact_ids": [
+        "low_literacy_pilot_evidence"
+      ],
+      "status": "metadata_missing"
+    },
+    {
+      "accepted_artifact_ids": [],
+      "gate": "owner_trusts_agent_summaries",
+      "missing_artifact_ids": [
+        "owner_briefing_delivery_evidence"
+      ],
+      "proves_done_state_gate": false,
+      "rejected_artifact_ids": [],
+      "required_artifact_ids": [
+        "owner_briefing_delivery_evidence"
+      ],
+      "status": "metadata_missing"
+    },
+    {
+      "accepted_artifact_ids": [],
+      "gate": "ca_closes_books_without_reentry",
+      "missing_artifact_ids": [
+        "provider_sandbox_adapter_evidence",
+        "ca_close_without_reentry_evidence"
+      ],
+      "proves_done_state_gate": false,
+      "rejected_artifact_ids": [],
+      "required_artifact_ids": [
+        "provider_sandbox_adapter_evidence",
+        "ca_close_without_reentry_evidence"
+      ],
+      "status": "metadata_missing"
+    },
+    {
+      "accepted_artifact_ids": [],
+      "gate": "zero_gst_penalty_12_months",
+      "missing_artifact_ids": [
+        "provider_sandbox_adapter_evidence",
+        "gst_12_month_outcome_evidence"
+      ],
+      "proves_done_state_gate": false,
+      "rejected_artifact_ids": [],
+      "required_artifact_ids": [
+        "provider_sandbox_adapter_evidence",
+        "gst_12_month_outcome_evidence"
+      ],
+      "status": "metadata_missing"
+    },
+    {
+      "accepted_artifact_ids": [],
+      "gate": "every_rupee_udhaar_settled",
+      "missing_artifact_ids": [
+        "provider_sandbox_adapter_evidence",
+        "udhaar_settlement_evidence"
+      ],
+      "proves_done_state_gate": false,
+      "rejected_artifact_ids": [
+        "udhaar_settlement_evidence"
+      ],
+      "required_artifact_ids": [
+        "provider_sandbox_adapter_evidence",
+        "udhaar_settlement_evidence"
+      ],
+      "status": "metadata_rejected"
+    },
+    {
+      "accepted_artifact_ids": [],
+      "gate": "reliable_7am_owner_briefing",
+      "missing_artifact_ids": [
+        "owner_briefing_delivery_evidence"
+      ],
+      "proves_done_state_gate": false,
+      "rejected_artifact_ids": [],
+      "required_artifact_ids": [
+        "owner_briefing_delivery_evidence"
+      ],
+      "status": "metadata_missing"
+    }
+  ],
+  "done_state_gate_metadata_summary": {
+    "done_state_gates_missing_all_metadata": 5,
+    "done_state_gates_proven_by_metadata": 0,
+    "done_state_gates_total": 6,
+    "done_state_gates_with_all_metadata_submitted": 0,
+    "done_state_gates_with_partial_metadata": 0,
+    "done_state_gates_with_rejected_metadata": 1
+  },
+  "done_state_gate_statuses": {
+    "ca_closes_books_without_reentry": "metadata_missing",
+    "every_rupee_udhaar_settled": "metadata_rejected",
+    "owner_trusts_agent_summaries": "metadata_missing",
+    "reliable_7am_owner_briefing": "metadata_missing",
+    "small_wholesaler_no_training": "metadata_missing",
+    "zero_gst_penalty_12_months": "metadata_missing"
+  },
+  "mode": "local_proof_collection_packet",
+  "rejected_artifacts": [
+    {
+      "artifact_id": "udhaar_settlement_evidence",
+      "rejection_reasons": [
+        "metadata_validation_failed: invoice_count must be >= 1",
+        "metadata_validation_failed: settled_amount must be > 0",
+        "metadata_validation_failed: unsettled_amount must be 0.00"
+      ],
+      "submitted_metadata": {
+        "artifact_id": "udhaar_settlement_evidence",
+        "bank_or_gateway_reconciliation_reference": "redacted-bank-recon-1",
+        "invoice_count": 0,
+        "owner_or_accountant_reviewer": "redacted-reviewer-1",
+        "pilot_period": "2026-05",
+        "redaction_confirmed": true,
+        "settled_amount": "0.00",
+        "unsettled_amount": "12.50"
+      }
+    }
+  ],
+  "ship_ready": false,
+  "status": "missing_external_evidence"
+}

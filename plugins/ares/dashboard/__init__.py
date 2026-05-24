@@ -1,0 +1,1 @@
+"""Ares dashboard plugin package."""

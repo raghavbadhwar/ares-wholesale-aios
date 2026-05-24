@@ -1,0 +1,21 @@
+{
+  "provider": "tally_busy",
+  "sandbox": true,
+  "recordset": "voucher_summary",
+  "rows": [
+    {
+      "voucher_number": "INV-SBOX-002",
+      "party_ledger": "Manual Review Traders",
+      "amount": 5600.0,
+      "status": "accepted"
+    },
+    {
+      "voucher_number": "PAY-SBOX-002",
+      "party_ledger": "Manual Review Traders",
+      "amount": 5600.0,
+      "status": "needs_manual_review"
+    }
+  ],
+  "redaction_confirmed": true,
+  "payload_reference": "redacted://tally/sandbox/odbc-voucher-manual-review-1"
+}

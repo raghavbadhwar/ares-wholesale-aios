@@ -1,0 +1,42 @@
+{
+  "latest_local_test_result": "202 passed in 2.74s",
+  "mode": "local_proof_review_signed_envelope_packet",
+  "reviewer_key_registry_snapshot_summary": {
+    "artifacts_proven_by_registry_snapshot": 0,
+    "latest_snapshot_hash": "4c5bec20f85f8344a84bba8331c6ccfbef2071ea381258ef13f5cfbb88df6471",
+    "latest_snapshot_id": "registry-snapshot-payment-demo-1",
+    "registry_snapshots_blocked": 1,
+    "registry_snapshots_total": 2,
+    "registry_snapshots_verified": 1,
+    "snapshot_chain_verification_enabled": true
+  },
+  "reviewer_key_registry_summary": {
+    "active_registry_entries": 1,
+    "artifacts_proven_by_key_registry": 0,
+    "envelopes_blocked_by_reviewer_key": 0,
+    "envelopes_with_allowed_reviewer_key": 1,
+    "registry_entries_total": 1,
+    "revoked_registry_entries": 0
+  },
+  "signature_scope": "signed_external_metadata_review_decision_envelopes_only",
+  "signed_envelope_summary": {
+    "artifacts_proven_by_signed_envelope": 0,
+    "signed_envelopes_accepted": 1,
+    "signed_envelopes_blocked": 0,
+    "signed_envelopes_total": 1,
+    "signed_envelopes_with_approved_decisions": 1,
+    "signed_envelopes_with_rejected_decisions": 0
+  },
+  "signed_review_envelopes": {
+    "signed-payment-proof-demo": {
+      "artifact_id": "provider_sandbox_adapter_evidence",
+      "decision_status": "external_review_approved",
+      "key_registry_snapshot_hash": "4c5bec20f85f8344a84bba8331c6ccfbef2071ea381258ef13f5cfbb88df6471",
+      "key_registry_snapshot_id": "registry-snapshot-payment-demo-1",
+      "key_registry_status": "allowed_reviewer_key",
+      "rejection_reasons": [],
+      "reviewer": "operator_or_accountant_reviewer",
+      "signature_status": "signature_metadata_accepted"
+    }
+  }
+}

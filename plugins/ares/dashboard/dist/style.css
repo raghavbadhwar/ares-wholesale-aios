@@ -1,0 +1,587 @@
+.ares-header-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.45rem 1rem;
+  border-bottom: 1px solid rgba(255, 207, 150, 0.2);
+  background: linear-gradient(90deg, rgba(42, 10, 12, 0.96), rgba(22, 47, 45, 0.92));
+  color: #ffe4bd;
+  text-transform: none;
+}
+
+.ares-header-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.ares-header-meta {
+  color: #9bd6c7;
+  font-size: 0.72rem;
+}
+
+.ares-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: min(100%, 1240px);
+  margin: 0 auto;
+  color: #f7ead6;
+  text-transform: none;
+}
+
+.ares-loading {
+  min-height: 18rem;
+  align-items: center;
+  justify-content: center;
+  color: #c9b9a2;
+}
+
+.ares-topbar,
+.ares-primary-actions,
+.ares-metrics,
+.ares-work,
+.ares-data-proof,
+.ares-grid,
+.ares-command-board,
+.ares-run-output,
+.ares-empty {
+  border: 1px solid rgba(255, 217, 169, 0.16);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(45, 19, 18, 0.88), rgba(16, 21, 22, 0.94)),
+    #111;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.25);
+}
+
+.ares-topbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.ares-title-block {
+  min-width: 0;
+}
+
+.ares-kicker,
+.ares-owner,
+.ares-muted,
+.ares-panel-head span,
+.ares-command-copy span,
+.ares-action-intent,
+.ares-metric-label {
+  color: #c7b8a4;
+}
+
+.ares-kicker {
+  margin: 0 0 0.2rem;
+  color: #d99d66;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.ares-title-block h1 {
+  margin: 0;
+  color: #fff0d3;
+  font-size: clamp(1.35rem, 3vw, 2rem);
+  line-height: 1.05;
+  letter-spacing: 0;
+}
+
+.ares-owner {
+  margin: 0.35rem 0 0;
+  font-size: 0.82rem;
+}
+
+.ares-client-tools {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.55rem;
+}
+
+.ares-select,
+.ares-button,
+.ares-mini-button {
+  min-height: 2.25rem;
+  border: 1px solid rgba(255, 217, 169, 0.2);
+  border-radius: 6px;
+  background: rgba(255, 244, 222, 0.06);
+  color: #ffe8c6;
+  font: inherit;
+}
+
+.ares-select {
+  max-width: 16rem;
+  padding: 0 0.65rem;
+}
+
+.ares-button,
+.ares-mini-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.85rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.ares-button:hover,
+.ares-mini-button:hover,
+.ares-action:hover {
+  border-color: rgba(96, 219, 176, 0.45);
+  background: rgba(37, 95, 77, 0.22);
+}
+
+.ares-alert {
+  border: 1px solid rgba(255, 98, 98, 0.35);
+  border-radius: 8px;
+  padding: 0.75rem 0.9rem;
+  background: rgba(95, 20, 27, 0.28);
+  color: #ffd6d6;
+}
+
+.ares-primary-actions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
+  padding: 0.75rem;
+}
+
+.ares-action {
+  min-height: 5.1rem;
+  border: 1px solid rgba(255, 217, 169, 0.16);
+  border-radius: 8px;
+  background: rgba(255, 244, 222, 0.045);
+  color: #ffe8c6;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ares-action:disabled,
+.ares-mini-button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.ares-action-muted {
+  border-style: dashed;
+  opacity: 0.72;
+}
+
+.ares-action-label,
+.ares-action-intent {
+  display: block;
+  padding: 0 0.75rem;
+}
+
+.ares-action-label {
+  margin-bottom: 0.35rem;
+  color: #fff0d3;
+  font-weight: 700;
+}
+
+.ares-action-intent {
+  font-size: 0.77rem;
+  line-height: 1.3;
+}
+
+.ares-metrics {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.5rem;
+  padding: 0.75rem;
+}
+
+.ares-metric {
+  min-width: 0;
+  border: 1px solid rgba(155, 214, 199, 0.16);
+  border-radius: 8px;
+  padding: 0.8rem;
+  background: rgba(17, 60, 55, 0.26);
+}
+
+.ares-metric-label {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-size: 0.72rem;
+}
+
+.ares-metric strong {
+  display: block;
+  color: #9bd6c7;
+  font-size: 1.45rem;
+  line-height: 1;
+}
+
+.ares-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 0.75rem;
+  padding: 0.75rem;
+}
+
+.ares-work,
+.ares-data-proof {
+  padding: 0.85rem;
+}
+
+.ares-work-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.ares-work-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: center;
+  border: 1px solid rgba(255, 217, 169, 0.12);
+  border-radius: 8px;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.ares-work-ready {
+  border-color: rgba(96, 219, 176, 0.28);
+}
+
+.ares-work-blocked,
+.ares-work-needs_input {
+  border-color: rgba(217, 157, 102, 0.34);
+}
+
+.ares-work-approval {
+  border-color: rgba(255, 217, 169, 0.34);
+}
+
+.ares-work-copy {
+  min-width: 0;
+}
+
+.ares-work-copy strong,
+.ares-work-copy span {
+  display: block;
+}
+
+.ares-work-copy strong {
+  color: #fff0d3;
+  font-size: 0.92rem;
+}
+
+.ares-work-copy span {
+  margin: 0.2rem 0 0.45rem;
+  color: #c7b8a4;
+  font-size: 0.78rem;
+  line-height: 1.28;
+}
+
+.ares-work-copy code {
+  display: block;
+  overflow-wrap: anywhere;
+  border: 1px solid rgba(155, 214, 199, 0.16);
+  border-radius: 5px;
+  padding: 0.28rem 0.38rem;
+  background: rgba(3, 20, 19, 0.58);
+  color: #9bd6c7;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.74rem;
+}
+
+.ares-proof-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.ares-proof-metric {
+  border: 1px solid rgba(155, 214, 199, 0.14);
+  border-radius: 8px;
+  padding: 0.65rem;
+  background: rgba(17, 60, 55, 0.18);
+}
+
+.ares-proof-metric span {
+  display: block;
+  color: #c7b8a4;
+  font-size: 0.72rem;
+}
+
+.ares-proof-metric strong {
+  display: block;
+  margin-top: 0.25rem;
+  color: #9bd6c7;
+  font-size: 1rem;
+}
+
+.ares-record-table {
+  margin-top: 0.8rem;
+  border: 1px solid rgba(255, 217, 169, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.ares-record-row {
+  display: grid;
+  grid-template-columns: 6rem minmax(0, 1fr) minmax(0, 0.75fr) minmax(0, 1.25fr);
+  gap: 0.5rem;
+  padding: 0.55rem 0.7rem;
+  border-top: 1px solid rgba(255, 217, 169, 0.08);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.ares-record-row:first-child {
+  border-top: 0;
+}
+
+.ares-record-row strong {
+  color: #d99d66;
+}
+
+.ares-record-row span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: #e8d6bd;
+}
+
+.ares-proof-empty {
+  margin: 0.75rem 0 0;
+}
+
+.ares-panel {
+  min-width: 0;
+  border: 1px solid rgba(255, 217, 169, 0.12);
+  border-radius: 8px;
+  padding: 0.85rem;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.ares-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.ares-panel-head h2,
+.ares-command-group h3 {
+  margin: 0;
+  color: #fff0d3;
+  font-size: 1rem;
+  letter-spacing: 0;
+}
+
+.ares-panel-head span {
+  font-size: 0.74rem;
+}
+
+.ares-action-list {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: #f7ead6;
+}
+
+.ares-action-list li + li {
+  margin-top: 0.45rem;
+}
+
+.ares-path-row {
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr);
+  gap: 0.65rem;
+  align-items: center;
+  padding: 0.45rem 0;
+  border-top: 1px solid rgba(255, 217, 169, 0.09);
+}
+
+.ares-path-row span {
+  color: #d99d66;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.ares-path-row code,
+.ares-command-row code,
+.ares-empty code {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  border: 1px solid rgba(155, 214, 199, 0.16);
+  border-radius: 5px;
+  padding: 0.28rem 0.38rem;
+  background: rgba(3, 20, 19, 0.58);
+  color: #9bd6c7;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.76rem;
+}
+
+.ares-command-board,
+.ares-run-output {
+  padding: 0.85rem;
+}
+
+.ares-board-head {
+  margin-bottom: 0.85rem;
+}
+
+.ares-command-groups {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.ares-command-group {
+  min-width: 0;
+  border: 1px solid rgba(255, 217, 169, 0.12);
+  border-radius: 8px;
+  padding: 0.8rem;
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.ares-command-group h3 {
+  margin-bottom: 0.65rem;
+  color: #d99d66;
+}
+
+.ares-command-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.65rem 0;
+  border-top: 1px solid rgba(255, 217, 169, 0.08);
+}
+
+.ares-command-row:first-of-type {
+  border-top: 0;
+}
+
+.ares-command-row-muted {
+  opacity: 0.72;
+}
+
+.ares-command-copy {
+  min-width: 0;
+}
+
+.ares-command-copy strong,
+.ares-command-copy span {
+  display: block;
+}
+
+.ares-command-copy strong {
+  color: #fff0d3;
+  font-size: 0.9rem;
+}
+
+.ares-command-copy span {
+  margin: 0.15rem 0 0.35rem;
+  font-size: 0.76rem;
+  line-height: 1.28;
+}
+
+.ares-row-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.ares-mini-button {
+  min-height: 2rem;
+  padding: 0 0.6rem;
+  font-size: 0.78rem;
+}
+
+.ares-mini-button-run {
+  border-color: rgba(96, 219, 176, 0.35);
+  color: #b7f2d6;
+}
+
+.ares-run-output pre {
+  max-height: 18rem;
+  margin: 0;
+  overflow: auto;
+  white-space: pre-wrap;
+  border: 1px solid rgba(255, 217, 169, 0.1);
+  border-radius: 8px;
+  padding: 0.85rem;
+  background: rgba(0, 0, 0, 0.28);
+  color: #e8d6bd;
+  font: 0.82rem/1.45 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  text-transform: none;
+}
+
+.ares-empty {
+  max-width: 44rem;
+  padding: 1.25rem;
+}
+
+.ares-empty h1 {
+  margin: 0 0 0.8rem;
+  color: #fff0d3;
+  font-size: 1.5rem;
+  letter-spacing: 0;
+}
+
+@media (max-width: 1100px) {
+  .ares-primary-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ares-metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .ares-command-groups {
+    grid-template-columns: 1fr;
+  }
+
+  .ares-work-list {
+    grid-template-columns: 1fr;
+  }
+
+  .ares-proof-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .ares-header-banner,
+  .ares-topbar,
+  .ares-command-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .ares-topbar,
+  .ares-grid {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ares-primary-actions,
+  .ares-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .ares-client-tools,
+  .ares-row-actions {
+    justify-content: flex-start;
+  }
+
+  .ares-command-row {
+    display: flex;
+  }
+
+  .ares-work-item,
+  .ares-record-row {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

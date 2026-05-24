@@ -1,0 +1,38 @@
+{
+  "latest_local_test_result": "202 passed in 2.74s",
+  "ledger_scope": "persisted_external_metadata_review_decision_replay_only",
+  "mode": "local_proof_review_decision_ledger_packet",
+  "review_decision_ledger_statuses": {
+    "ledger-bad-provider-review": {
+      "artifact_id": "provider_sandbox_adapter_evidence",
+      "decision_status": "external_review_blocked",
+      "rejection_reasons": [
+        "reviewer_mismatch: expected operator_or_accountant_reviewer"
+      ],
+      "replay_status": "blocked"
+    },
+    "ledger-invalid-payload": {
+      "artifact_id": "",
+      "decision_status": "external_review_blocked",
+      "rejection_reasons": [
+        "missing_ledger_entry_fields: recorded_at",
+        "invalid_decision_payload"
+      ],
+      "replay_status": "blocked"
+    },
+    "ledger-owner-briefing-1": {
+      "artifact_id": "owner_briefing_delivery_evidence",
+      "decision_status": "external_review_approved",
+      "rejection_reasons": [],
+      "replay_status": "replayed"
+    }
+  },
+  "review_decision_ledger_summary": {
+    "artifacts_proven_by_ledger": 0,
+    "ledger_entries_blocked": 2,
+    "ledger_entries_replayed": 1,
+    "ledger_entries_total": 3,
+    "ledger_entries_with_approved_decisions": 1,
+    "ledger_entries_with_rejected_decisions": 0
+  }
+}

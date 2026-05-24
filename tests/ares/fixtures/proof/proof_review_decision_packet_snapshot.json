@@ -1,0 +1,89 @@
+{
+  "artifact_review_decision_statuses": {
+    "owner_briefing_delivery_evidence": {
+      "decision": "approved",
+      "decision_status": "external_review_approved",
+      "rejection_reasons": [],
+      "reviewer": "external_reviewer"
+    },
+    "provider_sandbox_adapter_evidence": {
+      "decision": "approved",
+      "decision_status": "external_review_blocked",
+      "rejection_reasons": [
+        "reviewer_mismatch: expected operator_or_accountant_reviewer"
+      ],
+      "reviewer": "wrong_reviewer"
+    }
+  },
+  "artifact_review_decision_summary": {
+    "artifacts_approved_by_external_review": 1,
+    "artifacts_proven": 0,
+    "artifacts_rejected_by_external_review": 0,
+    "review_decisions_accepted": 1,
+    "review_decisions_blocked": 1,
+    "review_decisions_rejected": 0,
+    "review_decisions_total": 2
+  },
+  "decision_scope": "external_metadata_review_decisions_only",
+  "done_state_gate_review_decision_statuses": {
+    "ca_closes_books_without_reentry": {
+      "approved_artifact_ids": [],
+      "missing_review_decision_artifact_ids": [
+        "provider_sandbox_adapter_evidence",
+        "ca_close_without_reentry_evidence"
+      ],
+      "rejected_artifact_ids": [],
+      "review_decision_status": "blocked_until_external_review_complete"
+    },
+    "every_rupee_udhaar_settled": {
+      "approved_artifact_ids": [],
+      "missing_review_decision_artifact_ids": [
+        "provider_sandbox_adapter_evidence",
+        "udhaar_settlement_evidence"
+      ],
+      "rejected_artifact_ids": [],
+      "review_decision_status": "blocked_until_external_review_complete"
+    },
+    "owner_trusts_agent_summaries": {
+      "approved_artifact_ids": [
+        "owner_briefing_delivery_evidence"
+      ],
+      "missing_review_decision_artifact_ids": [],
+      "rejected_artifact_ids": [],
+      "review_decision_status": "external_review_complete_not_proven"
+    },
+    "reliable_7am_owner_briefing": {
+      "approved_artifact_ids": [
+        "owner_briefing_delivery_evidence"
+      ],
+      "missing_review_decision_artifact_ids": [],
+      "rejected_artifact_ids": [],
+      "review_decision_status": "external_review_complete_not_proven"
+    },
+    "small_wholesaler_no_training": {
+      "approved_artifact_ids": [],
+      "missing_review_decision_artifact_ids": [
+        "low_literacy_pilot_evidence"
+      ],
+      "rejected_artifact_ids": [],
+      "review_decision_status": "blocked_until_external_review_complete"
+    },
+    "zero_gst_penalty_12_months": {
+      "approved_artifact_ids": [],
+      "missing_review_decision_artifact_ids": [
+        "provider_sandbox_adapter_evidence",
+        "gst_12_month_outcome_evidence"
+      ],
+      "rejected_artifact_ids": [],
+      "review_decision_status": "blocked_until_external_review_complete"
+    }
+  },
+  "done_state_gate_review_decision_summary": {
+    "done_state_gates_blocked_until_review_complete": 4,
+    "done_state_gates_proven_by_review": 0,
+    "done_state_gates_total": 6,
+    "done_state_gates_with_external_review_complete_not_proven": 2
+  },
+  "latest_local_test_result": "202 passed in 2.74s",
+  "mode": "local_proof_review_decision_packet"
+}

@@ -3,11 +3,30 @@
 from __future__ import annotations
 
 import re
+from difflib import SequenceMatcher
 from uuid import uuid4
 
 from apps.ares.ares.approvals.service import ApprovalService
 from apps.ares.ares.data.models import IngestedEvent, Order, OrderExtractionResult, OrderItem, RiskLevel
 from apps.ares.ares.data.repository import BusinessRepository
+
+HINGLISH_NUMBERS = {
+    "ek": "1",
+    "do": "2",
+    "teen": "3",
+    "char": "4",
+    "chaar": "4",
+    "paanch": "5",
+    "panch": "5",
+    "che": "6",
+    "chhe": "6",
+    "saat": "7",
+    "aath": "8",
+    "nau": "9",
+    "dus": "10",
+    "bees": "20",
+}
+_FUZZY_MATCH_THRESHOLD = 0.62
 
 ITEM_RE = re.compile(
     r"(?P<qty>\d+(?:\.\d+)?)\s*"
@@ -16,7 +35,51 @@ ITEM_RE = re.compile(
     r"(?=\s+(?:aur\s+)?\d+(?:\.\d+)?\s*(?:carton|ctn|box|dabba|pcs|pc|piece|pieces|kg|kilo|bag|bags|packet|pkt|peti)?\b|\s+(?:kal|aaj|bhejna|bhej|dena|please|pls|urgent)\b|$)",
     re.IGNORECASE,
 )
-NOISE_WORDS = {"kal", "aaj", "bhejna", "bhej", "dena", "please", "pls", "urgent", "chahiye", "chaahiye"}
+NOISE_WORDS = {"kal", "aaj", "bhejna", "bhej", "bhejdo", "dena", "please", "pls", "urgent", "chahiye", "chaahiye", "jaldi", "yaar"}
+
+
+def _replace_hinglish_numbers(text: str) -> str:
+    def replace(match: re.Match[str]) -> str:
+        return HINGLISH_NUMBERS.get(match.group(0).lower(), match.group(0))
+
+    pattern = r"\b(" + "|".join(re.escape(word) for word in sorted(HINGLISH_NUMBERS, key=len, reverse=True)) + r")\b"
+    return re.sub(pattern, replace, text, flags=re.IGNORECASE)
+
+
+def _guess_intent(text: str) -> str:
+    normalized = text.strip().lower()
+    if normalized in {"hi", "hello", "namaste", "hey"}:
+        return "greeting"
+    if any(token in normalized for token in ("approve", "approved", "haan", "ok karo")):
+        return "approval_reply"
+    if any(token in normalized for token in ("baki", "outstanding", "payment", "kitna dena", "account mein")):
+        return "payment_query"
+    if any(token in normalized for token in ("stock", "inventory", "maal hai", "available")):
+        return "stock_query"
+    if re.search(r"\b\d+(?:\.\d+)?\b", _replace_hinglish_numbers(normalized)) and any(
+        token in normalized for token in ("bhej", "carton", "box", "kg", "bag", "packet", "order")
+    ):
+        return "order"
+    return "unknown"
+
+
+def _find_product_fuzzy(repository: BusinessRepository, name: str):
+    needle = " ".join(name.lower().replace("-", " ").split())
+    if not needle:
+        return None
+    best = None
+    best_score = 0.0
+    for product in repository.get_products():
+        candidates = [product.name, *getattr(product, "aliases", [])]
+        for candidate in candidates:
+            haystack = " ".join(str(candidate).lower().replace("-", " ").split())
+            score = SequenceMatcher(None, needle, haystack).ratio()
+            if needle in haystack or haystack in needle:
+                score = max(score, 0.92)
+            if score > best_score:
+                best = product
+                best_score = score
+    return best if best_score >= _FUZZY_MATCH_THRESHOLD else None
 
 
 def _clean_name(value: str) -> str:
@@ -31,7 +94,8 @@ def _normalized_unit(value: str | None) -> str:
 
 def extract_order_result(event: IngestedEvent) -> OrderExtractionResult:
     items: list[OrderItem] = []
-    for match in ITEM_RE.finditer(event.raw_text):
+    normalized_text = _replace_hinglish_numbers(event.raw_text)
+    for match in ITEM_RE.finditer(normalized_text):
         name = _clean_name(match.group("name"))
         if not name or name.lower() in NOISE_WORDS:
             continue

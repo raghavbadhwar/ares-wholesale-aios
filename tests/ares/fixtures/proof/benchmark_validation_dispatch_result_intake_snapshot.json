@@ -1,0 +1,56 @@
+{
+  "intake_key_hash": "45d9f6a8247fc6164dac3f9bdbaf13e6d6ab7aa0892ecfd5d65709e20c2540ee",
+  "summary": {
+    "dispatch_results_total": 1,
+    "dispatch_results_accepted": 1,
+    "dispatch_results_blocked": 0,
+    "specialized_subagent_profiles_total": 1,
+    "validation_gates_total": 8,
+    "artifacts_proven": 0
+  },
+  "hash_chain_summary": {
+    "hash_chain_verification_enabled": true,
+    "hash_algorithm": "sha256",
+    "dispatch_results_hash_verified": 1,
+    "dispatch_results_hash_failed": 0,
+    "hash_chain_verified": true
+  },
+  "intake": {
+    "intake_scope_hash": "613fdc9c5d0fcdc2ca3031d6d4bff0aa65ef8d1069a6732c3a6b3c425400a512",
+    "generated_from_hash": "9b21ca4bdd042c53b0f311578534633bb778a0d544924c68c0a40c6d8f7b655d",
+    "validation_gates": [
+      "required_fields_present",
+      "known_dispatch_item_id",
+      "action_item_matches_dispatch_item",
+      "source_dispatch_item_matches_dispatch_item",
+      "allowed_action_status",
+      "operator_reference_required",
+      "redaction_confirmed_required",
+      "reject_secret_values"
+    ],
+    "local_execution_constraints": {
+      "metadata_only": true,
+      "artifact_files_read": false,
+      "secret_values_inspected": false,
+      "live_api_called": false,
+      "external_contact_performed": false
+    },
+    "proves_ship_ready": false,
+    "proves_benchmark_parity": false,
+    "dispatch_result": {
+      "dispatch_item_id_hash": "ab74770ac8fb2b29d7c1b4102dbf148d9908d4af4b649b4e33eb747925848ff9",
+      "action_item_id_hash": "2c81ff7fc35aa3026ba34fc503ec165a9f30c60f653f663a6532f58ef21782a2",
+      "source_dispatch_item_id_hash": "9d72f48f19816dc8a2b43137ca2296c5690ddfffd179bc7f2b31914ae5ff1276",
+      "specialized_subagent_profile": "unknown_specialized_subagent_profile",
+      "action_status": "closed_no_proof",
+      "result_status": "accepted_for_local_followup",
+      "source_dispatch_status": "ready_for_specialized_subagent",
+      "source_dispatch_item_hash": "c756472851987850bfbd5b77439b2227dbc0999c0bc328d6b441a47056133448",
+      "rejection_reasons": [],
+      "proves_artifact_requirement": false,
+      "previous_result_hash": "GENESIS",
+      "result_hash": "b64c74ec23b30c43b0dde1bb0b9b53061c756ab106b8c706b7778d9796a60bf8",
+      "hash_verification_status": "verified"
+    }
+  }
+}

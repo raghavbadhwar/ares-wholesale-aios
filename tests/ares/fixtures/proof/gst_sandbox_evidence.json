@@ -1,0 +1,9 @@
+{
+  "artifact_id": "provider_sandbox_adapter_evidence",
+  "artifact_path_or_reference": "redacted://gst_sandbox/gstn_nic/gst_txn_cedfbfd6a770",
+  "provider": "gstn_nic",
+  "sandbox_or_production_like_tenant": "sandbox",
+  "run_timestamp": "2026-05-23T11:30:00+05:30",
+  "operator_or_accountant_reviewer": "redacted-ops-reviewer-3",
+  "redaction_confirmed": true
+}

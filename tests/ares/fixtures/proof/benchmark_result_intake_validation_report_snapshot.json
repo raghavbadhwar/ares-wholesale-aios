@@ -1,0 +1,64 @@
+{
+  "validation_report_key_hash": "df3cad2c2fb366cea89edc92658de5bb4f5fc42052a15cf85909bb9064d1763f",
+  "summary": {
+    "dispatch_results_accepted": 1,
+    "dispatch_results_blocked": 0,
+    "specialized_subagent_profiles_total": 1,
+    "specialized_subagent_profiles_with_dispatch_results": 1,
+    "validation_gates_failed": 0,
+    "validation_gates_total": 9,
+    "artifacts_proven": 0
+  },
+  "hash_chain_summary": {
+    "hash_chain_verification_enabled": true,
+    "hash_algorithm": "sha256",
+    "profile_groups_hash_verified": 1,
+    "profile_groups_hash_failed": 0,
+    "validation_gate_groups_hash_verified": 9,
+    "validation_gate_groups_hash_failed": 0,
+    "hash_chain_verified": true
+  },
+  "validation_report": {
+    "generated_from_hash": "45d9f6a8247fc6164dac3f9bdbaf13e6d6ab7aa0892ecfd5d65709e20c2540ee",
+    "validation_report_scope_hash": "0c4bb561cba6117121e6e4a18b7bccb30435af3705e9fc25635768873cf62bc8",
+    "validation_gates": [
+      "required_fields_present",
+      "known_dispatch_item_id",
+      "action_item_matches_dispatch_item",
+      "source_dispatch_item_matches_dispatch_item",
+      "allowed_action_status",
+      "operator_reference_required",
+      "redaction_confirmed_required",
+      "reject_secret_values",
+      "hash_chain_verified"
+    ],
+    "proves_ship_ready": false,
+    "proves_benchmark_parity": false,
+    "local_execution_constraints": {
+      "metadata_only": true,
+      "artifact_files_read": false,
+      "secret_values_inspected": false,
+      "live_api_called": false
+    },
+    "profile_entry": {
+      "specialized_subagent_profile": "unknown_specialized_subagent_profile",
+      "dispatch_results_total": 1,
+      "accepted_dispatch_item_ids_count": 1,
+      "blocked_dispatch_item_ids_count": 0,
+      "previous_profile_hash": "GENESIS",
+      "profile_hash": "2b2b71493647a954d4bf2a45152d12bec1e66dfb8654e568adf4db4c01cc7089",
+      "hash_verification_status": "verified"
+    },
+    "terminal_gate": {
+      "validation_gate": "hash_chain_verified",
+      "gate_status": "passed",
+      "dispatch_results_checked": 1,
+      "accepted_dispatch_item_ids_count": 1,
+      "blocked_dispatch_item_ids_count": 0,
+      "rejection_reasons": [],
+      "previous_gate_hash": "abd8c4a5599d1d14ebe5d254f162238c4e875f1017560514d6701e0f368aa2da",
+      "gate_hash": "750ef5b97b8d379afc10801ec5bcaae6818cdaecf4259619d7efc81869193261",
+      "hash_verification_status": "verified"
+    }
+  }
+}

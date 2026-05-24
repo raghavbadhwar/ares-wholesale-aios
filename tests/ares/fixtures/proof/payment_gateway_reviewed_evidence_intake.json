@@ -1,0 +1,27 @@
+{
+  "artifact_id": "provider_sandbox_adapter_evidence",
+  "bundle_id": "external-evidence-bundle-payment-f090cfa38eed",
+  "intake_id": "reviewed-payment-evidence-intake-7bc5b1acca09",
+  "operator_login_metadata": {
+    "actor_role": "operator_or_accountant",
+    "login_reference": "redacted-payment-operator-login-1",
+    "login_surface": "razorpay_sandbox_dashboard",
+    "redaction_confirmed": true,
+    "session_reference": "redacted-payment-session-1"
+  },
+  "provider": "razorpay",
+  "redaction_confirmed": true,
+  "review_outcome": "metadata_review_complete_not_verified",
+  "review_scope": "reviewed_external_evidence_intake_only",
+  "reviewed_at": "2026-05-23T11:10:00+05:30",
+  "reviewer_reference": "redacted-payment-reviewer-1",
+  "subject_metadata": {
+    "operation": "payment_gateway_webhook_review",
+    "portal_reference": "redacted://payments/razorpay/webhook-captured-1",
+    "redaction_confirmed": true,
+    "subject_reference": "pay_sbox_adapter_0001",
+    "subject_scope": "payment.captured"
+  },
+  "subject_metadata_kind": "payment_settlement_identity",
+  "transcript_id": "payment_txn_6023a1f90409"
+}

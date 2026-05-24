@@ -152,7 +152,7 @@ export function ChatSidebar({ channel, className }: ChatSidebarProps) {
   // JSON-RPC sidecar so the sidebar matches its documented best-effort
   // UX and the user always has a reconnect affordance.
   useEffect(() => {
-    const token = window.__HERMES_SESSION_TOKEN__;
+    const token = window.__HERMES_SESSION_TOKEN__ ?? window.__ARES_SESSION_TOKEN__;
 
     if (!token || !channel) {
       return;

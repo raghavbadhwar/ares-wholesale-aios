@@ -1,0 +1,285 @@
+Metadata-Version: 2.4
+Name: hermes-agent
+Version: 0.14.0
+Summary: Ares Wholesale AIOS — a Hermes-based company brain for Indian wholesalers and distributors
+Author: Raghav Badhwar, Nous Research
+License: MIT
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: openai==2.24.0
+Requires-Dist: python-dotenv==1.2.1
+Requires-Dist: fire==0.7.1
+Requires-Dist: httpx[socks]==0.28.1
+Requires-Dist: rich==14.3.3
+Requires-Dist: tenacity==9.1.4
+Requires-Dist: pyyaml==6.0.3
+Requires-Dist: ruamel.yaml==0.18.17
+Requires-Dist: requests==2.33.0
+Requires-Dist: jinja2==3.1.6
+Requires-Dist: pydantic==2.12.5
+Requires-Dist: prompt_toolkit==3.0.52
+Requires-Dist: croniter==6.0.0
+Requires-Dist: PyJWT[crypto]==2.12.1
+Requires-Dist: tzdata==2025.3; sys_platform == "win32"
+Requires-Dist: psutil==7.2.2
+Provides-Extra: anthropic
+Requires-Dist: anthropic==0.86.0; extra == "anthropic"
+Provides-Extra: exa
+Requires-Dist: exa-py==2.10.2; extra == "exa"
+Provides-Extra: firecrawl
+Requires-Dist: firecrawl-py==4.17.0; extra == "firecrawl"
+Provides-Extra: parallel-web
+Requires-Dist: parallel-web==0.4.2; extra == "parallel-web"
+Provides-Extra: fal
+Requires-Dist: fal-client==0.13.1; extra == "fal"
+Provides-Extra: edge-tts
+Requires-Dist: edge-tts==7.2.7; extra == "edge-tts"
+Provides-Extra: modal
+Requires-Dist: modal==1.3.4; extra == "modal"
+Provides-Extra: daytona
+Requires-Dist: daytona==0.155.0; extra == "daytona"
+Provides-Extra: vercel
+Requires-Dist: vercel==0.5.7; extra == "vercel"
+Provides-Extra: hindsight
+Requires-Dist: hindsight-client==0.6.1; extra == "hindsight"
+Provides-Extra: dev
+Requires-Dist: debugpy==1.8.20; extra == "dev"
+Requires-Dist: pytest==9.0.2; extra == "dev"
+Requires-Dist: pytest-asyncio==1.3.0; extra == "dev"
+Requires-Dist: pytest-xdist==3.8.0; extra == "dev"
+Requires-Dist: pytest-split==0.11.0; extra == "dev"
+Requires-Dist: mcp==1.26.0; extra == "dev"
+Requires-Dist: ty==0.0.21; extra == "dev"
+Requires-Dist: ruff==0.15.10; extra == "dev"
+Provides-Extra: messaging
+Requires-Dist: python-telegram-bot[webhooks]==22.6; extra == "messaging"
+Requires-Dist: discord.py[voice]==2.7.1; extra == "messaging"
+Requires-Dist: aiohttp==3.13.3; extra == "messaging"
+Requires-Dist: brotlicffi==1.2.0.1; extra == "messaging"
+Requires-Dist: slack-bolt==1.27.0; extra == "messaging"
+Requires-Dist: slack-sdk==3.40.1; extra == "messaging"
+Requires-Dist: qrcode==7.4.2; extra == "messaging"
+Provides-Extra: cron
+Provides-Extra: slack
+Requires-Dist: slack-bolt==1.27.0; extra == "slack"
+Requires-Dist: slack-sdk==3.40.1; extra == "slack"
+Requires-Dist: aiohttp==3.13.3; extra == "slack"
+Provides-Extra: matrix
+Requires-Dist: mautrix[encryption]==0.21.0; extra == "matrix"
+Requires-Dist: Markdown==3.10.2; extra == "matrix"
+Requires-Dist: aiosqlite==0.22.1; extra == "matrix"
+Requires-Dist: asyncpg==0.31.0; extra == "matrix"
+Requires-Dist: aiohttp-socks==0.11.0; extra == "matrix"
+Provides-Extra: cli
+Requires-Dist: simple-term-menu==1.6.6; extra == "cli"
+Provides-Extra: tts-premium
+Requires-Dist: elevenlabs==1.59.0; extra == "tts-premium"
+Provides-Extra: voice
+Requires-Dist: faster-whisper==1.2.1; extra == "voice"
+Requires-Dist: sounddevice==0.5.5; extra == "voice"
+Requires-Dist: numpy==2.4.3; extra == "voice"
+Provides-Extra: pty
+Requires-Dist: ptyprocess==0.7.0; sys_platform != "win32" and extra == "pty"
+Requires-Dist: pywinpty==2.0.15; sys_platform == "win32" and extra == "pty"
+Provides-Extra: honcho
+Requires-Dist: honcho-ai==2.0.1; extra == "honcho"
+Provides-Extra: mcp
+Requires-Dist: mcp==1.26.0; extra == "mcp"
+Provides-Extra: homeassistant
+Requires-Dist: aiohttp==3.13.3; extra == "homeassistant"
+Provides-Extra: sms
+Requires-Dist: aiohttp==3.13.3; extra == "sms"
+Provides-Extra: computer-use
+Requires-Dist: mcp==1.26.0; extra == "computer-use"
+Provides-Extra: acp
+Requires-Dist: agent-client-protocol==0.9.0; extra == "acp"
+Provides-Extra: bedrock
+Requires-Dist: boto3==1.42.89; extra == "bedrock"
+Provides-Extra: azure-identity
+Requires-Dist: azure-identity==1.25.3; extra == "azure-identity"
+Provides-Extra: termux
+Requires-Dist: python-telegram-bot[webhooks]==22.6; extra == "termux"
+Requires-Dist: hermes-agent[cron]; extra == "termux"
+Requires-Dist: hermes-agent[cli]; extra == "termux"
+Requires-Dist: hermes-agent[pty]; extra == "termux"
+Requires-Dist: hermes-agent[mcp]; extra == "termux"
+Requires-Dist: hermes-agent[honcho]; extra == "termux"
+Requires-Dist: hermes-agent[acp]; extra == "termux"
+Provides-Extra: termux-all
+Requires-Dist: hermes-agent[termux]; extra == "termux-all"
+Requires-Dist: hermes-agent[google]; extra == "termux-all"
+Requires-Dist: hermes-agent[homeassistant]; extra == "termux-all"
+Requires-Dist: hermes-agent[sms]; extra == "termux-all"
+Requires-Dist: hermes-agent[web]; extra == "termux-all"
+Provides-Extra: dingtalk
+Requires-Dist: dingtalk-stream==0.24.3; extra == "dingtalk"
+Requires-Dist: alibabacloud-dingtalk==2.2.42; extra == "dingtalk"
+Requires-Dist: qrcode==7.4.2; extra == "dingtalk"
+Provides-Extra: feishu
+Requires-Dist: lark-oapi==1.5.3; extra == "feishu"
+Requires-Dist: qrcode==7.4.2; extra == "feishu"
+Provides-Extra: google
+Requires-Dist: google-api-python-client==2.194.0; extra == "google"
+Requires-Dist: google-auth-oauthlib==1.3.1; extra == "google"
+Requires-Dist: google-auth-httplib2==0.3.1; extra == "google"
+Provides-Extra: youtube
+Requires-Dist: youtube-transcript-api==1.2.4; extra == "youtube"
+Provides-Extra: web
+Requires-Dist: fastapi==0.133.1; extra == "web"
+Requires-Dist: uvicorn[standard]==0.41.0; extra == "web"
+Provides-Extra: all
+Requires-Dist: hermes-agent[cron]; extra == "all"
+Requires-Dist: hermes-agent[cli]; extra == "all"
+Requires-Dist: hermes-agent[dev]; extra == "all"
+Requires-Dist: hermes-agent[pty]; extra == "all"
+Requires-Dist: hermes-agent[mcp]; extra == "all"
+Requires-Dist: hermes-agent[homeassistant]; extra == "all"
+Requires-Dist: hermes-agent[sms]; extra == "all"
+Requires-Dist: hermes-agent[acp]; extra == "all"
+Requires-Dist: hermes-agent[google]; extra == "all"
+Requires-Dist: hermes-agent[web]; extra == "all"
+Requires-Dist: hermes-agent[youtube]; extra == "all"
+Dynamic: license-file
+
+<p align="center">
+  <img src="assets/banner.png" alt="Ares Wholesale AIOS" width="100%">
+</p>
+
+# Ares Wholesale AIOS
+
+<p align="center">
+  <a href="docs/ares/QUICKSTART.md"><img src="https://img.shields.io/badge/Ares-Quickstart-B11226?style=for-the-badge" alt="Ares Quickstart"></a>
+  <a href="docs/ares/OPERATOR_RUNBOOK.md"><img src="https://img.shields.io/badge/Operator-Runbook-B87A2C?style=for-the-badge" alt="Operator Runbook"></a>
+  <a href="https://github.com/raghavbadhwar/ares-wholesale-aios"><img src="https://img.shields.io/badge/Company%20Brain-Indian%20Wholesalers-B11226?style=for-the-badge" alt="Company Brain for Indian Wholesalers"></a>
+  <a href="https://github.com/NousResearch/hermes-agent/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a>
+</p>
+
+Ares is a company brain for Indian wholesalers and distributors.
+
+It runs on the Hermes Agent runtime, but this repository is presented and operated as Ares: a vertical AIOS that watches business signals, remembers customer/vendor patterns, drafts owner actions, and asks for approval before anything ledger-impacting happens.
+
+Ares is built for real Indian wholesale operations: WhatsApp-first workflows, simple Indian-English owner approvals, Tally/Busy export ingestion, daily battle plans, payment radar, stock radar, order capture, and audit-safe action execution.
+
+## What Ares does
+
+- Daily Battle Plan: morning owner brief with money, stock, order, and follow-up priorities.
+- Payment Radar: finds overdue invoices and drafts polite collection follow-ups.
+- Order Capture: turns forwarded messages into structured order drafts.
+- Stock Radar: highlights low-stock and movement issues from exports.
+- Business Memory: learns practical operating patterns such as customer payment habits.
+- Approval Center: keeps humans in control before messages/actions are executed.
+- Mobile Owner Interface: supports simple Indian-English replies like `haan appr_xxx`, `reject appr_xxx`, `baadme appr_xxx`.
+- Cron/Gateway Ready: works with Hermes cron and messaging gateway for scheduled/remote operation.
+
+## One-command setup
+
+From a machine with `git` installed. The installer will use `uv`, and can install `uv` automatically if it is missing:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/raghavbadhwar/ares-wholesale-aios/main/scripts/setup_ares.sh | bash -s -- \
+  --client demo-wholesaler \
+  --business-name "Demo Wholesale" \
+  --owner-name "Raghav"
+```
+
+Then run:
+
+```bash
+ares chat --client demo-wholesaler
+ares autonomous-cycle --client demo-wholesaler
+ares mobile-approvals --client demo-wholesaler
+ares mobile-reply --client demo-wholesaler --reply "haan appr_xxx"
+ares print-cron-specs --client demo-wholesaler
+```
+
+## Ares command surface
+
+The setup script installs an `ares` wrapper, so users do not need a global Hermes install:
+
+```bash
+ares chat
+ares setup
+ares autonomous-cycle
+ares mobile-approvals
+ares mobile-reply
+ares sync-drive-manifest
+ares print-cron-specs
+ares approval-center
+ares list-clients
+ares list-workflows
+```
+
+Gateway slash command:
+
+```text
+/ares <client> cycle
+/ares <client> approvals
+/ares <client> reply haan appr_xxx
+/ares <client> reply approve appr_xxx
+```
+
+## Pilot operator flow
+
+1. Onboard the wholesaler with `ares setup`.
+2. Drop Tally/Busy exports, stock exports, and forwarded WhatsApp/order text into the configured intake paths.
+3. Run `ares autonomous-cycle --client <client>` manually or via cron.
+4. Send the owner the output from `ares mobile-approvals --client <client>`.
+5. Process owner replies with `ares mobile-reply --client <client> --reply "haan appr_xxx"`.
+6. Review action logs and memory updates before the next cycle.
+
+## Repository map
+
+```text
+apps/ares/                         Ares application package
+apps/ares/ares/cli.py              Ares CLI command implementation
+apps/ares/ares/workflows/          Payment, order, stock, brief, approval workflows
+apps/ares/ares/connectors/         File, Drive-manifest, message, GWS connector layer
+apps/ares/ares/memory/             Business memory learning loop
+apps/ares/ares/face/               Owner/mobile approval interface
+apps/ares/ares/execution/          Approved action execution + audit logging
+plugins/ares/                      Hermes plugin registration for Ares
+scripts/setup_ares.sh              One-command Ares setup script
+docs/ares/QUICKSTART.md            Setup and first-run guide
+docs/ares/OPERATOR_RUNBOOK.md      Concierge/operator runbook
+docs/ares/FIX_AND_POLISH_PLAN.md   Technical roadmap
+docs/ares/SECURITY_AND_PRIVACY.md  Safety and privacy notes
+```
+
+## Important design rule
+
+Ares is approval-first.
+
+It can ingest, analyze, remember, draft, summarize, and prepare actions. But owner-sensitive actions — payment follow-ups, ledger-impacting updates, external messages, or operational decisions — should go through approval gates and action logs.
+
+## Local development
+
+```bash
+git clone https://github.com/raghavbadhwar/ares-wholesale-aios.git ares
+cd ares
+uv run hermes ares --help
+ARES_HOME=/tmp/ares-dev ./scripts/setup_ares.sh --current-repo \
+  --client demo-wholesaler \
+  --business-name "Demo Wholesale" \
+  --owner-name "Raghav"
+uv run --extra dev python -m pytest tests/ares tests/hermes_cli/test_plugin_cli_registration.py -q
+```
+
+## Docs
+
+- [Ares Quickstart](docs/ares/QUICKSTART.md)
+- [Operator Runbook](docs/ares/OPERATOR_RUNBOOK.md)
+- [Ares Extension Strategy](docs/ares/ADR-001-ares-extension-strategy.md)
+- [Security and Privacy](docs/ares/SECURITY_AND_PRIVACY.md)
+- [Architecture Notes](docs/ares/architecture-notes.md)
+- [Fix and Polish Plan](docs/ares/FIX_AND_POLISH_PLAN.md)
+
+## Runtime attribution
+
+Ares is built on top of the open-source Hermes Agent runtime by Nous Research. Hermes provides the CLI agent, model routing, tools, memory, skills, cron scheduler, plugin system, and gateway infrastructure. Ares adds the wholesaler-specific workflows, command surface, memory patterns, approval UX, and operator runbooks.
+
+Upstream runtime:
+https://github.com/NousResearch/hermes-agent
+
+This Ares distribution:
+https://github.com/raghavbadhwar/ares-wholesale-aios

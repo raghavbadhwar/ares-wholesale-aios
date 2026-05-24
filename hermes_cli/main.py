@@ -70,6 +70,9 @@ import sys
 from pathlib import Path
 from typing import Optional
 
+if "HERMES_HOME" not in os.environ and os.environ.get("ARES_HOME"):
+    os.environ["HERMES_HOME"] = os.environ["ARES_HOME"]
+
 
 def _add_accept_hooks_flag(parser) -> None:
     """Attach the ``--accept-hooks`` flag.  Shared across every agent

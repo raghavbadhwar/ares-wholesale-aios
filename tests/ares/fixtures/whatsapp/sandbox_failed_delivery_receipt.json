@@ -1,0 +1,11 @@
+{
+  "provider": "whatsapp_business",
+  "sandbox": true,
+  "client_id": "demo",
+  "approval_id": "appr_sandbox_receipt_002",
+  "provider_message_id": "wamid.sandbox.msg.0002",
+  "recipient_phone": "+919000000002",
+  "status": "failed",
+  "redaction_confirmed": true,
+  "payload_reference": "redacted://whatsapp/sandbox/delivery-receipt-failed-1"
+}

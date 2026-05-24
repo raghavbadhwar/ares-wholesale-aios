@@ -1,0 +1,28 @@
+{
+  "type": "PAYMENT_FAILED_WEBHOOK",
+  "event_time": "2026-05-23T10:18:00+05:30",
+  "payload_reference": "redacted://payments/cashfree/webhook-failed-1",
+  "contains_redacted_test_data": true,
+  "data": {
+    "payment": {
+      "cf_payment_id": "cfpay_sbox_fail_0001",
+      "payment_status": "FAILED",
+      "payment_amount": 11800.0,
+      "payment_currency": "INR",
+      "payment_group": "upi",
+      "payment_message": "sandbox failed receipt",
+      "payment_time": "2026-05-23T10:18:00+05:30"
+    },
+    "order": {
+      "order_id": "inv_1",
+      "order_amount": 11800.0,
+      "order_currency": "INR"
+    },
+    "customer_details": {
+      "customer_id": "cust_1"
+    },
+    "metadata": {
+      "utr": "UTR-CF-FAIL-0001"
+    }
+  }
+}

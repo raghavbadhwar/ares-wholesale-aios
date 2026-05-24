@@ -1,0 +1,63 @@
+{
+  "dispatch_packet": {
+    "dispatch_item": {
+      "dispatch_item_hash": "c756472851987850bfbd5b77439b2227dbc0999c0bc328d6b441a47056133448",
+      "dispatch_status": "ready_for_specialized_subagent",
+      "hash_verification_status": "verified",
+      "next_action_type_hash": "2b71c7021025e49e6d289f68d43abc54c2b4322f2af88ce40fe6c64fe530b555",
+      "previous_dispatch_item_hash": "GENESIS",
+      "proves_artifact_requirement": false,
+      "required_output_contract": {
+        "allowed_action_statuses": [
+          "open",
+          "in_progress",
+          "blocked",
+          "closed_no_proof"
+        ],
+        "metadata_only": true,
+        "proves_artifact_requirement": false,
+        "required_fields": [
+          "dispatch_item_id",
+          "action_item_id",
+          "source_dispatch_item_id",
+          "action_status",
+          "updated_at",
+          "operator_reference",
+          "redaction_confirmed"
+        ]
+      },
+      "source_action_item_hash": "dfbda16d955a2cce25970b8c08c1fb0482adbb9568bf674533b768ea55e04044",
+      "source_action_status": "open",
+      "specialized_subagent_profile": "unknown_specialized_subagent_profile",
+      "validation_gate": "operator_reference_required"
+    },
+    "dispatch_packet_scope_hash": "95e91f15fa2932e1ba6f9bf85b9472d84f5a3d4111fb2b921e68201cd1205d35",
+    "generated_from_hash": "080033b59bcfef5bd23e9b30c1265bc7d2ddc21c22bba8664a67e9251858de6e",
+    "local_execution_constraints": {
+      "artifact_files_read": false,
+      "external_contact_performed": false,
+      "live_api_called": false,
+      "metadata_only": true,
+      "secret_values_inspected": false
+    },
+    "proves_benchmark_parity": false,
+    "proves_ship_ready": false
+  },
+  "dispatch_packet_key_hash": "9b21ca4bdd042c53b0f311578534633bb778a0d544924c68c0a40c6d8f7b655d",
+  "hash_chain_summary": {
+    "dispatch_items_hash_failed": 0,
+    "dispatch_items_hash_verified": 1,
+    "hash_algorithm": "sha256",
+    "hash_chain_verification_enabled": true,
+    "hash_chain_verified": true
+  },
+  "summary": {
+    "action_items_total": 1,
+    "artifacts_proven": 0,
+    "dispatch_items_blocked": 0,
+    "dispatch_items_ready": 1,
+    "dispatch_items_total": 1,
+    "specialized_subagent_profiles_total": 1,
+    "validation_gates_requiring_followup": 1
+  }
+}

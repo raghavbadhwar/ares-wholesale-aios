@@ -5,6 +5,8 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
+CLIENT_SUBDIRECTORIES = ("data", "exports", "inbox", "reports", "logs", "chat")
+
 
 def get_ares_home() -> Path:
     """Return the base Ares state directory.
@@ -30,4 +32,3 @@ def normalize_client_slug(value: str) -> str:
     if not slug:
         raise ValueError("client slug cannot be empty")
     return slug
-

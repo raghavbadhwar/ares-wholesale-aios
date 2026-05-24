@@ -409,8 +409,9 @@ export function useMainApp(gw: GatewayClient) {
   const marker = overlay.approval || overlay.sudo || overlay.secret || overlay.clarify ? '⚠' : ui.busy ? '⏳' : '✓'
 
   const tabCwd = ui.info?.cwd
+  const tabTitleFallback = ui.theme.brand.name.includes('Ares') ? 'Ares' : 'Hermes'
 
-  useTerminalTitle(model ? `${marker} ${model}${tabCwd ? ` · ${shortCwd(tabCwd, 24)}` : ''}` : 'Hermes')
+  useTerminalTitle(model ? `${marker} ${model}${tabCwd ? ` · ${shortCwd(tabCwd, 24)}` : ''}` : tabTitleFallback)
 
   useEffect(() => {
     if (!ui.sid || !stdout) {

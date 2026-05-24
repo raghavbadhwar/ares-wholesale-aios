@@ -3300,7 +3300,7 @@ class GatewayRunner:
         
         Returns True if at least one adapter connected successfully.
         """
-        logger.info("Starting Hermes Gateway...")
+        logger.info("Starting Ares Gateway...")
         try:
             self._gateway_loop = asyncio.get_running_loop()
         except RuntimeError:

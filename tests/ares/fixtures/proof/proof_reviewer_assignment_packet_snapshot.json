@@ -1,0 +1,55 @@
+{
+  "assignment_scope": "specialized_external_metadata_review_assignments_only",
+  "latest_local_test_result": "202 passed in 2.74s",
+  "mode": "local_proof_reviewer_assignment_packet",
+  "reviewer_assignment_summary": {
+    "artifact_requirements_total": 7,
+    "artifacts_proven_by_assignment": 0,
+    "assignments_blocked_until_metadata_ready": 5,
+    "assignments_ready_for_specialized_review": 2
+  },
+  "reviewer_assignments": {
+    "ca_close_without_reentry_evidence": {
+      "assignment_status": "blocked_until_metadata_ready",
+      "blocked_reason": "blocked_until_metadata_submitted",
+      "reviewer_role": "ca_reviewer",
+      "specialized_subagent_profile": "accounting_close_reviewer"
+    },
+    "gst_12_month_outcome_evidence": {
+      "assignment_status": "blocked_until_metadata_ready",
+      "blocked_reason": "blocked_until_metadata_submitted",
+      "reviewer_role": "accountant_reviewer",
+      "specialized_subagent_profile": "gst_compliance_reviewer"
+    },
+    "large_distributor_monthly_ops_evidence": {
+      "assignment_status": "blocked_until_metadata_ready",
+      "blocked_reason": "blocked_until_metadata_submitted",
+      "reviewer_role": "accountant_or_owner_reviewer",
+      "specialized_subagent_profile": "monthly_operations_reviewer"
+    },
+    "low_literacy_pilot_evidence": {
+      "assignment_status": "blocked_until_metadata_ready",
+      "blocked_reason": "blocked_until_metadata_submitted",
+      "reviewer_role": "observer",
+      "specialized_subagent_profile": "pilot_usability_observer"
+    },
+    "owner_briefing_delivery_evidence": {
+      "assignment_status": "ready_for_specialized_review",
+      "blocked_reason": "",
+      "reviewer_role": "external_reviewer",
+      "specialized_subagent_profile": "owner_operating_loop_reviewer"
+    },
+    "provider_sandbox_adapter_evidence": {
+      "assignment_status": "ready_for_specialized_review",
+      "blocked_reason": "",
+      "reviewer_role": "operator_or_accountant_reviewer",
+      "specialized_subagent_profile": "integration_accounting_reviewer"
+    },
+    "udhaar_settlement_evidence": {
+      "assignment_status": "blocked_until_metadata_ready",
+      "blocked_reason": "blocked_until_metadata_submitted",
+      "reviewer_role": "owner_or_accountant_reviewer",
+      "specialized_subagent_profile": "collections_settlement_reviewer"
+    }
+  }
+}

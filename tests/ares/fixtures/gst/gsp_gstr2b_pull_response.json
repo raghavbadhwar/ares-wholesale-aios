@@ -1,0 +1,17 @@
+{
+  "provider": "gsp_sandbox",
+  "sandbox": true,
+  "operation": "gstr2b_pull",
+  "gstin": "27REDAC1234F1Z5",
+  "request_payload": {
+    "period": "2026-05"
+  },
+  "response": {
+    "status": "accepted",
+    "portal_reference": "GSP-SANDBOX-2B-0001",
+    "matched_suppliers": 1,
+    "missing_suppliers": 0
+  },
+  "redaction_confirmed": true,
+  "payload_reference": "redacted://gsp/sandbox/gstr2b-pull-accepted-1"
+}

@@ -11,13 +11,16 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from apps.ares.ares.approvals.service import ApprovalService
-from apps.ares.ares.autonomy.runner import run_autonomous_cycle
+from apps.ares.ares.autonomy.runner import run_autonomous_cycle, run_morning_run
+from apps.ares.ares.connectors.auto_ingest import validate_local_inputs
 from apps.ares.ares.connectors.drive_sync import sync_drive_manifest
 from apps.ares.ares.connectors.export_parser import parse_outstanding_report, parse_stock_report
 from apps.ares.ares.data.factory import create_repository_for_profile
 from apps.ares.ares.execution.actions import ActionExecutor
 from apps.ares.ares.face.mobile_approval import MobileApprovalAdapter
+from apps.ares.ares.face.operator_shell import build_operator_shell, render_operator_shell
 from apps.ares.ares.face.owner_chat import handle_owner_reply
+from apps.ares.ares.hardening import build_runtime_health_snapshot, validate_dashboard_bind
 from apps.ares.ares.orchestrator.router import AresRouter, WORKFLOW_ALIASES
 from apps.ares.ares.paths import get_ares_home, normalize_client_slug
 from apps.ares.ares.profiles import ClientProfile, load_client_profile, write_client_profile
@@ -27,7 +30,7 @@ from apps.ares.ares.scheduling import build_cron_job_specs, build_cron_prompts
 def register_cli(subparser: argparse.ArgumentParser) -> None:
     actions = subparser.add_subparsers(dest="ares_action")
 
-    chat_p = actions.add_parser("chat", help="Chat interactively with the Ares company brain")
+    chat_p = actions.add_parser("chat", help="Chat interactively with the Ares wholesaler AIOS")
     chat_p.add_argument("--client", required=True, help="Client slug")
     chat_p.add_argument("-q", "--query", default="", help="Single query, then exit")
     chat_p.add_argument("-m", "--model", default="", help="Optional model override")
@@ -38,7 +41,7 @@ def register_cli(subparser: argparse.ArgumentParser) -> None:
 
     run_p = actions.add_parser("run-workflow", help="Run an Ares workflow")
     run_p.add_argument("--client", required=True, help="Client slug")
-    run_p.add_argument("--workflow", required=True, help="daily-brief, payment-radar, stock-radar, weekly-war-room")
+    run_p.add_argument("--workflow", required=True, help=f"One of: {', '.join(sorted(WORKFLOW_ALIASES))}")
     run_p.add_argument("--outstanding-csv", default="", help="Optional outstanding export CSV")
     run_p.add_argument("--stock-csv", default="", help="Optional stock export CSV")
     run_p.add_argument("--json", action="store_true", help="Print JSON payload")
@@ -68,6 +71,50 @@ def register_cli(subparser: argparse.ArgumentParser) -> None:
     show_p.add_argument("--client", required=True)
     actions.add_parser("list-clients", help="List local Ares clients")
     actions.add_parser("list-workflows", help="List workflows")
+
+    today_p = actions.add_parser("today", help="Run today's local command-center bundle")
+    today_p.add_argument("--client", required=True)
+    today_p.add_argument("--json", action="store_true")
+
+    validate_p = actions.add_parser("validate-inputs", help="Validate local Ares input folders")
+    validate_p.add_argument("--client", required=True)
+    validate_p.add_argument("--json", action="store_true")
+
+    morning_p = actions.add_parser("morning-run", help="Run ingestion, brief, memory, and approvals")
+    morning_p.add_argument("--client", required=True)
+    morning_p.add_argument("--json", action="store_true")
+
+    health_p = actions.add_parser("health-check", help="Emit local Ares runtime health")
+    health_p.add_argument("--client", default="")
+    health_p.add_argument("--json", action="store_true")
+
+    shell_p = actions.add_parser("operator-shell", help="Show the local Ares operator shell")
+    shell_p.add_argument("--client", required=True)
+    shell_p.add_argument("--json", action="store_true")
+
+    gstr_p = actions.add_parser("prepare-gstr1", help="Prepare a local approval-gated GSTR-1 draft")
+    gstr_p.add_argument("--client", required=True)
+    gstr_p.add_argument("--period", required=True)
+    gstr_p.add_argument("--seller-gstin", required=True)
+    gstr_p.add_argument("--requested-by", default="operator")
+    gstr_p.add_argument("--json", action="store_true")
+
+    tui_p = actions.add_parser("tui", help="Launch Ares chat in the Hermes TUI")
+    tui_p.add_argument("--client", required=True)
+    tui_p.add_argument("-q", "--query", default="")
+    tui_p.add_argument("--model", default="")
+    tui_p.add_argument("--provider", default="")
+    tui_p.add_argument("--toolsets", default="")
+    tui_p.add_argument("--yolo", action="store_true")
+
+    dashboard_p = actions.add_parser("dashboard", help="Launch the local Hermes dashboard with Ares context")
+    dashboard_p.add_argument("--client", required=True)
+    dashboard_p.add_argument("--host", default="127.0.0.1")
+    dashboard_p.add_argument("--port", type=int, default=9119)
+    dashboard_p.add_argument("--no-open", action="store_true")
+    dashboard_p.add_argument("--insecure", action="store_true")
+    dashboard_p.add_argument("--tui", action="store_true")
+    dashboard_p.add_argument("--skip-build", action="store_true")
 
     approval_p = actions.add_parser("approval-center", help="Show pending approvals")
     approval_p.add_argument("--client", required=True)
@@ -128,6 +175,74 @@ def ares_command(args: argparse.Namespace) -> int:
             result = _run_workflow(args)
             print(json.dumps(result["payload"], indent=2, default=str) if getattr(args, "json", False) else result["message"])
             return 0
+        if action in {"today", "morning-run"}:
+            payload = run_morning_run(args.client)
+            print(json.dumps(payload, indent=2, default=str) if getattr(args, "json", False) else payload["owner_message"])
+            return 0
+        if action == "validate-inputs":
+            payload = validate_local_inputs(client_id=args.client)
+            if getattr(args, "json", False):
+                print(json.dumps(payload, indent=2, default=str))
+            elif payload["blocking_errors"]:
+                print(f"Input check found {len(payload['blocking_errors'])} blocker(s).")
+            else:
+                print("Input check passed. No blocking issues found.")
+            return 0
+        if action == "health-check":
+            payload = build_runtime_health_snapshot(client_slug=getattr(args, "client", "") or None)
+            print(json.dumps(payload, indent=2, default=str) if getattr(args, "json", False) else _render_health_snapshot(payload))
+            return 0
+        if action == "operator-shell":
+            profile = load_client_profile(args.client)
+            repo = create_repository_for_profile(profile)
+            approvals = ApprovalService(repo, required_actions=set(profile.approval_preferences.required_actions) or None)
+            payload = build_operator_shell(profile=profile, repository=repo, approvals=approvals)
+            print(json.dumps(payload, indent=2, default=str) if getattr(args, "json", False) else render_operator_shell(payload))
+            return 0
+        if action == "prepare-gstr1":
+            profile = load_client_profile(args.client)
+            repo = create_repository_for_profile(profile)
+            approvals = ApprovalService(repo, required_actions=set(profile.approval_preferences.required_actions) or None)
+            from apps.ares.ares.workflows.gstr1 import prepare_gstr1_return
+            payload = prepare_gstr1_return(
+                repository=repo,
+                approvals=approvals,
+                client_id=profile.client_slug,
+                period=args.period,
+                seller_gstin=args.seller_gstin,
+                requested_by=args.requested_by,
+            )
+            print(json.dumps(payload, indent=2, default=str) if getattr(args, "json", False) else _render_gstr1_summary(payload))
+            return 0
+        if action == "tui":
+            profile = load_client_profile(args.client)
+            context_path = build_chat_context(profile)
+            launch = build_chat_launch(
+                profile,
+                context_path,
+                query=getattr(args, "query", ""),
+                model=getattr(args, "model", ""),
+                provider=getattr(args, "provider", ""),
+                toolsets=getattr(args, "toolsets", ""),
+                tui=True,
+                yolo=getattr(args, "yolo", False),
+            )
+            return run_chat_launch(launch)
+        if action == "dashboard":
+            profile = load_client_profile(args.client)
+            context_path = build_chat_context(profile)
+            launch = build_dashboard_launch(
+                profile,
+                context_path,
+                host=args.host,
+                port=args.port,
+                no_open=args.no_open,
+                insecure=args.insecure,
+                tui=args.tui,
+                skip_build=args.skip_build,
+            )
+            completed = subprocess.run(launch.command, cwd=launch.cwd, env=launch.env, check=False)
+            return int(completed.returncode)
         if action in {"create-sample-client", "onboard-client"}:
             slug = normalize_client_slug(args.client)
             profile = ClientProfile(
@@ -228,7 +343,7 @@ def ares_command(args: argparse.Namespace) -> int:
     except Exception as exc:
         print(f"Ares error: {exc}")
         return 1
-    print("Usage: hermes ares {chat|setup|run-workflow|onboard-client|list-clients|show-client|list-workflows|approval-center|owner-reply|autonomous-cycle|mobile-approvals|mobile-reply|sync-drive-manifest|print-cron-prompts|print-cron-specs|schedules}")
+    print("Usage: hermes ares {chat|setup|run-workflow|today|validate-inputs|morning-run|health-check|operator-shell|prepare-gstr1|dashboard|tui|onboard-client|list-clients|show-client|list-workflows|approval-center|owner-reply|autonomous-cycle|mobile-approvals|mobile-reply|sync-drive-manifest|print-cron-prompts|print-cron-specs|schedules}")
     return 2
 
 
@@ -239,8 +354,11 @@ class ChatLaunch:
     env: dict[str, str]
 
 
+DashboardLaunch = ChatLaunch
+
+
 def build_chat_context(profile: ClientProfile) -> Path:
-    """Write an AGENTS.md file that turns Hermes chat into an Ares company brain."""
+    """Write an AGENTS.md file that turns Hermes chat into an Ares wholesaler AIOS."""
     client_root = get_ares_home() / "clients" / profile.client_slug
     chat_dir = client_root / "chat"
     chat_dir.mkdir(parents=True, exist_ok=True)
@@ -248,9 +366,9 @@ def build_chat_context(profile: ClientProfile) -> Path:
     repo_root = Path(__file__).resolve().parents[3]
     ares_home = get_ares_home()
     context_path.write_text(
-        f"""# Ares Company Brain Session
+        f"""# Ares Wholesaler AIOS Session
 
-You are Ares, the company brain for {profile.business_name}.
+You are Ares, the wholesaler AIOS for {profile.business_name}.
 
 Client details:
 - Client slug: {profile.client_slug}
@@ -263,10 +381,13 @@ Client details:
 
 Operating rules:
 - Be concise, practical, and use simple Indian English.
-- Treat Ares as an approval-first business brain for an Indian wholesaler/distributor.
+- Treat Ares as an approval-first AI operating system for an Indian wholesaler/distributor.
+- Approach every problem, query, and task through the lens of a wholesaler business operator, not a generic assistant.
+- Default to the operating questions that matter for wholesalers: collections, pending orders, dispatch risk, low stock, reorder timing, supplier follow-up, GST/compliance, and owner approvals.
+- When a request is broad or ambiguous, convert it into concrete wholesaler actions, risks, and next steps instead of answering abstractly.
 - Never claim a workflow ran unless you actually run the relevant command and inspect the result.
 - For money, ledger-impacting actions, external customer/supplier messages, credit holds, or dispatch decisions: draft first, ask owner approval, then execute only after approval.
-- Prefer owner-friendly summaries: payment radar, pending orders, low stock, supplier issues, and next actions.
+- Prefer owner-friendly summaries: payment radar, pending orders, low stock, supplier issues, dispatch blockers, GST tasks, and next actions.
 
 Useful Ares commands:
 - ares autonomous-cycle --client {profile.client_slug}
@@ -279,7 +400,7 @@ Useful Ares commands:
 - ares print-cron-specs --client {profile.client_slug}
 
 If the `ares` wrapper is not on PATH inside a tool shell, run from the repo instead:
-cd {repo_root} && ARES_HOME={ares_home} uv run hermes ares <command> --client {profile.client_slug}
+cd {repo_root} && ARES_HOME={ares_home} HERMES_HOME={ares_home} uv run hermes ares <command> --client {profile.client_slug}
 
 When the owner asks broad questions like "what happened today?" or "what should I do now?", run the autonomous cycle or daily brief first, then summarize the result.
 """,
@@ -305,6 +426,10 @@ def build_chat_launch(
     env["ARES_CLIENT"] = profile.client_slug
     env["ARES_BUSINESS_NAME"] = profile.business_name
     env["ARES_HOME"] = str(get_ares_home())
+    # Ares client chat launches the shared Hermes TUI/gateway runtime.  That
+    # runtime still reads HERMES_HOME, so mirror it to the Ares home to avoid
+    # falling back to ~/.hermes for config, sessions, and logs.
+    env["HERMES_HOME"] = env["ARES_HOME"]
     env["ARES_CHAT_CONTEXT"] = str(context_path)
     env["HERMES_SKIN"] = "ares"
     env["PYTHONPATH"] = _prepend_path(env.get("PYTHONPATH", ""), str(repo_root))
@@ -329,11 +454,45 @@ def build_chat_launch(
     return ChatLaunch(command=command, cwd=context_path.parent, env=env)
 
 
+def build_dashboard_launch(
+    profile: ClientProfile,
+    context_path: Path,
+    *,
+    host: str = "127.0.0.1",
+    port: int = 9119,
+    no_open: bool = False,
+    insecure: bool = False,
+    tui: bool = False,
+    skip_build: bool = False,
+) -> DashboardLaunch:
+    """Build the local Hermes dashboard command for an Ares client."""
+    validate_dashboard_bind(host, insecure=insecure)
+    launch = build_chat_launch(profile, context_path)
+    command = [sys.executable, "-m", "hermes_cli.main", "dashboard", "--host", host, "--port", str(port)]
+    if no_open:
+        command.append("--no-open")
+    if insecure:
+        command.append("--insecure")
+    if tui:
+        command.append("--tui")
+    if skip_build:
+        command.append("--skip-build")
+    return DashboardLaunch(command=command, cwd=Path(__file__).resolve().parents[3], env=launch.env)
+
+
 def run_chat_launch(launch: ChatLaunch) -> int:
     """Run Ares chat. Interactive mode replaces the process; query mode returns."""
     if "--query" not in launch.command:
         os.execvpe(launch.command[0], launch.command, launch.env)
     completed = subprocess.run(launch.command, cwd=launch.cwd, env=launch.env, check=False)
+    if completed.returncode != 0:
+        client = launch.env.get("ARES_CLIENT", "<client>")
+        print(
+            "\nAres chat could not start or complete. Check model/provider credentials, then use "
+            f"deterministic workflow commands while chat is unavailable: "
+            f"`ares autonomous-cycle --client {client}` or "
+            f"`ares run-workflow --client {client} --workflow daily-brief`."
+        )
     return int(completed.returncode)
 
 
@@ -370,6 +529,25 @@ def _owner_reply_message(result: dict) -> str:
     if decision == "edited":
         return "Edited. Approval marked for review; no action executed."
     return str(result.get("message", "Approval kept pending."))
+
+
+def _render_health_snapshot(payload: dict) -> str:
+    checks = payload.get("checks", [])
+    lines = [
+        f"Ares runtime health: {payload.get('status', 'unknown')}",
+        f"Client: {payload.get('client_id') or 'none'}",
+        "",
+        "Checks:",
+    ]
+    lines.extend(f"- {check.get('id')}: {check.get('status')}" for check in checks)
+    return "\n".join(lines)
+
+
+def _render_gstr1_summary(result: dict) -> str:
+    return (
+        f"GSTR-1 draft {result.get('status', 'prepared')} for {result.get('period')}: "
+        f"{result.get('invoice_count', 0)} invoice(s), approval {result.get('approval_id', 'not-required')}."
+    )
 
 
 def _setup_success_message(client: str, profile_path: Path, ares_home: str, *, sample: bool = False) -> str:

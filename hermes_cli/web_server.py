@@ -3574,8 +3574,11 @@ def mount_spa(application: FastAPI):
         chat_js = "true" if _DASHBOARD_EMBEDDED_CHAT_ENABLED else "false"
         token_script = (
             f'<script>window.__HERMES_SESSION_TOKEN__="{_SESSION_TOKEN}";'
+            f'window.__ARES_SESSION_TOKEN__="{_SESSION_TOKEN}";'
             f"window.__HERMES_DASHBOARD_EMBEDDED_CHAT__={chat_js};"
-            f'window.__HERMES_BASE_PATH__="{prefix}";</script>'
+            f"window.__ARES_DASHBOARD_EMBEDDED_CHAT__={chat_js};"
+            f'window.__HERMES_BASE_PATH__="{prefix}";'
+            f'window.__ARES_BASE_PATH__="{prefix}";</script>'
         )
         if prefix:
             # Rewrite absolute asset URLs baked into the Vite build so the

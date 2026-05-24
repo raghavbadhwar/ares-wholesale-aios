@@ -1,0 +1,24 @@
+<ENVELOPE>
+  <HEADER>
+    <TALLYREQUEST>Import Data</TALLYREQUEST>
+  </HEADER>
+  <BODY>
+    <IMPORTRESULT>
+      <BATCHID>sync_123</BATCHID>
+      <STATUS>accepted</STATUS>
+      <EXTERNALREFERENCE>TALLY-SANDBOX-IMPORT-01</EXTERNALREFERENCE>
+      <ITEMS>
+        <ITEM>
+          <RECORDTYPE>invoice</RECORDTYPE>
+          <RECORDID>inv_1</RECORDID>
+          <STATUS>accepted</STATUS>
+        </ITEM>
+        <ITEM>
+          <RECORDTYPE>payment</RECORDTYPE>
+          <RECORDID>pay_1</RECORDID>
+          <STATUS>accepted</STATUS>
+        </ITEM>
+      </ITEMS>
+    </IMPORTRESULT>
+  </BODY>
+</ENVELOPE>

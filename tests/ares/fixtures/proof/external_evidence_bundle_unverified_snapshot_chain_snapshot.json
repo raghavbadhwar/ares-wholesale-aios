@@ -1,0 +1,42 @@
+{
+  "audit": {
+    "artifact_files_read": false,
+    "external_evidence_bundle_files_read": true,
+    "limitation": "Local external evidence bundle handoff packet only; it validates redacted metadata structure and does not inspect artifacts, secrets, or external systems.",
+    "live_api_called": false,
+    "secret_values_inspected": false
+  },
+  "benchmark_parity": false,
+  "external_evidence_bundle_summary": {
+    "bundles_accepted_for_handoff": 0,
+    "bundles_blocked": 1,
+    "bundles_total": 1
+  },
+  "external_evidence_bundles": [
+    {
+      "bundle_id": "external-evidence-bundle-payment-demo",
+      "bundle_status": "blocked_until_metadata_ready",
+      "proof_collection_summary": {
+        "artifact_requirements_accepted": 1,
+        "artifact_requirements_missing": 6,
+        "artifact_requirements_rejected": 0,
+        "artifact_requirements_total": 7
+      },
+      "review_decision_summary": {
+        "review_decisions_accepted": 1,
+        "review_decisions_total": 1
+      },
+      "reviewer_key_registry_snapshot_summary": {
+        "registry_snapshots_total": 2,
+        "registry_snapshots_verified": 0
+      },
+      "signed_envelope_summary": {
+        "signed_envelopes_accepted": 1,
+        "signed_envelopes_total": 1
+      }
+    }
+  ],
+  "latest_local_test_result": "202 passed in 2.74s",
+  "mode": "local_external_evidence_bundle_handoff_packet",
+  "ship_ready": false
+}

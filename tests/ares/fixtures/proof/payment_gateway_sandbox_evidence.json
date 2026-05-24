@@ -1,0 +1,9 @@
+{
+  "artifact_id": "provider_sandbox_adapter_evidence",
+  "artifact_path_or_reference": "redacted://payment_gateway/razorpay/payment_txn_6023a1f90409",
+  "provider": "razorpay",
+  "sandbox_or_production_like_tenant": "sandbox",
+  "run_timestamp": "2026-05-23T10:30:00+05:30",
+  "operator_or_accountant_reviewer": "redacted-ops-reviewer-1",
+  "redaction_confirmed": true
+}

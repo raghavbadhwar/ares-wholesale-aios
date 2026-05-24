@@ -236,15 +236,30 @@ function normalizeAnsiForeground(color: string): string {
 
 // ── Defaults ─────────────────────────────────────────────────────────
 
-const BRAND: ThemeBrand = {
-  name: 'Hermes Agent',
-  icon: '⚕',
-  prompt: '❯',
-  welcome: 'Type your message or /help for commands.',
-  goodbye: 'Goodbye! ⚕',
-  tool: '┊',
-  helpHeader: '(^_^)? Commands'
-}
+const ARES_BRAND =
+  process.env.HERMES_SKIN === 'ares' ||
+  process.env.ARES_SKIN === 'ares' ||
+  Boolean(process.env.ARES_HOME)
+
+const BRAND: ThemeBrand = ARES_BRAND
+  ? {
+      name: 'Ares Agent',
+      icon: '⚔',
+      prompt: '⚔',
+      welcome: 'Type your message or /help for commands.',
+      goodbye: 'Goodbye! ⚔',
+      tool: '╎',
+      helpHeader: '(⚔) Commands'
+    }
+  : {
+      name: 'Hermes Agent',
+      icon: '⚕',
+      prompt: '❯',
+      welcome: 'Type your message or /help for commands.',
+      goodbye: 'Goodbye! ⚕',
+      tool: '┊',
+      helpHeader: '(^_^)? Commands'
+    }
 
 const cleanPromptSymbol = (s: string | undefined, fallback: string) => {
   const cleaned = String(s ?? '')

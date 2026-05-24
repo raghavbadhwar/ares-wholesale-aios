@@ -1,0 +1,43 @@
+{
+  "artifact_requirements_accepted": 2,
+  "artifact_requirements_missing": 5,
+  "artifact_requirements_rejected": 0,
+  "artifact_requirements_total": 7,
+  "artifact_statuses": {
+    "accountant_close_evidence": "missing",
+    "gst_12_month_outcome_evidence": "missing",
+    "large_distributor_monthly_ops_evidence": "missing",
+    "low_literacy_pilot_evidence": "missing",
+    "owner_briefing_delivery_evidence": "metadata_accepted_for_review",
+    "provider_sandbox_adapter_evidence": "metadata_accepted_for_review",
+    "udhaar_settlement_evidence": "missing"
+  },
+  "audit": {
+    "artifact_files_read": false,
+    "limitation": "Local proof collection packet only; it lists required artifact metadata and does not inspect files, secrets, or external systems.",
+    "live_api_called": false,
+    "metadata_manifest_files_read": true,
+    "sandbox_submission_performed": false,
+    "secret_values_inspected": false
+  },
+  "benchmark_parity": false,
+  "done_state_gate_metadata_summary": {
+    "done_state_gates_missing_all_metadata": 1,
+    "done_state_gates_proven_by_metadata": 0,
+    "done_state_gates_total": 6,
+    "done_state_gates_with_all_metadata_submitted": 2,
+    "done_state_gates_with_partial_metadata": 3,
+    "done_state_gates_with_rejected_metadata": 0
+  },
+  "done_state_gate_statuses": {
+    "ca_closes_books_without_reentry": "metadata_partially_submitted",
+    "every_rupee_udhaar_settled": "metadata_partially_submitted",
+    "owner_trusts_agent_summaries": "metadata_submitted_for_review",
+    "reliable_7am_owner_briefing": "metadata_submitted_for_review",
+    "small_wholesaler_no_training": "metadata_missing",
+    "zero_gst_penalty_12_months": "metadata_partially_submitted"
+  },
+  "mode": "local_proof_collection_packet",
+  "ship_ready": false,
+  "status": "missing_external_evidence"
+}

@@ -14,10 +14,18 @@ from apps.ares.ares.data.models import (
     BusinessMemory,
     Customer,
     Invoice,
+    LedgerEntry,
     Order,
     Payment,
     ProductSKU,
+    PurchaseInvoice,
     StockRecord,
+    SupplierPayment,
+    SupplierPaymentAllocation,
+    StatutoryAdjustmentArtifact,
+    StatutoryAdjustmentDocument,
+    TaxEvent,
+    TaxAdjustment,
     WorkflowRun,
 )
 
@@ -114,6 +122,14 @@ class InMemoryRepository(BusinessRepository):
         self.orders: dict[str, Order] = {}
         self.invoices: dict[str, Invoice] = {}
         self.payments: dict[str, Payment] = {}
+        self.purchase_invoices: dict[str, PurchaseInvoice] = {}
+        self.supplier_payments: dict[str, SupplierPayment] = {}
+        self.supplier_payment_allocations: dict[str, SupplierPaymentAllocation] = {}
+        self.tax_events: dict[str, TaxEvent] = {}
+        self.tax_adjustments: dict[str, TaxAdjustment] = {}
+        self.statutory_adjustment_artifacts: dict[str, StatutoryAdjustmentArtifact] = {}
+        self.statutory_adjustment_documents: dict[str, StatutoryAdjustmentDocument] = {}
+        self.ledger_entries: dict[str, LedgerEntry] = {}
         self.stock_records: dict[str, StockRecord] = {}
         self.approvals: dict[str, ApprovalRequest] = {}
         self.memories: dict[str, BusinessMemory] = {}
@@ -130,6 +146,11 @@ class InMemoryRepository(BusinessRepository):
         invoices: Iterable[Invoice] = (),
         stock_records: Iterable[StockRecord] = (),
         payments: Iterable[Payment] = (),
+        purchase_invoices: Iterable[PurchaseInvoice] = (),
+        supplier_payments: Iterable[SupplierPayment] = (),
+        supplier_payment_allocations: Iterable[SupplierPaymentAllocation] = (),
+        tax_events: Iterable[TaxEvent] = (),
+        ledger_entries: Iterable[LedgerEntry] = (),
     ) -> "InMemoryRepository":
         repo = cls()
         for customer in customers:
@@ -142,6 +163,16 @@ class InMemoryRepository(BusinessRepository):
             repo.upsert_stock_record(record)
         for payment in payments:
             repo.upsert_payment(payment)
+        for invoice in purchase_invoices:
+            repo.upsert_purchase_invoice(invoice)
+        for payment in supplier_payments:
+            repo.upsert_supplier_payment(payment)
+        for allocation in supplier_payment_allocations:
+            repo.upsert_supplier_payment_allocation(allocation)
+        for event in tax_events:
+            repo.upsert_tax_event(event)
+        for entry in ledger_entries:
+            repo.upsert_ledger_entry(entry)
         return repo
 
     def get_customers(self) -> list[Customer]:
@@ -185,8 +216,165 @@ class InMemoryRepository(BusinessRepository):
         return list(self.payments.values())
 
     def upsert_payment(self, payment: Payment) -> Payment:
+        if payment.external_event_id:
+            existing = self.find_payment_by_external_event_id(payment.external_event_id)
+            if existing is not None:
+                return existing
         self.payments[payment.id] = payment
         return payment
+
+    def find_payment_by_external_event_id(self, external_event_id: str) -> Payment | None:
+        for payment in self.payments.values():
+            if payment.external_event_id == external_event_id:
+                return payment
+        return None
+
+    def effective_invoice_projection(self, invoice: Invoice) -> dict:
+        paid = sum(payment.amount for payment in self.payments.values() if payment.matched_invoice_id == invoice.id and payment.status in {"reconciled", "paid"})
+        amount = float(invoice.total_amount or invoice.amount or 0)
+        if paid >= amount and amount > 0:
+            status = "paid"
+        elif paid > 0:
+            status = "partially_paid"
+        else:
+            status = invoice.status
+        return {**invoice.model_dump(mode="json"), "status": status, "paid_amount": paid}
+
+    def get_purchase_invoices(self) -> list[PurchaseInvoice]:
+        return list(self.purchase_invoices.values())
+
+    def upsert_purchase_invoice(self, invoice: PurchaseInvoice) -> PurchaseInvoice:
+        self.purchase_invoices[invoice.id] = invoice
+        self._refresh_purchase_invoice_contract(invoice.id)
+        return invoice
+
+    def get_supplier_payments(self) -> list[SupplierPayment]:
+        return list(self.supplier_payments.values())
+
+    def upsert_supplier_payment(self, payment: SupplierPayment) -> SupplierPayment:
+        if payment.external_event_id:
+            existing = self.find_supplier_payment_by_external_event_id(payment.external_event_id)
+            if existing is not None:
+                return existing
+        self.supplier_payments[payment.id] = payment
+        if payment.matched_purchase_invoice_id:
+            self._refresh_purchase_invoice_contract(payment.matched_purchase_invoice_id)
+        return payment
+
+    def find_supplier_payment_by_external_event_id(self, external_event_id: str) -> SupplierPayment | None:
+        for payment in self.supplier_payments.values():
+            if payment.external_event_id == external_event_id:
+                return payment
+        return None
+
+    def get_supplier_payment_allocations(self) -> list[SupplierPaymentAllocation]:
+        return list(self.supplier_payment_allocations.values())
+
+    def upsert_supplier_payment_allocation(self, allocation: SupplierPaymentAllocation) -> SupplierPaymentAllocation:
+        self.supplier_payment_allocations[allocation.id] = allocation
+        self._refresh_purchase_invoice_contract(allocation.purchase_invoice_id)
+        return allocation
+
+    def get_tax_events(self) -> list[TaxEvent]:
+        return list(self.tax_events.values())
+
+    def upsert_tax_event(self, event: TaxEvent) -> TaxEvent:
+        self.tax_events[event.id] = event
+        if event.source_type == "purchase_invoice":
+            self._refresh_purchase_invoice_contract(event.source_id)
+        return self.tax_events[event.id]
+
+    def get_tax_adjustments(self) -> list[TaxAdjustment]:
+        return list(self.tax_adjustments.values())
+
+    def upsert_tax_adjustment(self, adjustment: TaxAdjustment) -> TaxAdjustment:
+        self.tax_adjustments[adjustment.id] = adjustment
+        return adjustment
+
+    def get_statutory_adjustment_artifacts(self) -> list[StatutoryAdjustmentArtifact]:
+        return list(self.statutory_adjustment_artifacts.values())
+
+    def upsert_statutory_adjustment_artifact(self, artifact: StatutoryAdjustmentArtifact) -> StatutoryAdjustmentArtifact:
+        self.statutory_adjustment_artifacts[artifact.id] = artifact
+        return artifact
+
+    def get_statutory_adjustment_documents(self) -> list[StatutoryAdjustmentDocument]:
+        return list(self.statutory_adjustment_documents.values())
+
+    def upsert_statutory_adjustment_document(self, document: StatutoryAdjustmentDocument) -> StatutoryAdjustmentDocument:
+        self.statutory_adjustment_documents[document.id] = document
+        return document
+
+    def get_ledger_entries(self) -> list[LedgerEntry]:
+        return sorted(
+            self.ledger_entries.values(),
+            key=lambda entry: (entry.entry_type.startswith("purchase_invoice"), entry.id),
+        )
+
+    def upsert_ledger_entry(self, entry: LedgerEntry) -> LedgerEntry:
+        self.ledger_entries[entry.id] = entry
+        return entry
+
+    def effective_purchase_invoice_projection(self, invoice: PurchaseInvoice) -> dict:
+        paid = sum(
+            allocation.amount
+            for allocation in self.supplier_payment_allocations.values()
+            if allocation.purchase_invoice_id == invoice.id and allocation.status == "posted"
+        )
+        tax_event = self.tax_events.get(f"tax_purchase_{invoice.id}")
+        if tax_event is not None:
+            total = float(tax_event.taxable_value or 0) + float(tax_event.tax_amount or 0)
+        else:
+            total = float(invoice.taxable_value or 0) + float(invoice.tax_amount or 0)
+        if paid >= total and total > 0:
+            status = "paid"
+        elif paid > 0:
+            status = "partially_paid"
+        elif invoice.status == "open":
+            status = "booked"
+        else:
+            status = invoice.status
+        return {**invoice.model_dump(mode="json"), "status": status, "paid_amount": paid}
+
+    def _refresh_purchase_invoice_contract(self, purchase_invoice_id: str) -> None:
+        invoice = self.purchase_invoices.get(purchase_invoice_id)
+        if invoice is None:
+            return
+        projection = self.effective_purchase_invoice_projection(invoice)
+        metadata = {
+            "invoice_status": projection["status"],
+            "raw_invoice_status": invoice.status,
+        }
+        tax_id = f"tax_purchase_{invoice.id}"
+        existing_tax = self.tax_events.get(tax_id)
+        self.tax_events[tax_id] = TaxEvent(
+            id=tax_id,
+            event_type=(existing_tax.event_type if existing_tax else "purchase_input_tax"),
+            source_type="purchase_invoice",
+            source_id=invoice.id,
+            document_type="purchase_invoice",
+            document_id=invoice.id,
+            document_number=invoice.invoice_number,
+            event_date=(existing_tax.event_date if existing_tax else invoice.date),
+            taxable_value=(existing_tax.taxable_value if existing_tax else invoice.taxable_value),
+            tax_amount=(existing_tax.tax_amount if existing_tax else invoice.tax_amount),
+            business_gstin_id=(existing_tax.business_gstin_id if existing_tax else invoice.business_gstin_id),
+            status=(existing_tax.status if existing_tax else "posted"),
+            metadata=metadata,
+        )
+        ledger_id = f"led_purchase_{invoice.id}_base"
+        existing_ledger = self.ledger_entries.get(ledger_id)
+        self.ledger_entries[ledger_id] = LedgerEntry(
+            id=ledger_id,
+            entry_type=(existing_ledger.entry_type if existing_ledger else "purchase_invoice_base"),
+            source_type="purchase_invoice",
+            source_id=invoice.id,
+            amount=self.tax_events[tax_id].taxable_value,
+            debit_account=(existing_ledger.debit_account if existing_ledger else "Purchase"),
+            credit_account=(existing_ledger.credit_account if existing_ledger else "Accounts Payable"),
+            status=(existing_ledger.status if existing_ledger else "posted"),
+            metadata=metadata,
+        )
 
     def get_stock_records(self) -> list[StockRecord]:
         return list(self.stock_records.values())
@@ -233,4 +421,3 @@ class InMemoryRepository(BusinessRepository):
 
     def list_action_logs(self) -> list[ActionExecutionLog]:
         return list(self.action_logs.values())
-

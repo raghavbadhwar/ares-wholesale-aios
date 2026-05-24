@@ -1,0 +1,58 @@
+{
+  "bundle_id": "external-evidence-bundle-whatsapp-demo",
+  "generated_at": "2026-05-23T11:00:00+05:30",
+  "redaction_confirmed": true,
+  "artifacts": [
+    {
+      "artifact_id": "provider_sandbox_adapter_evidence",
+      "artifact_path_or_reference": "redacted://whatsapp_business/whatsapp_txn_5c80a0e615b2",
+      "provider": "whatsapp_business",
+      "sandbox_or_production_like_tenant": "sandbox",
+      "run_timestamp": "2026-05-23T11:00:00+05:30",
+      "operator_or_accountant_reviewer": "redacted-ops-reviewer-2",
+      "redaction_confirmed": true
+    }
+  ],
+  "review_decisions": [
+    {
+      "artifact_id": "provider_sandbox_adapter_evidence",
+      "decision": "approved",
+      "reviewer": "operator_or_accountant_reviewer",
+      "review_reference": "redacted-ops-reviewer-2",
+      "reviewed_at": "2026-05-23T11:00:00+05:30",
+      "redaction_confirmed": true
+    }
+  ],
+  "signed_envelopes": [
+    {
+      "envelope_id": "signed-whatsapp-proof-demo",
+      "signature_scheme": "local_metadata_signature_v1",
+      "signer_key_reference": "redacted-reviewer-key-1",
+      "signature_reference": "redacted-signature-reference-1",
+      "signed_at": "2026-05-23T11:00:00+05:30",
+      "decision": {
+        "artifact_id": "provider_sandbox_adapter_evidence",
+        "decision": "approved",
+        "reviewer": "operator_or_accountant_reviewer",
+        "review_reference": "redacted-ops-reviewer-2",
+        "reviewed_at": "2026-05-23T11:00:00+05:30",
+        "redaction_confirmed": true
+      }
+    }
+  ],
+  "reviewer_key_registry_snapshots": [
+    {
+      "snapshot_id": "registry-snapshot-whatsapp-demo",
+      "recorded_at": "2026-05-23T11:00:00+05:30",
+      "reviewer_keys": [
+        {
+          "reviewer": "operator_or_accountant_reviewer",
+          "signer_key_reference": "redacted-reviewer-key-1",
+          "key_status": "active"
+        }
+      ],
+      "previous_snapshot_hash": "GENESIS",
+      "snapshot_hash": "39c0b183b87e05ca84ad7f3b86e100cb9a7c4ff88e31ad2e04f90d2a5fb8d37e"
+    }
+  ]
+}

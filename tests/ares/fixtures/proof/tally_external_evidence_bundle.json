@@ -1,0 +1,58 @@
+{
+  "bundle_id": "external-evidence-bundle-tally-demo",
+  "generated_at": "2026-05-23T12:00:00+05:30",
+  "redaction_confirmed": true,
+  "artifacts": [
+    {
+      "artifact_id": "provider_sandbox_adapter_evidence",
+      "artifact_path_or_reference": "redacted://tally_busy/bridge_txn_aa322fb2bd7b",
+      "provider": "tally_busy",
+      "sandbox_or_production_like_tenant": "sandbox",
+      "run_timestamp": "2026-05-23T12:00:00+05:30",
+      "operator_or_accountant_reviewer": "redacted-ops-reviewer-4",
+      "redaction_confirmed": true
+    }
+  ],
+  "review_decisions": [
+    {
+      "artifact_id": "provider_sandbox_adapter_evidence",
+      "decision": "approved",
+      "reviewer": "operator_or_accountant_reviewer",
+      "review_reference": "redacted-ops-reviewer-4",
+      "reviewed_at": "2026-05-23T12:00:00+05:30",
+      "redaction_confirmed": true
+    }
+  ],
+  "signed_envelopes": [
+    {
+      "envelope_id": "signed-tally-proof-demo",
+      "signature_scheme": "local_metadata_signature_v1",
+      "signer_key_reference": "redacted-reviewer-key-1",
+      "signature_reference": "redacted-signature-reference-1",
+      "signed_at": "2026-05-23T12:00:00+05:30",
+      "decision": {
+        "artifact_id": "provider_sandbox_adapter_evidence",
+        "decision": "approved",
+        "reviewer": "operator_or_accountant_reviewer",
+        "review_reference": "redacted-ops-reviewer-4",
+        "reviewed_at": "2026-05-23T12:00:00+05:30",
+        "redaction_confirmed": true
+      }
+    }
+  ],
+  "reviewer_key_registry_snapshots": [
+    {
+      "snapshot_id": "registry-snapshot-tally-demo",
+      "recorded_at": "2026-05-23T12:00:00+05:30",
+      "reviewer_keys": [
+        {
+          "reviewer": "operator_or_accountant_reviewer",
+          "signer_key_reference": "redacted-reviewer-key-1",
+          "key_status": "active"
+        }
+      ],
+      "previous_snapshot_hash": "GENESIS",
+      "snapshot_hash": "383241d17390132f40cd9224f0fa7c26d1066b86984cbb4f7b2fd7814bfc0ab5"
+    }
+  ]
+}

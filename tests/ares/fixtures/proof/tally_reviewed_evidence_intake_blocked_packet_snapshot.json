@@ -1,0 +1,48 @@
+{
+  "latest_local_test_result": "202 passed in 2.74s",
+  "mode": "local_reviewed_external_evidence_intake_packet",
+  "reviewed_evidence_intake_summary": {
+    "intakes_accepted_for_local_replay": 0,
+    "intakes_blocked": 1,
+    "intakes_blocked_until_metadata_ready": 1,
+    "intakes_rejected_after_review": 0,
+    "intakes_resubmitted_after_review_rejection": 0,
+    "intakes_total": 1,
+    "intakes_with_operator_login_metadata": 0,
+    "intakes_with_subject_metadata": 0
+  },
+  "reviewed_evidence_intakes": {
+    "reviewed-tally-evidence-intake-cb1bdc4621f1": {
+      "artifact_id": "provider_sandbox_adapter_evidence",
+      "bundle_id": "external-evidence-bundle-tally-84396635be5c",
+      "intake_status": "blocked_until_metadata_ready",
+      "operator_login_summary": {
+        "actor_role": "operator_or_accountant",
+        "login_surface": "",
+        "metadata_ready": false,
+        "session_reference_present": true
+      },
+      "provider": "tally_busy",
+      "rejection_reasons": [
+        "operator_login_metadata.missing_field:login_surface",
+        "subject_metadata.missing_scope"
+      ],
+      "review_outcome": "metadata_review_complete_not_verified",
+      "review_rejection_summary": {
+        "rejected_after_review": false,
+        "reopened_after_review_rejection": false,
+        "review_rejection_reason_count": 0,
+        "review_rejection_reference_present": false,
+        "review_resubmission_reference_present": false
+      },
+      "subject_metadata_summary": {
+        "metadata_ready": false,
+        "operation": "xml_gateway",
+        "portal_reference_present": true,
+        "subject_identifier": "cmp_demo_1",
+        "subject_metadata_kind": "tally_bridge_identity",
+        "subject_scope": ""
+      }
+    }
+  }
+}

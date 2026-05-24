@@ -67,6 +67,7 @@ import ProfilesPage from "@/pages/ProfilesPage";
 import SkillsPage from "@/pages/SkillsPage";
 import PluginsPage from "@/pages/PluginsPage";
 import ChatPage from "@/pages/ChatPage";
+import AresPage from "@/pages/AresPage";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 import { useI18n } from "@/i18n";
@@ -78,7 +79,7 @@ import { isDashboardEmbeddedChatEnabled } from "@/lib/dashboard-flags";
 import { api } from "@/lib/api";
 
 function RootRedirect() {
-  return <Navigate to="/sessions" replace />;
+  return <Navigate to="/ares" replace />;
 }
 
 function UnknownRouteFallback({ pluginsLoading }: { pluginsLoading: boolean }) {
@@ -96,6 +97,12 @@ const CHAT_NAV_ITEM: NavItem = {
   icon: Terminal,
 };
 
+const ARES_NAV_ITEM: NavItem = {
+  path: "/ares",
+  label: "Ares",
+  icon: Activity,
+};
+
 /**
  * Built-in routes except /chat.  Chat is rendered persistently (outside
  * <Routes>) when embedded — see the persistent chat host block rendered
@@ -107,6 +114,7 @@ const CHAT_NAV_ITEM: NavItem = {
  */
 const BUILTIN_ROUTES_CORE: Record<string, ComponentType> = {
   "/": RootRedirect,
+  "/ares": AresPage,
   "/sessions": SessionsPage,
   "/analytics": AnalyticsPage,
   "/models": ModelsPage,
@@ -196,10 +204,12 @@ function buildNavItems(
   manifests: PluginManifest[],
 ): NavItem[] {
   const items = [...builtIn];
+  const builtInPaths = new Set(builtIn.map((item) => item.path));
 
   for (const manifest of manifests) {
     if (manifest.tab.override) continue;
     if (manifest.tab.hidden) continue;
+    if (builtInPaths.has(manifest.tab.path)) continue;
 
     const pluginItem: NavItem = {
       path: manifest.tab.path,
@@ -364,8 +374,8 @@ export default function App() {
 
   const builtinNav = useMemo(() => {
     const base = embeddedChat
-      ? [CHAT_NAV_ITEM, ...BUILTIN_NAV_REST]
-      : BUILTIN_NAV_REST;
+      ? [ARES_NAV_ITEM, CHAT_NAV_ITEM, ...BUILTIN_NAV_REST]
+      : [ARES_NAV_ITEM, ...BUILTIN_NAV_REST];
     return showTokenAnalytics ? base : base.filter((n) => n.path !== "/analytics");
   }, [embeddedChat, showTokenAnalytics]);
 
@@ -501,7 +511,7 @@ export default function App() {
                   className="font-bold text-[1.125rem] leading-[0.95] tracking-[0.0525rem] text-midground"
                   style={{ mixBlendMode: "plus-lighter" }}
                 >
-                  Hermes
+                  Ares
                   <br />
                   Agent
                 </Typography>

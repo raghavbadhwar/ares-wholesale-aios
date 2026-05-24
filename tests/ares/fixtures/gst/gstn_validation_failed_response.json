@@ -1,0 +1,25 @@
+{
+  "provider": "gstn_nic",
+  "sandbox": true,
+  "operation": "gstr1_return_upload",
+  "gstin": "27REDAC1234F1Z5",
+  "request_payload": {
+    "period": "2026-05",
+    "sections": {
+      "b2b": 2
+    }
+  },
+  "response": {
+    "status": "validation_failed",
+    "reference_id": "GSTN-SANDBOX-ERR-0001",
+    "errors": [
+      {
+        "code": "invalid_period",
+        "field": "period",
+        "message": "Return period is not open in sandbox."
+      }
+    ]
+  },
+  "redaction_confirmed": true,
+  "payload_reference": "redacted://gstn/sandbox/gstr1-validation-failed-1"
+}

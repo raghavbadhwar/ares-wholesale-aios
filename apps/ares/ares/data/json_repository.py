@@ -14,13 +14,19 @@ from apps.ares.ares.data.models import (
     BusinessMemory,
     Customer,
     Invoice,
+    LedgerEntry,
     Order,
     Payment,
     ProductSKU,
+    PurchaseInvoice,
     StockRecord,
+    SupplierPayment,
+    SupplierPaymentAllocation,
+    TaxEvent,
     WorkflowRun,
 )
 from apps.ares.ares.data.repository import InMemoryRepository
+from apps.ares.ares.hardening import append_client_audit_event, redact_action_log_record, redact_workflow_run_record
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -34,6 +40,11 @@ class JsonClientRepository(InMemoryRepository):
         "orders": ("orders.json", Order),
         "invoices": ("invoices.json", Invoice),
         "payments": ("payments.json", Payment),
+        "purchase_invoices": ("purchase_invoices.json", PurchaseInvoice),
+        "supplier_payments": ("supplier_payments.json", SupplierPayment),
+        "supplier_payment_allocations": ("supplier_payment_allocations.json", SupplierPaymentAllocation),
+        "tax_events": ("tax_events.json", TaxEvent),
+        "ledger_entries": ("ledger_entries.json", LedgerEntry),
         "stock_records": ("stock_records.json", StockRecord),
         "approvals": ("approvals.json", ApprovalRequest),
         "memories": ("memories.json", BusinessMemory),
@@ -72,6 +83,11 @@ class JsonClientRepository(InMemoryRepository):
         for item in self._load_model_list("orders.json", Order): self.orders[item.id] = item
         for item in self._load_model_list("invoices.json", Invoice): self.invoices[item.id] = item
         for item in self._load_model_list("payments.json", Payment): self.payments[item.id] = item
+        for item in self._load_model_list("purchase_invoices.json", PurchaseInvoice): self.purchase_invoices[item.id] = item
+        for item in self._load_model_list("supplier_payments.json", SupplierPayment): self.supplier_payments[item.id] = item
+        for item in self._load_model_list("supplier_payment_allocations.json", SupplierPaymentAllocation): self.supplier_payment_allocations[item.id] = item
+        for item in self._load_model_list("tax_events.json", TaxEvent): self.tax_events[item.id] = item
+        for item in self._load_model_list("ledger_entries.json", LedgerEntry): self.ledger_entries[item.id] = item
         for item in self._load_model_list("stock_records.json", StockRecord): self.stock_records[item.sku_id] = item
         for item in self._load_model_list("approvals.json", ApprovalRequest): self.approvals[item.id] = item
         for item in self._load_model_list("memories.json", BusinessMemory): self.memories[item.id] = item
@@ -95,6 +111,16 @@ class JsonClientRepository(InMemoryRepository):
         saved = super().upsert_invoice(invoice); self._flush("invoices"); return saved
     def upsert_payment(self, payment: Payment) -> Payment:
         saved = super().upsert_payment(payment); self._flush("payments"); return saved
+    def upsert_purchase_invoice(self, invoice: PurchaseInvoice) -> PurchaseInvoice:
+        saved = super().upsert_purchase_invoice(invoice); self._flush("purchase_invoices"); self._flush("tax_events"); self._flush("ledger_entries"); return saved
+    def upsert_supplier_payment(self, payment: SupplierPayment) -> SupplierPayment:
+        saved = super().upsert_supplier_payment(payment); self._flush("supplier_payments"); self._flush("tax_events"); self._flush("ledger_entries"); return saved
+    def upsert_supplier_payment_allocation(self, allocation: SupplierPaymentAllocation) -> SupplierPaymentAllocation:
+        saved = super().upsert_supplier_payment_allocation(allocation); self._flush("supplier_payment_allocations"); self._flush("tax_events"); self._flush("ledger_entries"); return saved
+    def upsert_tax_event(self, event: TaxEvent) -> TaxEvent:
+        saved = super().upsert_tax_event(event); self._flush("tax_events"); self._flush("ledger_entries"); return saved
+    def upsert_ledger_entry(self, entry: LedgerEntry) -> LedgerEntry:
+        saved = super().upsert_ledger_entry(entry); self._flush("ledger_entries"); return saved
     def upsert_stock_record(self, record: StockRecord) -> StockRecord:
         saved = super().upsert_stock_record(record); self._flush("stock_records"); return saved
     def create_approval(self, approval: ApprovalRequest) -> ApprovalRequest:
@@ -104,6 +130,12 @@ class JsonClientRepository(InMemoryRepository):
     def save_memory(self, memory: BusinessMemory) -> BusinessMemory:
         saved = super().save_memory(memory); self._flush("memories"); return saved
     def log_workflow_run(self, run: WorkflowRun) -> WorkflowRun:
-        saved = super().log_workflow_run(run); self._flush("workflow_runs"); return saved
+        redacted = WorkflowRun.model_validate(redact_workflow_run_record(run.model_dump(mode="json")))
+        saved = super().log_workflow_run(redacted); self._flush("workflow_runs")
+        append_client_audit_event(saved.client_id, event_type="workflow_run", payload=saved.model_dump(mode="json"))
+        return saved
     def save_action_log(self, log: ActionExecutionLog) -> ActionExecutionLog:
-        saved = super().save_action_log(log); self._flush("action_logs"); return saved
+        redacted = ActionExecutionLog.model_validate(redact_action_log_record(log.model_dump(mode="json")))
+        saved = super().save_action_log(redacted); self._flush("action_logs")
+        append_client_audit_event(saved.client_id, event_type="action_log", payload=saved.model_dump(mode="json"))
+        return saved

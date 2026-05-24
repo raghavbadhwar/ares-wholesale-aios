@@ -1,0 +1,27 @@
+{
+  "artifact_id": "provider_sandbox_adapter_evidence",
+  "bundle_id": "external-evidence-bundle-whatsapp-2baa729a1256",
+  "intake_id": "reviewed-whatsapp-evidence-intake-538ae8be3eb4",
+  "operator_login_metadata": {
+    "actor_role": "operator_or_accountant",
+    "login_reference": "redacted-whatsapp-operator-login-1",
+    "login_surface": "whatsapp_business_sandbox_dashboard",
+    "redaction_confirmed": true,
+    "session_reference": "redacted-whatsapp-session-1"
+  },
+  "provider": "whatsapp_business",
+  "redaction_confirmed": true,
+  "review_outcome": "metadata_review_complete_not_verified",
+  "review_scope": "reviewed_external_evidence_intake_only",
+  "reviewed_at": "2026-05-23T11:40:00+05:30",
+  "reviewer_reference": "redacted-whatsapp-reviewer-1",
+  "subject_metadata": {
+    "operation": "whatsapp_sandbox_delivery_review",
+    "portal_reference": "redacted://whatsapp_business/wamid.sandbox.msg.0001",
+    "redaction_confirmed": true,
+    "subject_reference": "wamid.sandbox.msg.0001",
+    "subject_scope": "whatsapp_template_delivery_review"
+  },
+  "subject_metadata_kind": "whatsapp_message_identity",
+  "transcript_id": "whatsapp_txn_5c80a0e615b2"
+}

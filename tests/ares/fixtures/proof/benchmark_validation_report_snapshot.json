@@ -1,0 +1,62 @@
+{
+  "hash_chain_summary": {
+    "hash_algorithm": "sha256",
+    "hash_chain_verification_enabled": true,
+    "hash_chain_verified": true,
+    "profile_groups_hash_failed": 0,
+    "profile_groups_hash_verified": 1,
+    "validation_gate_groups_hash_failed": 0,
+    "validation_gate_groups_hash_verified": 9
+  },
+  "summary": {
+    "artifacts_proven": 0,
+    "dispatch_results_accepted": 0,
+    "dispatch_results_blocked": 1,
+    "specialized_subagent_profiles_total": 1,
+    "specialized_subagent_profiles_with_dispatch_results": 1,
+    "validation_gates_failed": 1,
+    "validation_gates_total": 9
+  },
+  "validation_report": {
+    "generated_from_hash": "3560d82ef2388a22097ed5c369566bff75f6c633e5951bff31fff590c52fb957",
+    "local_execution_constraints": {
+      "artifact_files_read": false,
+      "live_api_called": false,
+      "metadata_only": true,
+      "secret_values_inspected": false
+    },
+    "operator_reference_required_gate": {
+      "blocked_dispatch_item_ids_count": 1,
+      "gate_hash": "6d88b92f4e05c8ed3b201745306a800a07882e77b0ab91101dd1dbdaf8aa74da",
+      "gate_status": "failed",
+      "hash_verification_status": "verified",
+      "previous_gate_hash": "5506a23285fc56794ecf2614e9ff1386fd7e47fe8ffc9471e5f9ffda2d3ee386",
+      "rejection_reasons": [
+        "operator_reference_missing"
+      ]
+    },
+    "profile_entry": {
+      "blocked_dispatch_item_ids_count": 1,
+      "dispatch_results_total": 1,
+      "hash_verification_status": "verified",
+      "previous_profile_hash": "GENESIS",
+      "profile_hash": "842425588079f91d017f9f828c189d6f90e56e13d298306724bc68d2cd4f1692",
+      "specialized_subagent_profile": "integration_accounting_reviewer"
+    },
+    "proves_benchmark_parity": false,
+    "proves_ship_ready": false,
+    "validation_gates": [
+      "required_fields_present",
+      "known_dispatch_item_id",
+      "action_item_matches_dispatch_item",
+      "source_dispatch_item_matches_dispatch_item",
+      "allowed_action_status",
+      "operator_reference_required",
+      "redaction_confirmed_required",
+      "reject_secret_values",
+      "hash_chain_verified"
+    ],
+    "validation_report_scope_hash": "f46ff3420553228febde00c103edb15d171e9994a4e0c1ecdfc72b1606ac7693"
+  },
+  "validation_report_key_hash": "10b19b36f3d597fee89dadadeac6cbe8c63aa79b3dab3090e1470e85acca2096"
+}
